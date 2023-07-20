@@ -33,7 +33,7 @@ setup(
 		'Application Framework :: Liquirizia :: DataAccessObject :: PostgreSQL',
 	],
 	install_requires=[
-		'Liquirizia@git+https://github.com/team-of-mine-labs/Liquirizia.git',
+		'Liquirizia@git+https://github.com/yong5eon/Liquirizia.git',
 		'psycopg2-binary>=2.9.1',
 	],
 	python_requires='>=3.8'
