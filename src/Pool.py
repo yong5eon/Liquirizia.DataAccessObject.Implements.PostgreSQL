@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .DataAccessObjectConfiguration import DataAccessObjectConfiguration
+from .Configuration import Configuration
 
 from Liquirizia.Template import Singleton
 
@@ -12,7 +12,7 @@ __all__ = (
 )
 
 
-class DataAccessObjectPool(Singleton):
+class Pool(Singleton):
 
 	def onInit(self):
 		self.pool = {}
@@ -23,11 +23,11 @@ class DataAccessObjectPool(Singleton):
 			self.pool[key].closeall()
 
 	@classmethod
-	def Get(cls, conf: DataAccessObjectConfiguration):
-		pool = DataAccessObjectPool()
+	def Get(cls, conf: Configuration):
+		pool = Pool()
 		return pool.get(conf)
 
-	def get(self, conf: DataAccessObjectConfiguration):
+	def get(self, conf: Configuration):
 		if conf not in self.pool:
 			dsn = 'postgresql://'
 			if conf.user:
@@ -40,11 +40,11 @@ class DataAccessObjectPool(Singleton):
 		return self.pool[conf].getconn()
 
 	@classmethod
-	def Release(cls, conf: DataAccessObjectConfiguration, connection):
-		pool = DataAccessObjectPool()
+	def Release(cls, conf: Configuration, connection):
+		pool = Pool()
 		return pool.release(conf, connection)
 
-	def release(self, conf: DataAccessObjectConfiguration, connection):
+	def release(self, conf: Configuration, connection):
 		if conf not in self.pool:
 			return
 		self.pool[conf].putconn(connection)

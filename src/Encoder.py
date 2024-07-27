@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from collections import MutableSequence, MutableMapping, MutableSet
+from collections.abc import MutableSequence, MutableMapping, MutableSet
 from datetime import datetime, date
 from decimal import Decimal
 from json import JSONEncoder
 
 __all__ = (
-	'DataAccessObjectEncoder'
+	'Encoder'
 )
 
 
-class DataAccessObjectEncoder(JSONEncoder):
-	"""
-	Type Encoder for JSON
-	"""
+class Encoder(JSONEncoder):
+	"""Type Encoder for JSON"""
 
 	def default(self, obj):
 		if isinstance(obj, Decimal):
