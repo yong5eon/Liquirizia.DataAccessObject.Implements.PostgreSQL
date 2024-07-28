@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from Liquirizia.DataAccessObject import DataAccessObjectHelper, DataAccessObjectError
+from Liquirizia.DataAccessObject import Helper, Error
 from Liquirizia.DataAccessObject.Errors import *
 from Liquirizia.DataAccessObject.Properties.Database.Errors import *
 
-from Liquirizia.DataAccessObject.Implements.PostgreSQL import DataAccessObject, DataAccessObjectConfiguration
+from Liquirizia.DataAccessObject.Implements.PostgreSQL import Connection,Configuration 
 
 import sys
 
@@ -14,12 +14,12 @@ if __name__ == '__main__':
 
 	try:
 		# Set connection
-		DataAccessObjectHelper.Set(
+		Helper.Set(
 			'Sample',
-			DataAccessObject,
-			DataAccessObjectConfiguration(
+			Connection,
+			Configuration(
 				host='YOUR_POSTGRESQL_HOST',  # PostgreSQL Database Host Address
-				port=YOUR_POSTGRESQL_PORT,  # PostgreSQL Database Host Port
+				port=5432,  # PostgreSQL Database Host Port
 				database='YOUR_DATABASE',  # Database Name
 				username='YOUR_USER',  # Database User
 				password='YOUR_PASSWORD',  # Database Password for User
@@ -28,8 +28,8 @@ if __name__ == '__main__':
 		)
 
 		# Get Connection
-		con = DataAccessObjectHelper.Get('Sample')
-	except DataAccessObjectConnectionError as e:
+		con = Helper.Get('Sample')
+	except ConnectionError as e:
 		print(str(e), file=sys.stderr)
 		exit(-1)
 	except Exception as e:
@@ -55,19 +55,19 @@ if __name__ == '__main__':
 		con.execute("INSERT INTO LOG(TEXT) VALUES('TEST3')")
 
 		con.commit()
-	except DataAccessObjectExecuteError as e:
+	except ExecuteError as e:
 		con.rollback()
 		print(str(e), file=sys.stderr)
-	except DataAccessObjectCursorError as e:
+	except CursorError as e:
 		con.rollback()
 		print(str(e), file=sys.stderr)
-	except DataAccessObjectCommitError as e:
+	except CommitError as e:
 		print(str(e), file=sys.stderr)
-	except DataAccessObjectRollBackError as e:
+	except RollBackError as e:
 		print(str(e), file=sys.stderr)
-	except DataAccessObjectConnectionClosedError as e:
+	except ConnectionClosedError as e:
 		print('Connection is closed, {}'.format(str(e)), file=sys.stderr)
-	except DataAccessObjectError as e:
+	except Error as e:
 		print('Error, {}'.format(str(e)), file=sys.stderr)
 	except Exception as e:
 		print(str(e), file=sys.stderr)
@@ -81,15 +81,15 @@ if __name__ == '__main__':
 			print('{} : {}'.format(i, row), file=sys.stdout)
 
 		con.execute('DROP TABLE IF EXISTS LOG')
-	except DataAccessObjectExecuteError as e:
+	except ExecuteError as e:
 		con.rollback()
 		print(str(e), file=sys.stderr)
-	except DataAccessObjectCursorError as e:
+	except CursorError as e:
 		con.rollback()
 		print(str(e), file=sys.stderr)
-	except DataAccessObjectConnectionClosedError as e:
+	except ConnectionClosedError as e:
 		print('Connection is closed, {}'.format(str(e)), file=sys.stderr)
-	except DataAccessObjectError as e:
+	except Error as e:
 		print('Error, {}'.format(str(e)), file=sys.stderr)
 	except Exception as e:
 		print(str(e), file=sys.stderr)

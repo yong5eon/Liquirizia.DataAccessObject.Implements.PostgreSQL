@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from .DataAccessObjectEncoder import DataAccessObjectEncoder
+from .Encoder import Encoder
 
 from datetime import datetime, date
 from decimal import Decimal
 from json import dumps
 
 __all__ = (
-	'DataAccessObjectFormatter'
+	'Formatter'
 )
 
 
-class DataAccessObjectFormatter(object):
-	"""
-	Data Access Object Query Formatter for PostgreSQL
-	"""
+class Formatter(object):
+	"""Query Formatter for PostgreSQL"""
 
 	def __init__(self, sql, *args, **kwargs):
 		self.sql = sql
@@ -99,5 +97,5 @@ class DataAccessObjectFormatter(object):
 		return '\'{}\''.format('{}'.format(list).replace('\'', '')).replace('[', '{').replace(']', '}')
 
 	def fromDict(self, value):
-		dict = dumps(value, ensure_ascii=False, cls=DataAccessObjectEncoder)
+		dict = dumps(value, ensure_ascii=False, cls=Encoder)
 		return '\'{}\''.format(dict)
