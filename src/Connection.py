@@ -20,6 +20,7 @@ from .Configuration import Configuration
 from .Pool import Pool
 from .Context import Context
 from .Cursor import Cursor
+from .Session import Session
 
 from psycopg2 import connect
 from psycopg2 import (
