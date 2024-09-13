@@ -24,5 +24,7 @@ jobs:
         run: docker image build --file=res/PostgreSQL.15.docker --tag=postgresql:15 .
       - name: Run PostgreSQL-15 docker
         run: docker container run --name=postgresql --detach --publish=5432:5432 postgresql:15
+      - name: Check PostgreSQL-15 docker
+        run: docker logs postgresql
       - name: Test
         run: python -m Liquirizia.Test test
