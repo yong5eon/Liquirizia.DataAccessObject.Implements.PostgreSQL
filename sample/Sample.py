@@ -18,12 +18,14 @@ if __name__ == '__main__':
 			'Sample',
 			Connection,
 			Configuration(
-				host='YOUR_POSTGRESQL_HOST',  # PostgreSQL Database Host Address
+				host='127.0.0.1',  # PostgreSQL Database Host Address
 				port=5432,  # PostgreSQL Database Host Port
-				database='YOUR_DATABASE',  # Database Name
-				username='YOUR_USER',  # Database User
-				password='YOUR_PASSWORD',  # Database Password for User
+				database='postgres',  # Database Name
+				username='postgres',  # Database User
+				password='password',  # Database Password for User
 				persistent=True,  # Is Persistent Connection, True/False
+				min=1,
+				max=1,
 			)
 		)
 
@@ -54,33 +56,14 @@ if __name__ == '__main__':
 		con.execute("INSERT INTO LOG(TEXT) VALUES('TEST2')")
 		con.execute("INSERT INTO LOG(TEXT) VALUES('TEST3')")
 
-		con.commit()
-	except ExecuteError as e:
-		con.rollback()
-		print(str(e), file=sys.stderr)
-	except CursorError as e:
-		con.rollback()
-		print(str(e), file=sys.stderr)
-	except CommitError as e:
-		print(str(e), file=sys.stderr)
-	except RollBackError as e:
-		print(str(e), file=sys.stderr)
-	except ConnectionClosedError as e:
-		print('Connection is closed, {}'.format(str(e)), file=sys.stderr)
-	except Error as e:
-		print('Error, {}'.format(str(e)), file=sys.stderr)
-	except Exception as e:
-		print(str(e), file=sys.stderr)
-
-	try:
-		con.execute('SELECT * FROM LOG')
-
-		rows = con.rows()
+		ctx = con.execute('SELECT * FROM LOG')
+		rows = ctx.rows()
 
 		for i, row in enumerate(rows):
 			print('{} : {}'.format(i, row), file=sys.stdout)
 
 		con.execute('DROP TABLE IF EXISTS LOG')
+		con.commit()
 	except ExecuteError as e:
 		con.rollback()
 		print(str(e), file=sys.stderr)
