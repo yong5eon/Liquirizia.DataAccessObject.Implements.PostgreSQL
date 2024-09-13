@@ -110,7 +110,7 @@ Helper.Set(
 		password='password',  # Database Password for User
 		persistent=True,  # Is Use Connection Pool, True/False
 		min=1, # Minimum Connections in Pool
-		max=2, # Maximum Connections in Pool
+		max=1, # Maximum Connections in Pool
 	)
 )
 
