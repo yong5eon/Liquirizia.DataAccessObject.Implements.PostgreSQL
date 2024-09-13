@@ -14,7 +14,7 @@ __all__ = (
 
 class Pool(Singleton):
 
-	def onInit(self):
+	def __init__(self):
 		self.pool = {}
 		return
 
