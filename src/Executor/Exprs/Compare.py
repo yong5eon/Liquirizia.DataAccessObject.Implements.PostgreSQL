@@ -3,13 +3,15 @@
 from ..Expr import Expr
 from ...Type import Object
 
+from typing import Union
+
 __all__ = (
 	'In'
 )
 
 
 class In(Expr):
-	def __init__(self, attr: type[Object|str], args):
+	def __init__(self, attr: Union[Object,str], args):
 		self.attr = attr
 		self.args = args
 		return

@@ -36,6 +36,8 @@ from psycopg2 import (
 )
 from psycopg2.extras import RealDictCursor
 
+from typing import Union
+
 
 __all__ = (
 	'Connection'
@@ -135,7 +137,7 @@ class Connection(BaseConnection, Database, Run):
 			raise Error(str(e), error=e)
 		return
 
-	def run(self, executor: type[Executor|Executors]):
+	def run(self, executor: Union[Executor,Executors]):
 		cursor = None
 		try:
 			cursor = self.connection.cursor()

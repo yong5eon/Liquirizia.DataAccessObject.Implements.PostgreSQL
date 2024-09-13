@@ -3,8 +3,10 @@
 from Liquirizia.DataAccessObject.Model import Executors
 from Liquirizia.DataModel import Model
 
-from ..Model import Type
+from ..Model import Type as ModelType
 from ..Type import Short, Integer, Long
+
+from typing import Type
 
 __all__ = (
 	'Drop'
@@ -12,9 +14,9 @@ __all__ = (
 
 
 class Drop(Executors):
-	def __init__(self, o: type[Model], exist: bool = True, cascade=False):
+	def __init__(self, o: Type[Model], exist: bool = True, cascade=False):
 		self.executors = []
-		if o.__properties__['type'] == Type.Table:
+		if o.__properties__['type'] == ModelType.Table:
 			for index in o.__properties__['indexes'] if o.__properties__['indexes'] else []:
 				self.executors.append(('DROP INDEX {}{}{}'.format(
 					'IF EXISTS ' if exist else '',
@@ -41,7 +43,7 @@ class Drop(Executors):
 						v.seq.name,
 						' CASCADE' if cascade else ' RESTRICT'
 					), ()))
-		if o.__properties__['type'] == Type.View:
+		if o.__properties__['type'] == ModelType.View:
 			self.executors.append(('DROP VIEW {}{}{}'.format(
 				'IF EXISTS ' if exist else '',
 				o.__properties__['name'],

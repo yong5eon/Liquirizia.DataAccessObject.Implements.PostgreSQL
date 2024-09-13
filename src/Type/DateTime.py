@@ -15,6 +15,8 @@ from .Object import Object
 
 from datetime import date, time, datetime
 
+from typing import Union, Sequence
+
 __all__ = (
 	'Timestamp',
 	'Date',
@@ -29,7 +31,7 @@ class Timestamp(Object):
 			null: bool = False,
 			timezone: bool = False,
 			default: datetime = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -57,7 +59,7 @@ class Date(Object):
 			name: str, 
 			null: bool = False,
 			default: date = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -86,7 +88,7 @@ class Time(Object):
 			null: bool = False,
 			timezone: bool = False,
 			default: time = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]

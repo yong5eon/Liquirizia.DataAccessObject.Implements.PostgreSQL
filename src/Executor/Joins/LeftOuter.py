@@ -13,6 +13,6 @@ __all__ = (
 class LeftOuter(Join):
 	"""Left Outer Class"""
 
-	def __init__(self, table: Table, *args: type[list[Expr]]) -> None:
+	def __init__(self, table: Table, *args) -> None:
 		super(LeftOuter, self).__init__('LEFT OUTER', table, *args)
 		return

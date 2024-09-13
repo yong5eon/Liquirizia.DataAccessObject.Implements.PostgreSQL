@@ -27,6 +27,8 @@ from psycopg2 import (
 	InternalError as DatabaseInternalError,
 )
 
+from typing import Union
+
 __all__ = (
 	'Cursor'
 )
@@ -74,7 +76,7 @@ class Cursor(Cursor, Run):
 			raise Error(str(e), error=e)
 		return
 
-	def run(self, executor: type[Executor|Executors]):
+	def run(self, executor: Union[Executor,Executors]):
 		cursor = None
 		try:
 			def execs(execs: Executors):

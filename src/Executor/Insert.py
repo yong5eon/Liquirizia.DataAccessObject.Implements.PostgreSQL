@@ -6,7 +6,7 @@ from ..Model import Table
 from ..Type import Object
 from ..Cursor import Cursor
 
-from psycopg2.extras import Json
+from typing import Type
 
 __all__ = (
 	'Insert'
@@ -14,7 +14,7 @@ __all__ = (
 
 
 class Insert(Executor, Fetch):
-	def __init__(self, o: type[Table]):
+	def __init__(self, o: Type[Table]):
 		self.obj = o
 		self.table = o.__properties__['name']
 		self.kwargs = {}

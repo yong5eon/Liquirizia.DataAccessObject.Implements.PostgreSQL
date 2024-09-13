@@ -27,6 +27,8 @@ from psycopg2 import (
 	InternalError as DatabaseInternalError,
 )
 
+from typing import Union
+
 __all__ = (
 	'Session'
 )
@@ -82,7 +84,7 @@ class Session(BaseSession, Run):
 			raise Error(str(e), error=e)
 		return
 
-	def run(self, executor: type[Executor|Executors]):
+	def run(self, executor: Union[Executor,Executors]):
 		try:
 			def execs(execs: Executors):
 				__ = []

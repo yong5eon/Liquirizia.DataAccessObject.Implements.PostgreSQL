@@ -10,6 +10,7 @@ from Liquirizia.Validator.Patterns import (
 )
 
 from .Object import Object
+from typing import Union, Sequence
 
 __all__ = (
 	'Array',
@@ -21,10 +22,10 @@ class Array(Object):
 			self, 
 			name: str,
 			type: str,
-			size: type[int|tuple|list] = None,
+			size: Union[int,tuple,list] = None,
 			null: bool = False,
 			default: str = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
