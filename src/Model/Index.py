@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Sequence
+
 __all__ = (
 	'Index'
 )
@@ -9,7 +11,7 @@ class Index(object):
 	def __init__(
 		self, 
 		name: str,
-		colexprs: list[str],
+		colexprs: Sequence[str],
 		using: str = 'BTREE',
 		notexists: bool = True,
 	):

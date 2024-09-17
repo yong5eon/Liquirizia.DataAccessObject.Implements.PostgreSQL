@@ -13,6 +13,8 @@ from Liquirizia.Validator.Patterns import (
 
 from .Object import Object
 
+from typing import Union, Sequence
+
 __all__ = (
 	'Char',
 	'String',
@@ -26,7 +28,7 @@ class Char(Object):
 			size: int,
 			null: bool = False,
 			default: str = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -57,7 +59,7 @@ class String(Object):
 			size: int = None,
 			null: bool = False,
 			default: str = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -91,7 +93,7 @@ class Text(Object):
 			name: str, 
 			null: bool = False,
 			default: str = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]

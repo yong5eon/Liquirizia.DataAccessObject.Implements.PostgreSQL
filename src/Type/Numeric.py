@@ -15,6 +15,8 @@ from .Object import Object
 
 from ..Model import Sequence
 
+from typing import Union, Sequence
+
 __all__ = (
 	'Short',
 	'Integer',
@@ -32,7 +34,7 @@ class Short(Object):
 			null: bool = False,
 			default: str = None,
 			seq: Sequence = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -62,7 +64,7 @@ class Integer(Object):
 			null: bool = False,
 			default: str = None,
 			seq: Sequence = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -92,7 +94,7 @@ class Long(Object):
 			null: bool = False,
 			default: str = None,
 			seq: Sequence = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -121,7 +123,7 @@ class Float(Object):
 			name: str, 
 			null: bool = False,
 			default: float = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -149,7 +151,7 @@ class Double(Object):
 			name: str, 
 			null: bool = False,
 			default: float = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if not isinstance(vaps, (tuple, list)): vaps = [vaps]
@@ -179,7 +181,7 @@ class Decimal(Object):
 			precision: int,
 			null: bool = False,
 			default: float = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
 		if not isinstance(vaps, (tuple, list)): vaps = [vaps]

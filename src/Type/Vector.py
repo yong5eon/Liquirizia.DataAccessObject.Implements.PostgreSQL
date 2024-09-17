@@ -7,9 +7,13 @@ from Liquirizia.Validator.Patterns import (
 	SetDefault,
 	IsToNone,
 	IsListable,
+	If,
+	IsString,
 )
 
 from .Object import Object
+
+from typing import Union, Sequence
 
 __all__ = (
 	'Vector',
@@ -23,16 +27,25 @@ class Vector(Object):
 			size: int,
 			null: bool = False,
 			default: str = None,
-			vaps: tuple[Pattern, tuple[Pattern], list[Pattern]] = [],
+			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
+		class Eval(Pattern):
+			def __call__(self, parameter):
+				return eval(parameter)
 		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
 		patterns = []
 		if default:
 			patterns.append(SetDefault(default))
 		if null:
-			patterns.append(IsToNone(IsListable(*vaps)))
+			patterns.append(
+				IsToNone(
+					If(IsString(Eval())),
+					IsListable(*vaps),
+				)
+			)
 		else:
+			patterns.append(If(IsString(Eval())))
 			patterns.append(IsListable(*vaps))
 		args = None
 		if size:
@@ -48,3 +61,6 @@ class Vector(Object):
 			fn=fn,
 		)
 		return
+	
+	def encode(self, o: any):
+		return str(o)

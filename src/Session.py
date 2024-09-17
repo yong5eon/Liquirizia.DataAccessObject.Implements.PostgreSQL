@@ -15,7 +15,8 @@ from Liquirizia.DataAccessObject.Properties.Database.Errors import *
 from .Context import Context
 from .Cursor import Cursor
 
-from psycopg2 import (
+from psycopg.rows import dict_row
+from psycopg import (
 	# Execute Error
 	DatabaseError,
 	NotSupportedError as DatabaseNotSupportedError,
@@ -26,6 +27,8 @@ from psycopg2 import (
 	OperationalError as DatabaseOperationError,
 	InternalError as DatabaseInternalError,
 )
+
+from typing import Union
 
 __all__ = (
 	'Session'
@@ -38,7 +41,7 @@ class Session(BaseSession, Run):
 	def __init__(self, connection):
 		self.connection = connection
 		self.connection.autocommit = False
-		self.cursor  = self.connection.cursor()
+		self.cursor  = self.connection.cursor(row_factory=dict_row)
 		return
 
 	def __del__(self):
@@ -82,7 +85,7 @@ class Session(BaseSession, Run):
 			raise Error(str(e), error=e)
 		return
 
-	def run(self, executor: type[Executor|Executors]):
+	def run(self, executor: Union[Executor,Executors]):
 		try:
 			def execs(execs: Executors):
 				__ = []
@@ -93,7 +96,7 @@ class Session(BaseSession, Run):
 					__.extend(rows)
 				return __
 			def exec(exec: Executor):
-				self.cursor.execute(exec.query, exec.args)
+				self.cursor.execute(exec.query, exec.kwargs)
 				if not isinstance(exec, Fetch): return
 				return exec.fetch(Cursor(self.cursor))
 			if isinstance(executor, Executors): return execs(executor)

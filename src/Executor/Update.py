@@ -9,13 +9,15 @@ from ..Cursor import Cursor
 from .Expr import Expr
 from .Function import Function
 
+from typing import Type
+
 __all__ = (
 	'Update'
 )
 
 
 class Update(Executor, Fetch):
-	def __init__(self, o: type[Table]):
+	def __init__(self, o: Type[Table]):
 		self.obj = o
 		self.table = o.__properties__['name']
 		self.kwargs = {}
@@ -26,10 +28,10 @@ class Update(Executor, Fetch):
 		for k, v in self.obj.__dict__.items():
 			if not isinstance(v, Object): continue
 			if k not in kwargs.keys(): continue
-			self.kwargs[v.key] = v.validator(kwargs[k])
+			self.kwargs[v.key] = v.encode(v.validator(kwargs[k]))
 		return self
 	
-	def where(self, *args: type[list[Expr|Function]]):
+	def where(self, *args):
 		self.conds = args
 		return self
 	
@@ -41,13 +43,13 @@ class Update(Executor, Fetch):
 	def query(self):
 		return 'UPDATE {} SET {}{} RETURNING *'.format(
 			self.table,
-			', '.join(["{}=%s".format(k) for k in self.kwargs.keys()]),
+			', '.join(["{}=%({})s".format(k, k) for k in self.kwargs.keys()]),
 			' WHERE {}'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
 		)
 
 	@property	
 	def args(self):
-		return list(self.kwargs.values())
+		return self.kwargs
 
 	def fetch(self, cursor: Cursor):
 		obj = self.obj(**dict(cursor.row()))

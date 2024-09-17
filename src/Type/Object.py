@@ -34,3 +34,6 @@ class Object(Attribute):
 			self.key
 		)
 	
+	def encode(self, o: any):
+		return o
+	

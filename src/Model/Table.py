@@ -9,6 +9,7 @@ from ..Type import Object
 from ..Constraint import Constraint
 from .Index import Index
 
+from typing import Sequence
 
 __all__ = (
 	'Table'
@@ -19,8 +20,8 @@ class Table(Properties):
 	def __init__(
 		self, 
 		name: str, 
-		constraints: list[Constraint] = None,
-		indexes: list[Index] = None,
+		constraints: Sequence[Constraint] = None,
+		indexes: Sequence[Index] = None,
 		fn: Handler = None,
 	):
 		self.name = name
