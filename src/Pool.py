@@ -4,7 +4,7 @@ from .Configuration import Configuration
 
 from Liquirizia.Template import Singleton
 
-from psycopg2.pool import ThreadedConnectionPool
+from psycopg_pool import ConnectionPool
 
 
 __all__ = (
@@ -20,7 +20,7 @@ class Pool(Singleton):
 
 	def __del__(self):
 		for key in self.pool.keys():
-			self.pool[key].closeall()
+			self.pool[key].close()
 
 	@classmethod
 	def Get(cls, conf: Configuration):
@@ -36,7 +36,11 @@ class Pool(Singleton):
 					dsn += ':' + conf.password
 				dsn += '@'
 			dsn += '{}:{}/{}'.format(conf.host, conf.port, conf.database)
-			self.pool[conf] = ThreadedConnectionPool(conf.min, conf.max, dsn)
+			self.pool[conf] = ConnectionPool(
+				conninfo=dsn,
+				min_size=conf.min,
+				max_size=conf.max,
+			)
 		return self.pool[conf].getconn()
 
 	@classmethod

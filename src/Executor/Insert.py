@@ -24,7 +24,7 @@ class Insert(Executor, Fetch):
 		for k, v in self.obj.__dict__.items():
 			if not isinstance(v, Object): continue
 			if k not in kwargs.keys(): continue
-			self.kwargs[v.key] = v.validator(kwargs[k])
+			self.kwargs[v.key] = v.encode(v.validator(kwargs[k]))
 		return self
 	
 	@property
@@ -36,12 +36,12 @@ class Insert(Executor, Fetch):
 		return 'INSERT INTO {}({}) VALUES({}) RETURNING *'.format(
 			self.table,
 			', '.join(self.kwargs.keys()),
-			', '.join(["%s" for k in self.kwargs.keys()]),
+			', '.join(['%({})s'.format(k) for k in self.kwargs.keys()]),
 		)
 
 	@property	
 	def args(self):
-		return list(self.kwargs.values())
+		return self.kwargs.values()
 
 	def fetch(self, cursor: Cursor):
 		obj = self.obj(**dict(cursor.row()))

@@ -6,7 +6,7 @@ from Liquirizia.DataAccessObject import Error
 from Liquirizia.DataAccessObject.Errors import *
 from Liquirizia.DataAccessObject.Properties.Database.Errors import *
 
-from psycopg2 import (
+from psycopg import (
 	# Execute Error
 	DatabaseError,
 	NotSupportedError as DatabaseNotSupportedError,

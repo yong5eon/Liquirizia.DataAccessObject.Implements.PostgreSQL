@@ -15,7 +15,7 @@ from Liquirizia.DataAccessObject.Model import (
 
 from .Context import Context
 
-from psycopg2 import (
+from psycopg import (
 	# Execute Error
 	DatabaseError,
 	NotSupportedError as DatabaseNotSupportedError,
@@ -88,7 +88,7 @@ class Cursor(Cursor, Run):
 					__.extend(rows)
 				return __
 			def exec(exec: Executor):
-				self.cursor.execute(exec.query, exec.args)
+				self.cursor.execute(exec.query, exec.kwargs)
 				if not isinstance(exec, Fetch): return
 				return exec.fetch(Cursor(self.cursor))
 			if isinstance(executor, Executors): return execs(executor)

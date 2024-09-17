@@ -91,13 +91,7 @@ class SampleTable(Model):
 	colTime: date = TIME('COL_TIME', null=True)
 	colVector : list = VECTOR('COL_VECTOR', size=3, null=True)
 	colDataModel : Model = JSON('COL_DATAMODEL', null=True)
-	colDataModelBool : bool = BOOL('COL_DATAMODEL_BOOL', null=True)
-	colDataModelInteger : int = INTEGER('COL_DATAMODEL_INTEGER', null=True)
-	colDataModelFloat : float = FLOAT('COL_DATAMODEL_FLOAT', null=True)
-	colDataModelDecimal : Decimal = DECIMAL('COL_DATAMODEL_DECIMAL', scale=10, precision=1, null=True)
-	colDataModelString : str = TEXT('COL_DATAMODEL_STRING', null=True)
-	colDataModelList : list = ARRAY('COL_DATAMODEL_LIST', type='INTEGER', null=True)
-	colDataModelDictionary : dict = JSON('COL_DATAMODEL_DICTIONARY', null=True)
+
 
 Helper.Set(
 	'Sample',
@@ -132,14 +126,14 @@ o = SampleModel(
 		'Bool': True,
 		'Integer': 1,
 		'Float': 1.0,
-		# 'Decimal': Decimal(1.0),
+		'Decimal': Decimal(1.0),
 		'String': 'String',
 		'List': [1,2,3],
 		'Dictionary': {
 			'Bool': True,
 			'Integer': 1,
 			'Float': 1.0,
-			# 'Decimal': Decimal(1.0),
+			'Decimal': Decimal(1.0),
 			'String': 'String',
 		}
 	},
@@ -167,17 +161,38 @@ _ = con.run(
 		colTime=datetime.now().time(),
 		colVector=[1,2,3],
 		colDataModel=o,
-		colDataModelBool=o.attrBool,
-		colDataModelInteger=o.attrInteger,
-		colDataModelFloat=o.attrFloat,
-		colDataModelDecimal=o.attrDecimal,
-		colDataModelString=o.attrString,
-		colDataModelList=o.attrList,
-		colDataModelDictionary=dict(o.attrDictionary),
 	)
 )
 
 PrettyPrint(_)
+
+o = SampleModel(
+	attrBool=False,
+	attrInteger=2,
+	attrFloat=2.0,
+	attrDecimal=Decimal(2.0),
+	attrString='string',
+	attrList=[4,5,6],
+	attrDictionary={
+		'Bool': False,
+		'Integer': 2,
+		'Float': 2.0,
+		'Decimal': Decimal(2.0),
+		'String': 'string',
+		'List': [4,5,6],
+		'Dictionary': {
+			'Bool': False,
+			'Integer': 2,
+			'Float': 2.0,
+			'Decimal': Decimal(2.0),
+			'String': 'string',
+		}
+	},
+	attrDateTime=datetime.now(),
+	attrDate=datetime.now().date(),
+	attrTime=datetime.now().time(),
+)
+
 
 # HANDLER
 _.colBool=False
@@ -198,6 +213,7 @@ _.colTimestamp=datetime.now()
 _.colDate=datetime.now().date()
 _.colTime=datetime.now().time()
 _.colVector=[4,5,6]
+_.colDataModel=o
 
 # SELECT
 _ = con.run(Select(SampleTable).to(SampleTable))

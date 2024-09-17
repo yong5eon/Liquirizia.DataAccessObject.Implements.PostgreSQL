@@ -28,7 +28,7 @@ class Update(Executor, Fetch):
 		for k, v in self.obj.__dict__.items():
 			if not isinstance(v, Object): continue
 			if k not in kwargs.keys(): continue
-			self.kwargs[v.key] = v.validator(kwargs[k])
+			self.kwargs[v.key] = v.encode(v.validator(kwargs[k]))
 		return self
 	
 	def where(self, *args):
@@ -43,13 +43,13 @@ class Update(Executor, Fetch):
 	def query(self):
 		return 'UPDATE {} SET {}{} RETURNING *'.format(
 			self.table,
-			', '.join(["{}=%s".format(k) for k in self.kwargs.keys()]),
+			', '.join(["{}=%({})s".format(k, k) for k in self.kwargs.keys()]),
 			' WHERE {}'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
 		)
 
 	@property	
 	def args(self):
-		return list(self.kwargs.values())
+		return self.kwargs
 
 	def fetch(self, cursor: Cursor):
 		obj = self.obj(**dict(cursor.row()))

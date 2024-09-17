@@ -25,10 +25,19 @@ class JavaScriptObjectNotation(Object):
 			name: str, 
 			null: bool = False,
 			default: str = None,
+			obj: object = None,
 			vaps: Union[Pattern,Sequence[Pattern]] = (),
 			fn: Handler = None,
 		):
-		if vaps and not isinstance(vaps, (tuple, list)): vaps = [vaps]
+		class Bind(Pattern):
+			def __call__(self, parameter):
+				if isinstance(parameter, dict): return obj(**parameter)
+				return parameter
+		if not isinstance(vaps, (tuple, list)): 
+			vaps = [vaps] 
+		else: 
+			vaps = list(vaps)
+		if obj: vaps.append(Bind())
 		patterns = []
 		if default:
 			patterns.append(SetDefault(default))

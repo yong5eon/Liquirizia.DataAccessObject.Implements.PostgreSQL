@@ -21,9 +21,10 @@ from .Pool import Pool
 from .Context import Context
 from .Cursor import Cursor
 from .Session import Session
+from .Adapters import InitAdapters
 
-from psycopg2 import connect
-from psycopg2 import (
+from psycopg import connect
+from psycopg import (
 	# Execute Error
 	DatabaseError,
 	NotSupportedError as DatabaseNotSupportedError,
@@ -34,8 +35,7 @@ from psycopg2 import (
 	OperationalError as DatabaseOperationError,
 	InternalError as DatabaseInternalError,
 )
-from psycopg2.extras import RealDictCursor
-
+from psycopg.rows import dict_row
 from typing import Union
 
 
@@ -62,15 +62,18 @@ class Connection(BaseConnection, Database, Run):
 			if self.conf.persistent:
 				self.connection = Pool.Get(self.conf)
 			else:
+				dsn = 'postgresql://'
+				if self.conf.user:
+					dsn += self.conf.user
+					if self.conf.password:
+						dsn += ':' + self.conf.password
+					dsn += '@'
+				dsn += '{}:{}/{}'.format(self.conf.host, self.conf.port, self.conf.database)
 				self.connection = connect(
-					host=self.conf.host,
-					port=str(self.conf.port),
-					database=self.conf.database,
-					user=self.conf.user,
-					password=self.conf.password
+					conninfo=dsn,
+					autocommit=self.conf.autocommit,
 				)
-			self.connection.cursor_factory = RealDictCursor
-			self.connection.autocommit = self.conf.autocommit
+			InitAdapters(connection=self.connection)
 		except (DatabaseInternalError, DatabaseOperationError) as e:
 			raise ConnectionError(str(e), error=e)
 		except Exception as e:
@@ -101,7 +104,7 @@ class Connection(BaseConnection, Database, Run):
 
 	def execute(self, sql, *args):
 		try:
-			cursor = self.connection.cursor()
+			cursor = self.connection.cursor(row_factory=dict_row)
 			cursor.execute(sql, args)
 			return Context(cursor)
 		except (
@@ -120,7 +123,7 @@ class Connection(BaseConnection, Database, Run):
 
 	def executes(self, sql, *args):
 		try:
-			cursor = self.connection.cursor()
+			cursor = self.connection.cursor(row_factory=dict_row)
 			cursor.executemany(sql, args)
 			return Context(cursor)
 		except (
@@ -140,7 +143,7 @@ class Connection(BaseConnection, Database, Run):
 	def run(self, executor: Union[Executor,Executors]):
 		cursor = None
 		try:
-			cursor = self.connection.cursor()
+			cursor = self.connection.cursor(row_factory=dict_row)
 			def execs(execs: Executors):
 				__ = []
 				for query, args in execs:
@@ -150,7 +153,7 @@ class Connection(BaseConnection, Database, Run):
 					__.extend(rows)
 				return __
 			def exec(exec: Executor):
-				cursor.execute(exec.query, exec.args)
+				cursor.execute(exec.query, exec.kwargs)
 				if not isinstance(exec, Fetch): return
 				return exec.fetch(Cursor(cursor))
 			if isinstance(executor, Executors): return execs(executor)
@@ -169,7 +172,7 @@ class Connection(BaseConnection, Database, Run):
 			raise Error(str(e), error=e)
 		
 	def cursor(self) -> Cursor:
-		return Cursor(self.connection.cursor())
+		return Cursor(self.connection.cursor(row_factory=dict_row))
 		
 	def session(self) -> Session:
 		return Session(self.connection)

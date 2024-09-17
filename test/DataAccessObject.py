@@ -39,6 +39,7 @@ class TestDataAccessObject(Case):
 	@Order(2)
 	def testExecute(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		ctx = con.execute('SELECT 1 AS col1')
 		ASSERT_IS_NOT_NONE(ctx)
 		rows = ctx.rows()
@@ -46,11 +47,13 @@ class TestDataAccessObject(Case):
 		row = rows[0]
 		ASSERT_IS_EQUAL(len(row), 1)
 		ASSERT_IS_EQUAL(row['col1'], 1)
+		con.commit()
 		return
 
 	@Order(3)
 	def testCursorExecute(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		cur = con.cursor()
 		ctx = cur.execute('SELECT 1 AS col1')
 		ASSERT_IS_NOT_NONE(ctx)
@@ -59,6 +62,7 @@ class TestDataAccessObject(Case):
 		row = rows[0]
 		ASSERT_IS_EQUAL(len(row), 1)
 		ASSERT_IS_EQUAL(row['col1'], 1)
+		con.commit()
 		return
 
 	@Order(3)
