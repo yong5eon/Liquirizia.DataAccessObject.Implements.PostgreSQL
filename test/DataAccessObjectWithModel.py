@@ -127,6 +127,10 @@ class TestDataAccessObject(Case):
 				max=10,
 			)
 		)
+		con = Helper.Get('Sample')
+		con.begin()
+		con.execute('CREATE EXTENSION IF NOT EXISTS VECTOR')
+		con.commit()
 		return super().setUpClass()
 	
 	def setUp(self):
