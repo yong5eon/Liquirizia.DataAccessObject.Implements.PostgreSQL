@@ -41,7 +41,7 @@ class Insert(Executor, Fetch):
 
 	@property	
 	def args(self):
-		return self.kwargs.values()
+		return self.kwargs
 
 	def fetch(self, cursor: Cursor):
 		obj = self.obj(**dict(cursor.row()))

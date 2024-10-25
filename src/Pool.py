@@ -5,6 +5,12 @@ from .Configuration import Configuration
 from Liquirizia.Template import Singleton
 
 from psycopg_pool import ConnectionPool
+from psycopg import (
+	Cursor,
+	ClientCursor,
+	ServerCursor,
+)
+from psycopg.rows import dict_row
 
 
 __all__ = (
@@ -40,6 +46,11 @@ class Pool(Singleton):
 				conninfo=dsn,
 				min_size=conf.min,
 				max_size=conf.max,
+				kwargs={
+					'autocommit': conf.autocommit,
+					'cursor_factory': ClientCursor,
+					'row_factory': dict_row,
+				}
 			)
 		return self.pool[conf].getconn()
 

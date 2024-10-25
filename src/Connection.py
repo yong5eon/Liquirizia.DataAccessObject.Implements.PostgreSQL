@@ -21,9 +21,8 @@ from .Pool import Pool
 from .Context import Context
 from .Cursor import Cursor
 from .Session import Session
-from .Adapters import InitAdapters
 
-from psycopg import connect
+from psycopg import connect, ClientCursor
 from psycopg import (
 	# Execute Error
 	DatabaseError,
@@ -72,8 +71,12 @@ class Connection(BaseConnection, Database, Run):
 				self.connection = connect(
 					conninfo=dsn,
 					autocommit=self.conf.autocommit,
+					cursor_factory=ClientCursor,
+					row_factory=dict_row,
 				)
-			InitAdapters(connection=self.connection)
+			for k, v in self.conf.dumpers.items() if self.conf.dumpers else []:
+				self.connection.adapters.register_dumper(k, v)
+			# TODO : set Loaders
 		except (DatabaseInternalError, DatabaseOperationError) as e:
 			raise ConnectionError(str(e), error=e)
 		except Exception as e:
@@ -104,7 +107,7 @@ class Connection(BaseConnection, Database, Run):
 
 	def execute(self, sql, *args):
 		try:
-			cursor = self.connection.cursor(row_factory=dict_row)
+			cursor = self.connection.cursor()
 			cursor.execute(sql, args)
 			return Context(cursor)
 		except (
@@ -123,7 +126,7 @@ class Connection(BaseConnection, Database, Run):
 
 	def executes(self, sql, *args):
 		try:
-			cursor = self.connection.cursor(row_factory=dict_row)
+			cursor = self.connection.cursor()
 			cursor.executemany(sql, args)
 			return Context(cursor)
 		except (
@@ -133,7 +136,7 @@ class Connection(BaseConnection, Database, Run):
 			DatabaseIntegrityError, 
 			DatabaseProgrammingError
 		) as e:
-			raise ExecuteError(str(e))
+			raise ExecuteError(str(e), error=e)
 		except (DatabaseInternalError, DatabaseOperationError) as e:
 			raise ConnectionError(str(e), error=e)
 		except Exception as e:
@@ -143,7 +146,7 @@ class Connection(BaseConnection, Database, Run):
 	def run(self, executor: Union[Executor,Executors]):
 		cursor = None
 		try:
-			cursor = self.connection.cursor(row_factory=dict_row)
+			cursor = self.connection.cursor()
 			def execs(execs: Executors):
 				__ = []
 				for query, args in execs:
@@ -153,7 +156,7 @@ class Connection(BaseConnection, Database, Run):
 					__.extend(rows)
 				return __
 			def exec(exec: Executor):
-				cursor.execute(exec.query, exec.kwargs)
+				cursor.execute(exec.query, exec.args)
 				if not isinstance(exec, Fetch): return
 				return exec.fetch(Cursor(cursor))
 			if isinstance(executor, Executors): return execs(executor)
@@ -165,14 +168,14 @@ class Connection(BaseConnection, Database, Run):
 			DatabaseIntegrityError, 
 			DatabaseProgrammingError
 		) as e:
-			raise ExecuteError(str(e))
+			raise ExecuteError(str(e), error=e)
 		except (DatabaseInternalError, DatabaseOperationError) as e:
 			raise ConnectionError(str(e), error=e)
 		except Exception as e:
 			raise Error(str(e), error=e)
 		
 	def cursor(self) -> Cursor:
-		return Cursor(self.connection.cursor(row_factory=dict_row))
+		return Cursor(self.connection.cursor())
 		
 	def session(self) -> Session:
 		return Session(self.connection)
@@ -190,7 +193,6 @@ class Connection(BaseConnection, Database, Run):
 			DatabaseProgrammingError
 		) as e:
 			raise CommitError(str(e), error=e)
-			raise ExecuteError(str(e))
 		except (DatabaseInternalError, DatabaseOperationError) as e:
 			raise ConnectionError(str(e), error=e)
 		except Exception as e:

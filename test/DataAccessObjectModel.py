@@ -68,19 +68,11 @@ class SampleModel(Model):
 
 class SampleTableUpdated(Handler):
 	def __call__(self, model, obj, attr, value, prev):
-		print('{} of {} is changed {} to {} in {}'.format(
-			'{}({})'.format(attr.name, attr.key),
-			'{}({})'.format(model.__name__, model.__properties__['name']),
-			prev,
-			value,
-			obj,
-		))
 		changed = obj.__cursor__.run(Update(model).set(
 			**{attr.name: value}
 		).where(
 			IsEqualTo(model.id, obj.id)
 		))
-		print(changed)
 		return
 
 @Table(
@@ -110,7 +102,7 @@ class SampleTable(Model):
 	colDataModel : Model = JSON('COL_DATAMODEL', null=True, obj=SampleModel)
 
 
-class TestDataAccessObject(Case):
+class TestDataAccessObjectWithModel(Case):
 	@classmethod
 	def setUpClass(cls):
 		Helper.Set(

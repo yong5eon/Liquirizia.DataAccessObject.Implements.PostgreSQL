@@ -56,7 +56,6 @@ class Cursor(Cursor, Run):
 			raise ConnectionError(str(e), error=e)
 		except Exception as e:
 			raise Error(str(e), error=e)
-		return
 
 	def executes(self, sql, *args):
 		try:
