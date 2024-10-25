@@ -1,32 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from .Model import (
-	ModelDumper,
-	ListDumper,
-	TupleDumper,
-	DictionaryDumper,
-	InitAdapterForModel,
-)
-from .JavaScriptObjectNotation import (
-	JavaScriptObjectNotationDumper,
-	InitAdapterForJavaScriptObjectNotation,
-)
-
-from psycopg import Connection
+from .JavaScriptObjectNotation import JavaScriptObjectNotationDumper
+from .Array import ArrayDumper
 
 __all__ = (
-	'InitAdpaters',
-	# JSON
 	'JavaScriptObjectNotationDumper',
-	# MODEL
-	'ModelDumper',
-	'ListDumper',
-	'TupleDumper',
-	'DictionaryDumper',
+    'ArrayDumper',
 )
-
-
-def InitAdapters(connection: Connection):
-	InitAdapterForModel(connection)
-	InitAdapterForJavaScriptObjectNotation(connection)
-	return
