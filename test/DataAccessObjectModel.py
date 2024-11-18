@@ -3,21 +3,19 @@
 from Liquirizia.Test import *
 
 from Liquirizia.DataAccessObject import Helper
-from Liquirizia.DataAccessObject.Errors import *
-from Liquirizia.DataAccessObject.Properties.Database.Errors import *
 
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Model import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Type import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraint import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Filters import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Orders import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Joins import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Exprs import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Functions import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Filters import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Orders import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Joins import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Exprs import *
 
-from Liquirizia.DataModel import Model, Attribute, Handler
+
+from Liquirizia.DataModel import Model, Value, Handler
 from Liquirizia.Validator import Validator, Pattern
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
@@ -55,35 +53,38 @@ class StrToTime(Pattern):
 
 
 class SampleModel(Model):
-	attrBool : bool = Attribute(Validator(IsToNone(IsBool())))
-	attrInteger : int = Attribute(Validator(IsToNone(IsInteger())))
-	attrFloat : float = Attribute(Validator(IsToNone(IsFloat())))
-	attrDecimal : Decimal = Attribute(Validator(IsToNone(If(IsString(ToDecimal())),IsDecimal())))
-	attrString : str = Attribute(Validator(IsToNone(IsString())))
-	attrList : list = Attribute(Validator(IsToNone(IsList())))
-	attrDictionary : dict = Attribute(Validator(IsToNone(IsDictionary())))
-	attrDateTime : datetime = Attribute(Validator(IsToNone(If(IsString(StrToDateTime())),IsDateTime())))
-	attrDate : date = Attribute(Validator(IsToNone(If(IsString(StrToDate())),IsDate())))
-	attrTime : time = Attribute(Validator(IsToNone(If(IsString(StrToTime())),IsTime())))
+	attrBool : bool = Value(Validator(IsToNone(IsBool())))
+	attrInteger : int = Value(Validator(IsToNone(IsInteger())))
+	attrFloat : float = Value(Validator(IsToNone(IsFloat())))
+	attrDecimal : Decimal = Value(Validator(IsToNone(If(IsString(ToDecimal())),IsDecimal())))
+	attrString : str = Value(Validator(IsToNone(IsString())))
+	attrList : list = Value(Validator(IsToNone(IsList())))
+	attrDictionary : dict = Value(Validator(IsToNone(IsDictionary())))
+	attrDateTime : datetime = Value(Validator(IsToNone(If(IsString(StrToDateTime())),IsDateTime())))
+	attrDate : date = Value(Validator(IsToNone(If(IsString(StrToDate())),IsDate())))
+	attrTime : time = Value(Validator(IsToNone(If(IsString(StrToTime())),IsTime())))
+
 
 class SampleTableUpdated(Handler):
-	def __call__(self, model, obj, attr, value, prev):
-		changed = obj.__cursor__.run(Update(model).set(
-			**{attr.name: value}
+	def __call__(self, m, o, v, pv):
+		changed = m.__cursor__.run(Update(SampleTable).set(
+			**{o.name: v}
 		).where(
-			IsEqualTo(model.id, obj.id)
+			IsEqualTo(SampleTable.id, m.id)
 		))
 		return
-
-@Table(
-	name='SAMPLE',
+class SampleTable(
+	Table,
+	table='SAMPLE',
+	sequences=(
+		Sequence('SEQ_SAMPLE', type=INT)
+	),
 	constraints=(
 		PrimaryKey('PK_SAMPLE', cols='ID'),
 	),
-	fn=SampleTableUpdated()
-)
-class SampleTable(Model):
-	id : int = INT('ID', seq=Sequence('SEQ_SAMPLE'), default=NextVal('SEQ_SAMPLE'))
+	fn=SampleTableUpdated(),
+):
+	id : int = INT('ID', default=NextVal('SEQ_SAMPLE'))
 	colBool : bool = BOOL('COL_BOOL', null=True)
 	colShort : int = INT2('COL_INT2', null=True)
 	colInteger : int = INT4('COL_INT', null=True)
@@ -99,7 +100,7 @@ class SampleTable(Model):
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
 	colVector : list = VECTOR('COL_VECTOR', size=3, null=True)
-	colDataModel : Model = JSON('COL_DATAMODEL', null=True, obj=SampleModel)
+	colDataModel : Model = JSON('COL_DATAMODEL', null=True)
 
 
 class TestDataAccessObjectWithModel(Case):
@@ -203,9 +204,9 @@ class TestDataAccessObjectWithModel(Case):
 		ASSERT_IS_EQUAL(inserted.colChar, 'C')
 		ASSERT_IS_EQUAL(inserted.colString, 'String')
 		ASSERT_IS_EQUAL(inserted.colText, 'Text')
-		ASSERT_IS_EQUAL(inserted.colList, [1,2,3])
-		ASSERT_IS_EQUAL(inserted.colDictionary, {'a':1, 'b': 2})
-		ASSERT_IS_EQUAL(inserted.colVector, [1,2,3])
+		ASSERT_IS_EQUAL(list(inserted.colList), [1,2,3])
+		ASSERT_IS_EQUAL(dict(inserted.colDictionary), {'a':1, 'b': 2})
+		ASSERT_IS_EQUAL(list(inserted.colVector), [1,2,3])
 		# ASSERT_IS_EQUAL(inserted.colDataModel, o)
 		return
 
@@ -420,9 +421,9 @@ class TestDataAccessObjectWithModel(Case):
 		ASSERT_IS_EQUAL(inserted.colChar, updated.colChar)
 		ASSERT_IS_EQUAL(inserted.colString, updated.colString)
 		ASSERT_IS_EQUAL(inserted.colText, updated.colText)
-		ASSERT_IS_EQUAL(inserted.colList, updated.colList)
-		ASSERT_IS_EQUAL(inserted.colDictionary, updated.colDictionary)
-		ASSERT_IS_EQUAL(inserted.colVector, updated.colVector)
+		ASSERT_IS_EQUAL(list(inserted.colList), list(updated.colList))
+		ASSERT_IS_EQUAL(dict(inserted.colDictionary), dict(updated.colDictionary))
+		ASSERT_IS_EQUAL(list(inserted.colVector), list(updated.colVector))
 		# ASSERT_IS_EQUAL(inserted.colDataModel, updated.colDataModel)
 		return
 

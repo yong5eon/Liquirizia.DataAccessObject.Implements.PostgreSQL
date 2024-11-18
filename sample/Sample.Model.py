@@ -2,22 +2,25 @@
 
 from Liquirizia.DataAccessObject import Helper
 
-from Liquirizia.DataAccessObject.Errors import *
-from Liquirizia.DataAccessObject.Properties.Database.Errors import *
-
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Model import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Type import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraint import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Filters import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Orders import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Joins import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Exprs import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Functions import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
 
-from Liquirizia.DataModel import Model, Handler
-from Liquirizia.Validator.Patterns import IsIn
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Filters import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Orders import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Joins import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Exprs import *
+
+from Liquirizia.Validator import Validator
+from Liquirizia.Validator.Patterns import (
+	IsString,
+	IsSizeOf,
+	IsIn,
+)
+
+from Liquirizia.DataModel import Handler
 from Liquirizia.Util import *
 
 from random import randrange, sample
@@ -27,23 +30,27 @@ from decimal import Decimal as decimal, Context as context
 
 # table
 class StudentUpdated(Handler):
-	def __call__(self, model, obj, attr, value, prev):
+	def __call__(self, m, o, v, pv):
 		print('{} of {} is changed {} to {} in {}'.format(
-			'{}({})'.format(attr.name, attr.key),
-			'{}({})'.format(model.__name__, model.__properties__['name']),
-			prev,
-			value,
-			obj,
+			o.key,
+			m.__model__,
+			pv,
+			v,
+			m,
 		))
-		changed = obj.__cursor__.run(Update(Student).set(
-			**{attr.name: value}
+		changed = m.__cursor__.run(Update(Student).set(
+			**{o.name: v}
 		).where(
-			IsEqualTo(Student.id, obj.id)
+			IsEqualTo(Student.id, m.id)
 		))
-		print(changed)
+		PrettyPrint(changed)
 		return
-@Table(
-	name = 'STUDENT',
+class Student(
+	Table,
+	table='STUDENT',
+	sequences=(
+		Sequence(name='SEQ_STUDENT', type=INT),
+	),
 	constraints=(
 		PrimaryKey(name='PK_STUDENT', cols='ID'),
 		Unique(name='UK_STUDENT_CODE', cols='CODE'),
@@ -55,36 +62,39 @@ class StudentUpdated(Handler):
 		Index(name='IDX_STUDENT_AT_UPDATED', colexprs='AT_UPDATED DESC'),
 	),
 	fn=StudentUpdated(),
-)
-class Student(Model):
-	id = Integer(name='ID', seq=Sequence(name='SEQ_STUDENT', type='INTEGER'), default=NextVal('SEQ_STUDENT'))
-	code = Text('CODE')
-	name = Text(name='NAME')
-	metadata = ByteArray(name='METADATA')
-	atCreated = Timestamp(name='AT_CREATED', default=Now())
-	atUpdated = Timestamp(name='AT_UPDATED', null=True)
-	isDeleted = Text(name='IS_DELETED', default='N', vaps=IsIn('Y', 'N'))
-	isUpdated = Bool(name='IS_UPDATED', default=False)
+):
+	id = INT(name='ID', default=NextVal('SEQ_STUDENT'))
+	code = TEXT('CODE')
+	name = TEXT(name='NAME')
+	metadata = BYTEARRAY(name='METADATA')
+	atCreated = TIMESTAMP(name='AT_CREATED', default=Now())
+	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
+	isDeleted = CHAR(name='IS_DELETED', size=1, default='N', va=Validator(IsString(IsSizeOf(1), IsIn('Y', 'N'))))
+	isUpdated = BOOL(name='IS_UPDATED', default=False)
 
 
 class ClassUpdated(Handler):
-	def __call__(self, model, obj, attr, value, prev):
+	def __call__(self, m, o, v, pv):
 		print('{} of {} is changed {} to {} in {}'.format(
-			'{}({})'.format(attr.name, attr.key),
-			'{}({})'.format(model.__name__, model.__properties__['name']),
-			prev,
-			value,
-			obj,
+			o.key,
+			m.__model__,
+			pv,
+			v,
+			m,
 		))
-		changed = obj.__cursor__.run(Update(Class).set(
-			**{attr.name: value}
+		changed = m.__cursor__.run(Update(Class).set(
+			**{o.name: v}
 		).where(
-			IsEqualTo(Class.id, obj.id)
+			IsEqualTo(Class.id, m.id)
 		))
-		print(changed)
+		PrettyPrint(changed)
 		return
-@Table(
-	name='CLASS',
+class Class(
+	Table,
+	table='CLASS',
+	sequences=(
+		Sequence('SEQ_CLASS', type=INT),
+	),
 	constraints=(
 		PrimaryKey(name='PK_CLASS', cols='ID'),
 		Unique(name='UK_CLASS_CODE', cols='CODE'),
@@ -96,36 +106,36 @@ class ClassUpdated(Handler):
 		Index(name='IDX_CLASS_AT_UPDATED', colexprs='AT_UPDATED DESC'),
 	),
 	fn=ClassUpdated(),
-)
-class Class(Model):
-	id = Integer(name='ID', seq=Sequence(name='SEQ_CLASS', type='INTEGER'), default=NextVal('SEQ_CLASS'))
-	code = Text(name='CODE')
-	name = Text(name='NAME')
-	atCreated = Timestamp(name='AT_CREATED', default=Now())
-	atUpdated = Timestamp(name='AT_UPDATED', null=True)
-	isDeleted = Text(name='IS_DELETED', default='N', vaps=IsIn('Y', 'N'))
-	isUpdated = Bool(name='IS_UPDATED', default=False)
+):
+	id = INT(name='ID', default=NextVal('SEQ_CLASS'))
+	code = TEXT(name='CODE')
+	name = TEXT(name='NAME')
+	atCreated = TIMESTAMP(name='AT_CREATED', default=Now())
+	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
+	isDeleted = CHAR(name='IS_DELETED', size=1, default='N', va=Validator(IsIn('Y', 'N')))
+	isUpdated = BOOL(name='IS_UPDATED', default=False)
 
 
 class StudentClassUpdated(Handler):
-	def __call__(self, model, obj, attr, value, prev):
+	def __call__(self, m, o, v, pv):
 		print('{} of {} is changed {} to {} in {}'.format(
-			'{}({})'.format(attr.name, attr.key),
-			'{}({})'.format(model.__name__, model.__properties__['name']),
-			prev,
-			value,
-			obj,
+			o.key,
+			m.__model__,
+			pv,
+			v,
+			m,
 		))
-		changed = obj.__cursor__.run(Update(StudentOfClass).set(
-			**{attr.name: value}
+		changed = m.__cursor__.run(Update(StudentOfClass).set(
+			**{o.name: v}
 		).where(
-			IsEqualTo(StudentOfClass.studentId, obj.studentId),
-			IsEqualTo(StudentOfClass.classId, obj.classId),
+			IsEqualTo(StudentOfClass.studentId, m.studentId),
+			IsEqualTo(StudentOfClass.classId, m.classId),
 		))
-		print(changed)
+		PrettyPrint(changed)
 		return
-@Table(
-	name='STUDENT_CLASS',
+class StudentOfClass(
+	Table,
+	table='STUDENT_CLASS',
 	constraints=(
 		PrimaryKey(name='PK_STUDENT_CLASS', cols=('STUDENT', 'CLASS')),
 		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols='STUDENT', reference='STUDENT', referenceCols='ID'),
@@ -137,29 +147,29 @@ class StudentClassUpdated(Handler):
 		Index(name='IDX_STUDENT_CLASS_AT_UPDATED', colexprs='AT_UPDATED DESC'),
 	),
 	fn=StudentClassUpdated(),
-)
-class StudentOfClass(Model):
-	studentId = Integer(name='STUDENT')
-	studentName = Text(name='STUDENT_NAME')
-	classId = Integer(name='CLASS')
-	className = Text(name='CLASS_NAME')
-	score = Float(name='SCORE', null=True)
-	rate = Decimal(name='RATE', precision=1, scale=3, null=True)
-	tests = Array(name='TESTS', type='INTEGER', null=True)
-	vector = Vector(name='POSISTION', size=3, null=True)
-	metadata = JavaScriptObjectNotation(name='METADATA', null=True)
-	atCreated = Timestamp(name='AT_CREATED', timezone=True, default=Now())
-	atCreatedDate = Date(name='AT_CREATED_DATE', default=Now())
-	atCreatedTime = Time(name='AT_CREATED_TIME', timezone=True, default=Now())
-	atUpdated = Timestamp(name='AT_UPDATED', null=True)
-	atUpdatedDate = Date(name='AT_UPDATED_DATE', null=True)
-	atUpdatedTime = Time(name='AT_UPDATED_TIME', null=True)
-	isUpdated = Bool(name='IS_UPDATED', default=False)
+):
+	studentId = INT(name='STUDENT')
+	studentName = TEXT(name='STUDENT_NAME')
+	classId = INT(name='CLASS')
+	className = TEXT(name='CLASS_NAME')
+	score = FLOAT(name='SCORE', null=True)
+	rate = DECIMAL(name='RATE', precision=1, scale=3, null=True)
+	tests = ARRAY(name='TESTS', type='INTEGER', null=True)
+	vector = VECTOR(name='POSISTION', size=3, null=True)
+	metadata = JSON(name='METADATA', null=True)
+	atCreated = TIMESTAMP(name='AT_CREATED', timezone=True, default=Now())
+	atCreatedDate = DATE(name='AT_CREATED_DATE', default=Now())
+	atCreatedTime = TIME(name='AT_CREATED_TIME', timezone=True, default=Now())
+	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
+	atUpdatedDate = DATE(name='AT_UPDATED_DATE', null=True)
+	atUpdatedTime = TIME(name='AT_UPDATED_TIME', null=True)
+	isUpdated = BOOL(name='IS_UPDATED', default=False)
 
 
 # View 
-@View(
-	name='STAT_STUDENT',
+class StatOfStudent(
+	View,
+	view='STAT_STUDENT',
 	executor=Select(Student).join(
 		LeftOuter(StudentOfClass, IsEqualTo(Student.id, StudentOfClass.studentId)),
 		LeftOuter(Class, IsEqualTo(StudentOfClass.classId, Class.id)),
@@ -170,27 +180,27 @@ class StudentOfClass(Model):
 	).values(
 		Student.id,
 		Student.name,
-		Count(Class.id, 'COUNT'),
-		Sum(StudentOfClass.score, 'SUM'),
-		Average(StudentOfClass.score, 'AVG'),
+		Alias(Count(Class.id), 'COUNT'),
+		Alias(Sum(StudentOfClass.score), 'SUM'),
+		Alias(Average(StudentOfClass.score), 'AVG'),
 		Student.atCreated,
 		Student.atUpdated,
 	).orderBy(
 		Ascend(Student.id)
 	)
-)
-class StatOfStudent(Model):
-	id = Integer(name='ID')
-	name = Text(name='NAME')
-	count = Integer(name='COUNT')
-	sum = Float(name='SUM', null=True)
-	average = Float(name='AVG', null=True)
-	atCreated = Timestamp(name='AT_CREATED')
-	atUpdated = Timestamp(name='AT_UPDATED', null=True)
+):
+	id = INT(name='ID')
+	name = TEXT(name='NAME')
+	count = INT(name='COUNT')
+	sum = FLOAT(name='SUM', null=True)
+	average = FLOAT(name='AVG', null=True)
+	atCreated = TIMESTAMP(name='AT_CREATED')
+	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
 
 
-@View(
-	name='STAT_CLASS',
+class StatOfClass(
+	View,
+	view='STAT_CLASS',
 	executor=Select(Class).join(
 		LeftOuter(StudentOfClass, IsEqualTo(Class.id, StudentOfClass.classId)),
 		LeftOuter(Student), IsEqualTo(StudentOfClass.studentId, Student.id)
@@ -201,23 +211,22 @@ class StatOfStudent(Model):
 	).values(
 		Class.id,
 		Class.name,
-		Count(Student.id, 'COUNT'),
-		Sum(StudentOfClass.score, 'SUM'),
-		Average(StudentOfClass.score, 'AVG'),
+		Alias(Count(Student.id), 'COUNT'),
+		Alias(Sum(StudentOfClass.score), 'SUM'),
+		Alias(Average(StudentOfClass.score), 'AVG'),
 		Class.atCreated,
 		Class.atUpdated,
 	).orderBy(
 		Ascend(Class.id)
 	)
-)
-class StatOfClass(Model):
-	id = Integer(name='ID')
-	name = Text(name='NAME')
-	count = Integer(name='COUNT')
-	sum = Float(name='SUM', null=True)
-	average = Float(name='AVG', null=True)
-	atCreated = Timestamp(name='AT_CREATED')
-	atUpdated = Timestamp(name='AT_UPDATED', null=True)
+):
+	id = INT(name='ID')
+	name = TEXT(name='NAME')
+	count = INT(name='COUNT')
+	sum = FLOAT(name='SUM', null=True)
+	average = FLOAT(name='AVG', null=True)
+	atCreated = TIMESTAMP(name='AT_CREATED')
+	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
 
 
 if __name__ == '__main__':
@@ -234,7 +243,7 @@ if __name__ == '__main__':
 			password='password',  # Database Password for User
 			persistent=True,  # Is Use Connection Pool, True/False
 			min=1, # Minimum Connections in Pool
-			max=1, # Maximum Connections in Pool
+			max=2, # Maximum Connections in Pool
 		)
 	)
 
@@ -254,10 +263,10 @@ if __name__ == '__main__':
 	con.run(Create(StatOfClass))
 
 	STUDENT = [
-		['SU970001', 'Koo Hayoon', 'VERSION'],
-		['SU970002', 'Ma Youngin', 'VERSION'],
-		['SU970003', 'Kang Miran', 'VERSION'],
-		['SU970004', 'Song Hahee', 'VERSION'],
+		['SU970001', 'Koo Hayoon', 'README.md'],
+		['SU970002', 'Ma Youngin', 'README.md'],
+		['SU970003', 'Kang Miran', 'README.md'],
+		['SU970004', 'Song Hahee', 'README.md'],
 	]
 
 	CLASS = [
@@ -368,7 +377,6 @@ if __name__ == '__main__':
 		costs = []
 		for i in range(0, randrange(5, 10)):
 			costs.append(randrange(0, 100))
-		_.tests=costs
 		_.metadata={
 			'costs': costs
 		}
@@ -423,11 +431,11 @@ if __name__ == '__main__':
 		).values(
 			Alias(Student.id, 'STUDENT'),
 			Alias(Student.name, 'NAME'),
-			Count(StudentOfClass.score, 'COUNT'),
-			Sum(StudentOfClass.score, 'SUM'),
-			Average(StudentOfClass.score, 'AVG'),
-			Min(StudentOfClass.atCreated, 'AT_CREATED'),
-			Max(StudentOfClass.atUpdated, 'AT_UPDATED'),
+			Alias(Count(StudentOfClass.score), 'COUNT'),
+			Alias(Sum(StudentOfClass.score), 'SUM'),
+			Alias(Average(StudentOfClass.score), 'AVG'),
+			Alias(Min(StudentOfClass.atCreated), 'AT_CREATED'),
+			Alias(Max(StudentOfClass.atUpdated), 'AT_UPDATED'),
 		).where(
 			IsEqualTo(Student.isDeleted, 'N')
 		).groupBy(
