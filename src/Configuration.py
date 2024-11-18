@@ -5,9 +5,12 @@ from Liquirizia.DataAccessObject import Configuration as BaseConfiguration
 from .Adapters import (
 	JavaScriptObjectNotationDumper,
 	ArrayDumper,
+	DataModelDumper,
 )
 
 from collections.abc import Sequence, Mapping
+from Liquirizia.DataModel import Model
+
 from psycopg.adapt import Dumper, Loader
 from typing import Type, Mapping as Map
 
@@ -46,6 +49,7 @@ class Configuration(BaseConfiguration):
 			dict: JavaScriptObjectNotationDumper,
 			Sequence: ArrayDumper,
 			Mapping: JavaScriptObjectNotationDumper,
+			Model: DataModelDumper,
 		}
 		if dumpers: self.dumpers.update(dumpers)
 		# TODO : set Loaders

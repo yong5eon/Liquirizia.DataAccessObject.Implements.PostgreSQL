@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from Liquirizia.DataAccessObject import Helper
-from Liquirizia.DataAccessObject.Errors import *
-from Liquirizia.DataAccessObject.Properties.Database.Errors import *
 
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Model import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Type import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraint import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Filters import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Orders import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Joins import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Exprs import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executor.Functions import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Filters import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Orders import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Joins import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Exprs import *
 
-from Liquirizia.DataModel import Model, Attribute, Handler
+from Liquirizia.DataModel import Model, Value, Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
@@ -38,43 +35,45 @@ from datetime import datetime, date, time
 
 
 class SampleModel(Model):
-	attrBool : bool = Attribute(Validator(IsToNone(IsBool())))
-	attrInteger : int = Attribute(Validator(IsToNone(IsInteger())))
-	attrFloat : float = Attribute(Validator(IsToNone(IsFloat())))
-	attrDecimal : Decimal = Attribute(Validator(IsToNone(IsDecimal())))
-	attrString : str = Attribute(Validator(IsToNone(IsString())))
-	attrList : list = Attribute(Validator(IsToNone(IsList())))
-	attrDictionary : dict = Attribute(Validator(IsToNone(IsDictionary())))
-	attrDateTime : datetime = Attribute(Validator(IsToNone(IsDateTime())))
-	attrDate : date = Attribute(Validator(IsToNone(IsDate())))
-	attrTime : time = Attribute(Validator(IsToNone(IsTime())))
+	attrBool : bool = Value(Validator(IsToNone(IsBool())))
+	attrInteger : int = Value(Validator(IsToNone(IsInteger())))
+	attrFloat : float = Value(Validator(IsToNone(IsFloat())))
+	attrDecimal : Decimal = Value(Validator(IsToNone(IsDecimal())))
+	attrString : str = Value(Validator(IsToNone(IsString())))
+	attrList : list = Value(Validator(IsToNone(IsList())))
+	attrDictionary : dict = Value(Validator(IsToNone(IsDictionary())))
+	attrDateTime : datetime = Value(Validator(IsToNone(IsDateTime())))
+	attrDate : date = Value(Validator(IsToNone(IsDate())))
+	attrTime : time = Value(Validator(IsToNone(IsTime())))
+
 
 class SampleTableUpdated(Handler):
-	def __call__(self, model, obj, attr, value, prev):
-		print('{} of {} is changed {} to {} in {}'.format(
-			'{}({})'.format(attr.name, attr.key),
-			'{}({})'.format(model.__name__, model.__properties__['name']),
-			prev,
-			value,
-			obj,
+	def __call__(self, m, o, v, pv):
+		print('{} of {} is changed {} to {}'.format(
+			'{}({})'.format(o.name, o.key),
+			'{}({})'.format(m.__class__.__name__, m.__model__),
+			v,
+			pv,
 		))
-		changed = obj.__cursor__.run(Update(model).set(
-			**{attr.name: value}
+		changed = m.__cursor__.run(Update(SampleTable).set(
+			**{o.name: v}
 		).where(
-			IsEqualTo(model.id, obj.id)
+			IsEqualTo(SampleTable.id, m.id)
 		))
 		print(changed)
 		return
-
-@Table(
-	name='SAMPLE',
+class SampleTable(
+	Table,
+	table='SAMPLE',
+	sequences=(
+		Sequence('SEQ_SAMPLE', type=INT)
+	),
 	constraints=(
 		PrimaryKey('PK_SAMPLE', cols='ID'),
 	),
 	fn=SampleTableUpdated()
-)
-class SampleTable(Model):
-	id : int = INT('ID', seq=Sequence('SEQ_SAMPLE'), default=NextVal('SEQ_SAMPLE'))
+):
+	id : int = INT('ID', default=NextVal('SEQ_SAMPLE'))
 	colBool : bool = BOOL('COL_BOOL', null=True)
 	colShort : int = INT2('COL_INT2', null=True)
 	colInteger : int = INT4('COL_INT', null=True)

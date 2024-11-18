@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Liquirizia.DataAccessObject import Helper, Error
-from Liquirizia.DataAccessObject.Errors import *
-from Liquirizia.DataAccessObject.Properties.Database.Errors import *
+from Liquirizia.DataAccessObject import Helper
 
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import Connection,Configuration 
 
@@ -31,9 +29,6 @@ if __name__ == '__main__':
 
 		# Get Connection
 		con = Helper.Get('Sample')
-	except ConnectionError as e:
-		print(str(e), file=sys.stderr)
-		exit(-1)
 	except Exception as e:
 		print(str(e), file=sys.stderr)
 		exit(-1)
@@ -64,15 +59,6 @@ if __name__ == '__main__':
 
 		con.execute('DROP TABLE IF EXISTS LOG')
 		con.commit()
-	except ExecuteError as e:
-		con.rollback()
-		print(str(e), file=sys.stderr)
-	except CursorError as e:
-		con.rollback()
-		print(str(e), file=sys.stderr)
-	except ConnectionClosedError as e:
-		print('Connection is closed, {}'.format(str(e)), file=sys.stderr)
-	except Error as e:
-		print('Error, {}'.format(str(e)), file=sys.stderr)
 	except Exception as e:
+		con.rollback()
 		print(str(e), file=sys.stderr)

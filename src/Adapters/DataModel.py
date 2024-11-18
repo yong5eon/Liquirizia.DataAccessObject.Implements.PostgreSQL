@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from psycopg.adapt import Dumper, Loader
+from psycopg.adapt import Dumper
 
 from decimal import Decimal
 from datetime import datetime, date, time
 from collections.abc import Sequence, Mapping
 from Liquirizia.DataModel import Model
 
-from json import dumps, loads
+from json import dumps
 
 from typing import Any
 
 __all__ = (
-	'JavaScriptObjectNotationDumper',
+	'DataModelDumper',
 )
 
 
-class JavaScriptObjectNotationDumper(Dumper):
+class DataModelDumper(Dumper):
 	def encode(self, o: Any):
 		encoder = (
 			(set, lambda o: list(o)),
@@ -31,10 +31,6 @@ class JavaScriptObjectNotationDumper(Dumper):
 		for T, enc in encoder:
 			if isinstance(o, T): return enc(o)
 		raise TypeError('{} is not support to encode in {}'.format(o.__class__.__name__, self.__class__.__name__))
-	def dump(self, o : Mapping):
-		return dumps(o, default=self.encode, ensure_ascii=False).encode('utf-8')
-	
-class JavaScriptObjectNotationLoader(Loader):
-	def load(self, data):
-		return loads(data.decode('utf-8'))
-	
+	def dump(self, o : Model):
+		return dumps(o.__properties__, default=self.encode, ensure_ascii=False).encode('utf-8')
+

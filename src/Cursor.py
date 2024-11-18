@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from Liquirizia.DataAccessObject.Properties.Database import Cursor
-
-from Liquirizia.DataAccessObject import Error
-from Liquirizia.DataAccessObject.Errors import *
-from Liquirizia.DataAccessObject.Properties.Database.Errors import *
-
-from Liquirizia.DataAccessObject.Model import (
+from Liquirizia.DataAccessObject.Properties.Database import (
+	Cursor as BaseCursor,
 	Executors,
 	Executor,
 	Fetch,
@@ -15,18 +10,6 @@ from Liquirizia.DataAccessObject.Model import (
 
 from .Context import Context
 
-from psycopg import (
-	# Execute Error
-	DatabaseError,
-	NotSupportedError as DatabaseNotSupportedError,
-	ProgrammingError as DatabaseProgrammingError,
-	DataError as DatabaseDataError,
-	IntegrityError as DatabaseIntegrityError,
-	# Connection Error
-	OperationalError as DatabaseOperationError,
-	InternalError as DatabaseInternalError,
-)
-
 from typing import Union
 
 __all__ = (
@@ -34,76 +17,36 @@ __all__ = (
 )
 
 
-class Cursor(Cursor, Run):
+class Cursor(BaseCursor, Run):
 	"""Cursor Class for PostgreSQL"""
 	def __init__(self, cursor):
 		self.cursor = cursor
 		return
 
 	def execute(self, sql, *args):
-		try:
-			self.cursor.execute(sql, args)
-			return Context(self.cursor)
-		except (
-			DatabaseError, 
-			DatabaseDataError, 
-			DatabaseNotSupportedError, 
-			DatabaseIntegrityError, 
-			DatabaseProgrammingError
-		) as e:
-			raise ExecuteError(str(e))
-		except (DatabaseInternalError, DatabaseOperationError) as e:
-			raise ConnectionError(str(e), error=e)
-		except Exception as e:
-			raise Error(str(e), error=e)
+		self.cursor.execute(sql, args)
+		return Context(self.cursor)
 
 	def executes(self, sql, *args):
-		try:
-			self.cursor.executemany(sql, args)
-			return Context(self.cursor)
-		except (
-			DatabaseError, 
-			DatabaseDataError, 
-			DatabaseNotSupportedError, 
-			DatabaseIntegrityError, 
-			DatabaseProgrammingError
-		) as e:
-			raise ExecuteError(str(e))
-		except (DatabaseInternalError, DatabaseOperationError) as e:
-			raise ConnectionError(str(e), error=e)
-		except Exception as e:
-			raise Error(str(e), error=e)
-		return
+		self.cursor.executemany(sql, args)
+		return Context(self.cursor)
 
 	def run(self, executor: Union[Executor,Executors]):
-		cursor = None
-		try:
-			def execs(execs: Executors):
-				__ = []
-				for query, args in execs:
-					self.cursor.execute(query, args)
-					if not isinstance(executor, Fetch): continue
-					rows = executor.fetch(Cursor(self.cursor))
-					__.extend(rows)
-				return __
-			def exec(exec: Executor):
-				self.cursor.execute(exec.query, exec.kwargs)
-				if not isinstance(exec, Fetch): return
-				return exec.fetch(Cursor(self.cursor))
-			if isinstance(executor, Executors): return execs(executor)
-			if isinstance(executor, Executor): return exec(executor)
-		except (
-			DatabaseError, 
-			DatabaseDataError, 
-			DatabaseNotSupportedError, 
-			DatabaseIntegrityError, 
-			DatabaseProgrammingError
-		) as e:
-			raise ExecuteError(str(e))
-		except (DatabaseInternalError, DatabaseOperationError) as e:
-			raise ConnectionError(str(e), error=e)
-		except Exception as e:
-			raise Error(str(e), error=e)
+		def execs(execs: Executors):
+			__ = []
+			for query, args in execs:
+				self.cursor.execute(query, args)
+				if not isinstance(executor, Fetch): continue
+				rows = executor.fetch(Cursor(self.cursor))
+				__.extend(rows)
+			return __
+		def exec(exec: Executor):
+			self.cursor.execute(exec.query, exec.args)
+			if not isinstance(exec, Fetch): return
+			return exec.fetch(Cursor(self.cursor))
+		if isinstance(executor, Executors): return execs(executor)
+		if isinstance(executor, Executor): return exec(executor)
+		raise RuntimeError('{} must be executor or executors'.format(executor.__class__.__name__))
 		
 	def rows(self):
 		def transform(rows):
@@ -111,36 +54,10 @@ class Cursor(Cursor, Run):
 			for i, row in enumerate(rows):  # iterate throw the sqlite3.Row objects
 				li.append(dict(row))
 			return li
-		try:
-			return transform(self.cursor.fetchall())
-		except (
-			DatabaseError, 
-			DatabaseDataError, 
-			DatabaseNotSupportedError, 
-			DatabaseIntegrityError, 
-			DatabaseProgrammingError
-		) as e:
-			raise ExecuteError(str(e))
-		except (DatabaseInternalError, DatabaseOperationError) as e:
-			raise ConnectionError(str(e), error=e)
-		except Exception as e:
-			raise Error(str(e), error=e)
+		return transform(self.cursor.fetchall())
 
 	def row(self):
-		try:
-			return dict(self.cursor.fetchone())
-		except (
-			DatabaseError, 
-			DatabaseDataError, 
-			DatabaseNotSupportedError, 
-			DatabaseIntegrityError, 
-			DatabaseProgrammingError
-		) as e:
-			raise ExecuteError(str(e))
-		except (DatabaseInternalError, DatabaseOperationError) as e:
-			raise ConnectionError(str(e), error=e)
-		except Exception as e:
-			raise Error(str(e), error=e)
+		return dict(self.cursor.fetchone())
 
 	def count(self):
 		return self.cursor.rowcount
