@@ -12,7 +12,6 @@ jobs:
         run: |
           brew install --cask docker
           open /Applications/Docker.app
-          while ! docker system info > /dev/null 2>&1; do sleep 1; done
       - name: Verify Docker Installation
         run: docker --version
       - name: Verify Docker Compose Installation
