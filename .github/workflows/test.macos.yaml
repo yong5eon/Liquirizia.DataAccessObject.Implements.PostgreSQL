@@ -16,6 +16,10 @@ jobs:
         run: docker --version
       - name: Verify Docker Compose Installation
         run: docker compose --version
+      - name: Run Docker Compose
+        run: |
+          docker compose up -d
+          docker ps
       - uses: actions/checkout@v4
       - name: Set up Python ${{matrix.python-version}}
         uses: actions/setup-python@v5
