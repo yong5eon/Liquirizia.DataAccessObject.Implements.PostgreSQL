@@ -9,6 +9,8 @@ jobs:
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     steps:
       - uses: crazy-max/ghaction-setup-docker@v3
+        env:
+          LIMA_START_ARGS: --cpus 4 --memory 8
       - uses: actions/checkout@v4
       - name: Set up Python ${{matrix.python-version}}
         uses: actions/setup-python@v5
