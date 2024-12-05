@@ -1,4 +1,4 @@
-name: Test Liquirizia.DataAccessObject.Implements.PostgreSQL for GNU/Linux
+name: Test Liquirizia.DataAccessObject.Implements.PostgreSQL
 on: push
 jobs:
   build:
