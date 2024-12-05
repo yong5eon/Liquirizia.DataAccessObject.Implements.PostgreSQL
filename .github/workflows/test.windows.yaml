@@ -16,14 +16,14 @@ jobs:
       - name: Start Docker Desktop
         run: |
           Start-Process -FilePath "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+					# Wait for Docker daemon to start
+          while (-not (docker info > $null 2>&1)) { Start-Sleep -Seconds 5 }
       - name: Verify Docker Installation
         run: docker --version
       - name: Verify Docker Compose Installation
         run: docker compose --version
       - name: Run Docker Compose
-        run: |
-          docker compose up -d
-          docker ps
+        run: docker ps
       - uses: actions/checkout@v4
       - name: Set up Python ${{matrix.python-version}}
         uses: actions/setup-python@v5
