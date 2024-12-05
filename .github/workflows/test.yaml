@@ -1,10 +1,11 @@
-name: Test Liquirizia
+name: Test Liquirizia.DataAccessObject.Implements.PostgreSQL for GNU/Linux
 on: push
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
     strategy:
       matrix:
+        os: [ubuntu-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     steps:
       - uses: actions/checkout@v4
