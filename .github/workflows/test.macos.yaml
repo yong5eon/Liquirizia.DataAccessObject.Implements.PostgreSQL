@@ -10,12 +10,15 @@ jobs:
     steps:
       - name: Install Docker Desktop
         run: |
-          brew install --cask docker
-          open /Applications/Docker.app
+          brew install docker docker-compose
+          # Link the Docker Compose v2 plugin so it's understood by the docker CLI
+          mkdir -p ~/.docker/cli-plugins
+          ln -sfn /usr/local/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
+          colima start
       - name: Verify Docker Installation
         run: docker --version
       - name: Verify Docker Compose Installation
-        run: docker compose --version
+        run: docker-compose --version
       - name: Run Docker Compose
         run: docker ps
       - uses: actions/checkout@v4
