@@ -2,6 +2,7 @@ ARG TAG=15-alpine
 FROM postgres:$TAG AS pgvector
 RUN apk add git
 RUN apk add build-base
+RUN apk add build-essential
 RUN apk add clang
 RUN apk add clang15
 RUN apk add llvm15-dev llvm15
