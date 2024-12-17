@@ -20,6 +20,7 @@ setup(
 	long_description=open('README.md', encoding='utf-8').read(),
 	long_description_content_type='text/markdown',
 	author=WHO,
+	version=open('VERSION', encoding='utf-8').read(),
 	packages=PKGS,
 	package_dir=DIRS,
 	include_package_data=False,
@@ -34,7 +35,7 @@ setup(
 	],
 	install_requires=[
 		'Liquirizia@git+https://github.com/yong5eon/Liquirizia.git',
-		'psycopg[binary,pool]>=3.2.2',
+		'psycopg[binary,pool]',
 	],
 	python_requires='>=3.8'
 )
