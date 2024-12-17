@@ -1,12 +1,21 @@
-name: Test Liquirizia.DataAccessObject.Implements.PostgreSQL
-on: push
+name: Test
+on:
+  push:
+    branches:
+      - 'feature/*'
+      - 'fix/*'
+      - 'bug/*'
+  pull_request:
+    types:
+      - opened
+      - synchronize
 jobs:
   build:
-    runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{matrix.python-version}}
@@ -21,11 +30,5 @@ jobs:
         run: pip install --upgrade setuptools wheel ruff
       - name: Install Liquirizia
         run: pip install --upgrade .
-      - name: Build PostgreSQL-15 docker
-        run: docker image build --file=res/PostgreSQL.15.docker --tag=postgresql:15 .
-      - name: Run PostgreSQL-15 docker
-        run: docker container run --name=postgresql --detach --publish=5432:5432 postgresql:15
-      - name: Check PostgreSQL-15 docker
-        run: docker logs postgresql
       - name: Test
         run: python -m Liquirizia.Test test
