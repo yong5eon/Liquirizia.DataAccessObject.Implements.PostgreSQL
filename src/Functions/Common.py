@@ -13,6 +13,9 @@ __all__ = (
 	'Min',
 	'Max',
 	'AggregateToArray',
+	'RowNumber',
+	'Rank',
+	'DenseRank',
 )
 
 
@@ -80,3 +83,57 @@ class AggregateToArray(Function):
 		return
 	def __str__(self):
 		return 'ARRAY_AGG({})'.format(str(self.col))
+
+
+class RowNumber(Function):
+	def __init__(self, *args):
+		self.orders = args
+		self.partitions = None
+		return
+	def orderBy(self, *args):
+		self.orders = args
+		return
+	def partitionBy(self, *args):
+		self.partitions = args
+		return
+	def __str__(self):
+		return 'ROW_NUMBER() OVER({}{})'.format(
+			' PARTITION BY {} '.format(', '.join([str(partition) for partition in self.partitionBy])) if self.partitions else '',
+			' ORDER BY {}'.format(', '.join([str(order) for order in self.orders])),
+		)
+
+
+class Rank(Function):
+	def __init__(self, *args):
+		self.orders = args
+		self.partitions = None
+		return
+	def orderBy(self, *args):
+		self.orders = args
+		return
+	def partitionBy(self, *args):
+		self.partitions = args
+		return
+	def __str__(self):
+		return 'RANK() OVER({}{})'.format(
+			' PARTITION BY {} '.format(', '.join([str(partition) for partition in self.partitionBy])) if self.partitions else '',
+			' ORDER BY {}'.format(', '.join([str(order) for order in self.orders])),
+		)
+
+
+class DenseRank(Function):
+	def __init__(self, *args):
+		self.orders = args
+		self.partitions = None
+		return
+	def orderBy(self, *args):
+		self.orders = args
+		return
+	def partitionBy(self, *args):
+		self.partitions = args
+		return
+	def __str__(self):
+		return 'DENSE_RANK() OVER({}{})'.format(
+			' PARTITION BY {} '.format(', '.join([str(partition) for partition in self.partitionBy])) if self.partitions else '',
+			' ORDER BY {}'.format(', '.join([str(order) for order in self.orders])),
+		)

@@ -7,6 +7,9 @@ from .Common import (
 	Min,
 	Max,
 	AggregateToArray,
+	RowNumber,
+	Rank,
+	DenseRank,
 )
 from .Condition import (
 	IfNull,
@@ -30,6 +33,9 @@ __all__ = (
 	'Min',
 	'Max',
 	'AggregateToArray',
+	'RowNumber',
+	'Rank',
+	'DenseRank',
 	# CONDITION
 	'IfNull',
 	# DATETIME
