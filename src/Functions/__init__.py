@@ -17,6 +17,10 @@ from .DateTime import (
 from .Sequence import (
 	NextVal,
 )
+from .JavaScriptObjectNotation import (
+	AggregateToJSON,
+	AggregateToJSONB,
+)
 
 __all__ = (
 	# COMMON
@@ -32,4 +36,7 @@ __all__ = (
 	'Now',
 	# SEQUENCE
 	'NextVal',
+	# JSON
+	'AggregateToJSON',
+	'AggregateToJSONB',
 )
