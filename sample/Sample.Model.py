@@ -365,6 +365,19 @@ if __name__ == '__main__':
 			tests=costs,
 			vector=[randrange(-10, 10), randrange(-10, 10), randrange(-10, 10)],
 			metadata={},
+		).on(
+			StudentOfClass.studentId,
+			StudentOfClass.classId,
+		).set(
+			studentName=s.name,
+			className=c.name,
+			score=sum(costs)/len(costs),
+			rate=decimal(sum(costs)/len(costs), context=context(prec=1)),
+			tests=costs,
+			vector=[randrange(-10, 10), randrange(-10, 10), randrange(-10, 10)],
+			metadata={},
+			atUpdated=datetime.now(),
+			isUpdated=True,
 		)
 		sc = con.run(exec)
 		PrettyPrint(sc)
