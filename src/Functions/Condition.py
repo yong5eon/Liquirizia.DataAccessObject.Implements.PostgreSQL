@@ -14,14 +14,14 @@ __all__ = (
 class IfNull(Function):
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[str, Type, Function],
 		value: Any,
 	):
 		self.col = col
 		self.value = value
 		return
 	def __str__(self):
-		return 'IFNULL({}, {})'.format(
+		return 'COALESCE({}, {})'.format(
 			str(self.col),
 			self.value,
 		)
