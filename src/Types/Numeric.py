@@ -14,7 +14,7 @@ from Liquirizia.Validator.Patterns import (
 )
 
 from ..Function import Function
-from decimal import Decimal
+from decimal import Decimal as PyDecimal
 from typing import Union, Sequence
 
 __all__ = (
@@ -169,7 +169,7 @@ class Decimal(Type, typestr='NUMERIC'):
 			scale: int,
 			precision: int,
 			null: bool = False,
-			default: Union[Decimal, Function]= None,
+			default: Union[PyDecimal, Function]= None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
