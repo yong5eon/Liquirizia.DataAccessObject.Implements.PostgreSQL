@@ -10,6 +10,8 @@ from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
 	IsDictionary,
+	IsArray,
+	Any,
 	If,
 	IsTypeOf,
 )
@@ -64,9 +66,9 @@ class JavaScriptObjectNotation(Type, typestr='JSON'):
 		):
 		if not va:
 			if null:
-				va = Validator(IsToNone(If(IsModel(ModelToDict())), IsDictionary()))
+				va = Validator(IsToNone(If(IsModel(ModelToDict())), Any(IsDictionary(), IsArray())))
 			else:
-				va = Validator(IsNotToNone(If(IsModel(ModelToDict())), IsDictionary()))
+				va = Validator(IsNotToNone(If(IsModel(ModelToDict())), Any(IsDictionary(), IsArray())))
 		super().__init__(
 			key=name, 
 			type='JSON',
@@ -91,9 +93,9 @@ class JavaScriptObjectNotationByteArray(Type, typestr='JSONB'):
 		):
 		if not va:
 			if null:
-				va = Validator(IsToNone(If(IsTypeOf(Model, ModelToDict())), IsDictionary()))
+				va = Validator(IsToNone(If(IsTypeOf(Model, ModelToDict())), Any(IsDictionary(), IsArray())))
 			else:
-				va = Validator(IsNotToNone(If(IsTypeOf(Model, ModelToDict())), IsDictionary()))
+				va = Validator(IsNotToNone(If(IsTypeOf(Model, ModelToDict())), Any(IsDictionary(), IsArray())))
 		super().__init__(
 			key=name, 
 			type='JSONB',
