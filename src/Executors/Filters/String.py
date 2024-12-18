@@ -26,5 +26,5 @@ class IsLike(Expr):
 	def __str__(self):
 		return '{} LIKE {}'.format(
 			str(self.col),
-			self.encode(self.other),
+			self.encode('%%{}%%'.format(self.other)),
 		)
