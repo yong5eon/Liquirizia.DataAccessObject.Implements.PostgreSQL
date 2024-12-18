@@ -3,6 +3,7 @@
 from ..Function import Function
 
 from ..Type import Type
+from ..Executors import Expr
 
 from typing import Union
 
@@ -25,9 +26,16 @@ class Count(Function):
 		col: Union[str, Type],
 	):
 		self.col = col 
+		self.conds = None
 		return
+	def where(self, *args):
+		self.conds = args
+		return self
 	def __str__(self):
-		return 'COUNT({})'.format(str(self.col))
+		return 'COUNT({}){}'.format(
+			str(self.col),
+			' FILTER (WHERE {})'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
+		)
 
 
 class Sum(Function):
@@ -36,9 +44,16 @@ class Sum(Function):
 		col: Union[str, Type],
 	):
 		self.col = col 
+		self.conds = None
 		return
+	def where(self, *args):
+		self.conds = args
+		return self
 	def __str__(self):
-		return 'SUM({})'.format(str(self.col))
+		return 'SUM({}){}'.format(
+			str(self.col),
+			' FILTER (WHERE {})'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
+		)
 	
 
 class Average(Function):
@@ -47,9 +62,16 @@ class Average(Function):
 		col: Union[str, Type],
 	):
 		self.col = col 
+		self.conds = None
 		return
+	def where(self, *args):
+		self.conds = args
+		return self
 	def __str__(self):
-		return 'AVG({})'.format(str(self.col))
+		return 'AVG({}){}'.format(
+			str(self.col),
+			' FILTER (WHERE {})'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
+		)
 	
 
 class Min(Function):
