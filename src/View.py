@@ -34,10 +34,11 @@ class View(Model):
 		cls,
 		executor: Executor,
 		view: str = None,
+		schema: str = 'PUBLIC',
 		description: str = None,
-		schema: Object = None,
+		format: Object = None,
 		fn: Handler = None,
 	):
-		cls.__model__ = view if view else cls.__name__
+		cls.__model__ = '{}.{}'.format(schema, view if view else cls.__name__)
 		cls.__executor__ = executor
-		return super().__init_subclass__(description, schema, fn)
+		return super().__init_subclass__(description, format, fn)

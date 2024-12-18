@@ -38,14 +38,15 @@ class Table(Model):
 	def __init_subclass__(
 		cls,
 		table: str = None,
+		schema: str = 'PUBLIC',
 		sequences: TSequence[Sequence] = None,
 		constraints: TSequence[Constraint] = None,
 		indexes: TSequence[Index] = None,
 		description: str = None,
-		schema: Object = None,
+		format: Object = None,
 		fn: Handler = None,
 	):
-		cls.__model__ = table if table else cls.__name__
+		cls.__model__ = '{}.{}'.format(schema, table if table else cls.__name__)	
 		if sequences:
 			if isinstance(sequences, Sequence): sequences = [sequences]
 		cls.__sequences__ = sequences
@@ -55,4 +56,4 @@ class Table(Model):
 		if indexes:
 			if isinstance(indexes, Index): indexes = [indexes]
 		cls.__indexes__ = indexes
-		return super().__init_subclass__(description, schema, fn)
+		return super().__init_subclass__(description, format, fn)
