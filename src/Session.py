@@ -4,6 +4,8 @@ from Liquirizia.DataAccessObject.Properties.Database import (
 	Session as BaseSession,
 	Run,
 	Fetch,
+	Mapper,
+	Filter,
 	Executor,
 	Executors,
 )
@@ -44,19 +46,19 @@ class Session(BaseSession, Run):
 		return Context(self.cursor)
 		return
 
-	def run(self, executor: Union[Executor,Executors]):
+	def run(self, executor: Union[Executor,Executors], mapper: Mapper = None, filter: Filter = None):
 		def execs(execs: Executors):
 			__ = []
 			for query, args in execs:
 				self.cursor.execute(query, args)
 				if not isinstance(executor, Fetch): continue
-				rows = executor.fetch(Cursor(self.cursor))
+				rows = executor.fetch(Cursor(self.cursor), mapper=mapper, filter=filter)
 				__.extend(rows)
 			return __
 		def exec(exec: Executor):
 			self.cursor.execute(exec.query, exec.kwargs)
 			if not isinstance(exec, Fetch): return
-			return exec.fetch(Cursor(self.cursor))
+			return exec.fetch(Cursor(self.cursor), mapper=mapper, filter=filter)
 		if isinstance(executor, Executors): return execs(executor)
 		if isinstance(executor, Executor): return exec(executor)
 		raise RuntimeError('{} must be executor or exectors'.format(executor.__class__.__name__))

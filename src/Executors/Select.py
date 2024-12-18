@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from Liquirizia.DataAccessObject.Properties.Database import Executor, Fetch
+from Liquirizia.DataAccessObject.Properties.Database import (
+	Executor,
+	Fetch,
+	Mapper,
+	Filter,
+)
 from Liquirizia.DataModel import Model
 
 from ..Cursor import Cursor
@@ -86,13 +91,15 @@ class Select(Executor, Fetch):
 	def args(self):
 		return list(self.kwargs.values())
 
-	def fetch(self, cursor: Cursor):
+	def fetch(self, cursor: Cursor, mapper: Mapper = None, filter: Filter = None):
 		_ = []
 		for i, row in enumerate(cursor.rows()):
+			if mapper: row = {mapper(k): v for k, v in row.items()}
+			if filter: row = filter(row)
 			if self.o:
-				obj = self.o(**dict(row))
+				obj = self.o(**row)
 				obj.__cursor__ = cursor
 				_.append(obj)
 			else:
-				_.append(dict(row))
+				_.append(row)
 		return _ if len(_) else None
