@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from ..Constraint import Constraint
+from ..Table import Table
+from ..Type import Type
 
-from typing import Union, Sequence
+from typing import Union, Sequence, Type as T
 
 __all__ = (
 	'ForeignKey'
@@ -14,8 +16,8 @@ class ForeignKey(Constraint):
 		self,
 		name: str,
 		cols: Union[str, Sequence[str]],
-		reference: str = None,
-		referenceCols: str = None,
+		reference: Union[str, T[Table]] = None,
+		referenceCols: Union[str, Type] = None,
 		onDelete: str = None,
 		onUpdate: str = None,
 	):
