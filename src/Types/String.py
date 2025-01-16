@@ -46,6 +46,8 @@ class Char(Type, typestr='CHAR'):
 					va = Validator(IsNotToNone(IsString(IsSizeOf(size))))
 				else:
 					va = Validator(IsNotToNone(IsString()))
+		if isinstance(default, Function): default = str(default)
+		if isinstance(default, str): default = '\'{}\''.format(default)
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
@@ -53,7 +55,7 @@ class Char(Type, typestr='CHAR'):
 				'({})'.format(size) if size else ''
 			),
 			null=null,
-			default=str(default) if isinstance(default, Function) else '\'{}\''.format(default),
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -83,6 +85,8 @@ class String(Type, typestr='VARCHAR'):
 					va = Validator(IsNotToNone(IsString(IsSizeIn(size))))
 				else:
 					va = Validator(IsNotToNone(IsString()))
+		if isinstance(default, Function): default = str(default)
+		if isinstance(default, str): default = '\'{}\''.format(default)
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
@@ -90,7 +94,7 @@ class String(Type, typestr='VARCHAR'):
 				'({})'.format(size) if size else ''
 			),
 			null=null,
-			default=str(default) if isinstance(default, Function) else '\'{}\''.format(default),
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -113,11 +117,13 @@ class Text(Type, typestr='TEXT'):
 				va = Validator(IsToNone(IsString()))
 			else:
 				va = Validator(IsNotToNone(IsString()))
+		if isinstance(default, Function): default = str(default)
+		if isinstance(default, str): default = '\'{}\''.format(default)
 		super().__init__(
 			key=name, 
 			type=self.typestr,
 			null=null,
-			default=str(default) if isinstance(default, Function) else '\'{}\''.format(default),
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
