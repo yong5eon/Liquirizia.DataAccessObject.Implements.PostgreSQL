@@ -4,6 +4,10 @@ on:
     types:
       - opened
       - synchronize 
+    branches:
+      - feature/*
+      - bug/*
+      - fix/*
 jobs:
   check-file:
     runs-on: ubuntu-latest
