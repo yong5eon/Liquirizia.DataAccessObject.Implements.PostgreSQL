@@ -112,6 +112,7 @@ con = Helper.Get('Sample')
 con.begin()
 
 # con.execute('CREATE EXTENSION VECTOR')
+con.run(Drop(SampleTable))
 con.run(Create(SampleTable))
 
 o = SampleModel(
