@@ -9,6 +9,7 @@ from typing import Union, Type as T
 __all__ = (
 	'Alias',
 	'TypeTo',
+	'If',
 )
 
 
@@ -39,3 +40,33 @@ class TypeTo(Expr):
 		return
 	def __str__(self):
 		return '{}::{}'.format(str(self.col), self.type)
+
+
+class If(Expr):
+	def __init__(
+		self,
+		expr: Union[str, Type, Function, Expr],
+	):
+		self.cond = expr
+		self.then = None
+		self.else = None
+		return
+	def then(
+		self,
+		expr: Union[str, Type, Function, Expr],
+	):
+		self.then = expr
+		return self
+	def else(
+		self,
+		expr: Union[str, Type, Function, Expr],
+	):
+		self.else = expr
+		return self
+	def __str__(self):
+		return 'CASE WHEN {} THEN {}{} END'.format(
+			str(self.cond),
+			str(self.then),
+			' ELSE {}'.format(str(self.else)) if self.else else '',
+		)
+
