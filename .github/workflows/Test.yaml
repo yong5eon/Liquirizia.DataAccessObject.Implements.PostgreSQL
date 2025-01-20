@@ -2,9 +2,9 @@ name: Test
 on:
   push:
     branches:
-      - 'feature/*'
-      - 'fix/*'
-      - 'bug/*'
+      - feature/*
+      - fix/*
+      - bug/*
   pull_request:
     types:
       - opened
