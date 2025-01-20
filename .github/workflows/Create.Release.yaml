@@ -3,8 +3,8 @@ on:
   pull_request:
     types:
       - closed
-    branchs:
-      - release/*
+    branches:
+      - 'release/*'
 jobs:
   create-release:
     if: github.event.pull_request.merged == true

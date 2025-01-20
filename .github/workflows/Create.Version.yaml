@@ -4,9 +4,9 @@ on:
     types:
       - closed
     branches:
-      - feature/*
-      - bug/*
-      - fix/*
+      - 'feature/*'
+      - 'bug/*'
+      - 'fix/*'
 jobs:
   create-version:
     if: github.event.pull_request.merged == true
