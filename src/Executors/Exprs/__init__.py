@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from .Common import (
+	Value,
 	Alias,
 	TypeTo,
+	If,
 )
 from .Condition import (
 	In,
@@ -12,8 +14,10 @@ from .Condition import (
 
 __all__ = (
 	# COMMON
+	'Value',
 	'Alias',
 	'TypeTo',
+	'If',
 	# CONDITION
 	'In',
 	'IsNull',
