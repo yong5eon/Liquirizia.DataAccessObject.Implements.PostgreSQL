@@ -103,7 +103,7 @@ class SampleTable(
 	colDataModel : Model = JSON('COL_DATAMODEL', null=True)
 
 
-class TestDataAccessObjectWithModel(Case):
+class TestTable(Case):
 	@classmethod
 	def setUpClass(cls):
 		Helper.Set(
