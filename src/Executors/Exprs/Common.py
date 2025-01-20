@@ -4,13 +4,26 @@ from ..Expr import Expr
 from ...Function import Function
 from ...Type import Type
 
-from typing import Union, Type as T
+from typing import Union, Type as T, Any
 
 __all__ = (
+	'Value',
 	'Alias',
 	'TypeTo',
 	'If',
 )
+
+
+class Value(Expr):
+	def __init__(self, value: Any):
+		self.value = value
+		return
+	def __str__(self):
+		fn ={
+			str: lambda x: "'{}'".format(x),
+		}.get(type(self.value), None)
+		if fn: return fn(self.value)
+		return str(self.value)
 
 
 class Alias(Expr):
@@ -45,28 +58,29 @@ class TypeTo(Expr):
 class If(Expr):
 	def __init__(
 		self,
-		expr: Union[str, Type, Function, Expr],
+		cond: Union[str, Type, Function, Expr],
+		thenexpr: Union[str, Type, Function, Expr] = None,
+		elseexpr: Union[str, Type, Function, Expr] = None,
 	):
-		self.cond = expr
-		self.then = None
-		self.else = None
+		self.condexpr = cond
+		self.thenexpr = thenexpr
+		self.elseexpr = elseexpr
 		return
 	def then(
 		self,
 		expr: Union[str, Type, Function, Expr],
 	):
-		self.then = expr
+		self.thenexpr = expr
 		return self
-	def else(
+	def els(
 		self,
 		expr: Union[str, Type, Function, Expr],
 	):
-		self.else = expr
+		self.elseexpr = expr
 		return self
 	def __str__(self):
 		return 'CASE WHEN {} THEN {}{} END'.format(
-			str(self.cond),
-			str(self.then),
-			' ELSE {}'.format(str(self.else)) if self.else else '',
+			str(self.condexpr),
+			str(self.thenexpr),
+			' ELSE {}'.format(str(self.elseexpr)) if self.elseexpr else '',
 		)
-
