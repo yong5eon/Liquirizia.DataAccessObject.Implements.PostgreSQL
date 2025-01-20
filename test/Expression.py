@@ -30,10 +30,10 @@ class SampleModel(
 	id: int = INT(name='ID', default=NextVal('SEQ_SAMPLE'))
 	name: str = VARCHAR(name='NAME')
 	description: str = VARCHAR(name='DESCRIPTION', null=True)
-  atCreated: datetime = TIMESTAMP(name='AT_CREATED')
+	atCreated: datetime = TIMESTAMP(name='AT_CREATED')
 
 
-class TestExprs(Case):
+class TestExpression(Case):
 	@classmethod
 	def setUpClass(cls):
 		Helper.Set(
@@ -51,6 +51,8 @@ class TestExprs(Case):
 			)
 		)
 		con = Helper.Get('Sample')
+		con.begin()
+		con.run(Drop(SampleModel))
 		con.run(Create(SampleModel))
 		con.run(Insert(SampleModel).values(
 			name='A',
@@ -65,41 +67,56 @@ class TestExprs(Case):
 			name='C',
 			atCreated=datetime.now(),
 		))
+		con.commit()
 		return super().setUpClass()
 
 	@classmethod
 	def tearDownClass(cls):
 		con = Helper.Get('Sample')
+		con.begin()
 		con.run(Drop(SampleModel))
+		con.commit()
 		return super().tearDownClass()
 
 	@Order(1)
 	def testAlias(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		rows = con.run(Select(SampleModel).values(
 			Alias(SampleModel.name, 'NM')
 		))
+		con.commit()
 		for row in rows:
-			ASSERT_IS_TRUE('nm' in row)
+			ASSERT_IS_EQUAL('nm' in row, True)
 		return
 
 	@Order(2)
 	def testTypeTo(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		rows = con.run(Select(SampleModel).values(
 			TypeTo(SampleModel.id, FLOAT)
 		))
+		con.commit()
 		for row in rows:
-			ASSERT_IS_TRUE(isinstance(row['id'], float))
+			ASSERT_IS_EQUAL(isinstance(row['id'], float), True)
 		return
 
 	@Order(3)
 	def testIf(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		rows = con.run(Select(SampleModel).values(
 			SampleModel.description,
-			Alias(If(IsNotNull(SampleModel.description)).then('Y').else('N'), 'STATUS'),
+			Alias(
+				If(
+					IsNotNull(
+						SampleModel.description
+					)
+				).then(Value('Y')).els(Value('N')), 'STATUS'
+			),
 		))
+		con.commit()
 		for row in rows:
 			if row['description']:
 				ASSERT_IS_EQUAL(row['status'], 'Y')
@@ -110,27 +127,33 @@ class TestExprs(Case):
 	@Order(4)
 	def testIn(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		rows = con.run(Select(SampleModel).where(
 			In(SampleModel.name, ('A', 'B'))
 		))
+		con.commit()
 		ASSERT_IS_EQUAL(len(rows), 2)
 		return
 
 	@Order(5)
 	def testIsNull(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		rows = con.run(Select(SampleModel).where(
 			IsNull(SampleModel.description)
 		))
+		con.commit()
 		ASSERT_IS_EQUAL(len(rows), 2)
 		return
 
 	@Order(6)
 	def testIsNotNull(self):
 		con = Helper.Get('Sample')
+		con.begin()
 		rows = con.run(Select(SampleModel).where(
 			IsNotNull(SampleModel.description)
 		))
+		con.commit()
 		ASSERT_IS_EQUAL(len(rows), 1)
 		return
 
