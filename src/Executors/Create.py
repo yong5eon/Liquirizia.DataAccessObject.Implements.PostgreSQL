@@ -43,7 +43,7 @@ class ForeignKeyToSQL(object):
 		return 'CONSTRAINT {} FOREIGN KEY({}) REFERENCES {}({})'.format(
 			key.name,
 			', '.join(key.cols),
-			key.reference.__model__ if issubclass(key.reference, Table) else key.reference,
+			key.reference if isinstance(key.reference, str) else key.reference.__model__,
 			', '.join([col.key if isinstance(col, Type) else col for col in key.referenceCols])
 		)
 	
