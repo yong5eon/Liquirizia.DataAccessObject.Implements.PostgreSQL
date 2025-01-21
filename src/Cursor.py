@@ -9,10 +9,11 @@ from Liquirizia.DataAccessObject.Properties.Database import (
 	Mapper,
 	Filter,
 )
+from Liquirizia.DataModel import Model
 
 from .Context import Context
 
-from typing import Union
+from typing import Union, Type
 
 __all__ = (
 	'Cursor'
@@ -33,19 +34,25 @@ class Cursor(BaseCursor, Run):
 		self.cursor.executemany(sql, args)
 		return Context(self.cursor)
 
-	def run(self, executor: Union[Executor,Executors], mapper: Mapper = None, filter: Filter = None):
+	def run(
+		self,
+		executor: Union[Executor,Executors],
+		mapper: Mapper = None,
+		filter: Filter = None,
+		fetch: Type[Model] = None,
+	):
 		def execs(execs: Executors):
 			__ = []
 			for query, args in execs:
 				self.cursor.execute(query, args)
 				if not isinstance(executor, Fetch): continue
-				rows = executor.fetch(Cursor(self.cursor), mapper=mapper, filter=filter)
+				rows = executor.fetch(Cursor(self.cursor), mapper=mapper, filter=filter, fetch=fetch)
 				__.extend(rows)
 			return __
 		def exec(exec: Executor):
 			self.cursor.execute(exec.query, exec.args)
 			if not isinstance(exec, Fetch): return
-			return exec.fetch(Cursor(self.cursor), mapper=mapper, filter=filter)
+			return exec.fetch(Cursor(self.cursor), mapper=mapper, filter=filter, fetch=fetch)
 		if isinstance(executor, Executors): return execs(executor)
 		if isinstance(executor, Executor): return exec(executor)
 		raise RuntimeError('{} must be executor or executors'.format(executor.__class__.__name__))
@@ -63,3 +70,4 @@ class Cursor(BaseCursor, Run):
 
 	def count(self):
 		return self.cursor.rowcount
+

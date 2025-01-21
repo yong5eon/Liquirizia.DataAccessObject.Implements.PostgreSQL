@@ -14,6 +14,8 @@ from Liquirizia.DataAccessObject.Properties.Database import (
 from Liquirizia.DataAccessObject.Properties.Database.Cursor import Cursor
 from Liquirizia.DataAccessObject.Properties.Database.Session import Session
 
+from Liquirizia.DataModel import Model
+
 from .Configuration import Configuration
 from .Pool import Pool
 from .Context import Context
@@ -22,7 +24,8 @@ from .Session import Session
 
 from psycopg import connect, ClientCursor
 from psycopg.rows import dict_row
-from typing import Union
+
+from typing import Union, Type
 
 
 __all__ = (
@@ -92,20 +95,26 @@ class Connection(BaseConnection, Database, Run):
 		cursor.executemany(sql, args)
 		return Context(cursor)
 
-	def run(self, executor: Union[Executor,Executors], mapper: Mapper = None, filter: Filter = None):
+	def run(
+		self,
+		executor: Union[Executor,Executors],
+		mapper: Mapper = None,
+		filter: Filter = None,
+		fetch: Type[Model] = None,
+	):
 		cursor = self.connection.cursor()
 		def execs(execs: Executors):
 			__ = []
 			for query, args in execs:
 				cursor.execute(query, args)
 				if not isinstance(executor, Fetch): continue
-				rows = executor.fetch(Cursor(cursor), mapper=mapper, filter=filter)
+				rows = executor.fetch(Cursor(cursor), mapper=mapper, filter=filter, fetch=fetch)
 				__.extend(rows)
 			return __
 		def exec(exec: Executor):
 			cursor.execute(exec.query, exec.args)
 			if not isinstance(exec, Fetch): return
-			return exec.fetch(Cursor(cursor), mapper=mapper, filter=filter)
+			return exec.fetch(Cursor(cursor), mapper=mapper, filter=filter, fetch=fetch)
 		if isinstance(executor, Executors): return execs(executor)
 		if isinstance(executor, Executor): return exec(executor)
 		raise RuntimeError('{} must be executor or executors'.format(executor.__class__.__name__))
@@ -127,3 +136,4 @@ class Connection(BaseConnection, Database, Run):
 			self.connection.rollback()
 			self.connection.autocommit = self.conf.autocommit
 		return
+
