@@ -192,7 +192,7 @@ class TestTable(Case):
 			colTime=datetime.now().time(),
 			colVector=[1,2,3],
 			colDataModel=o,
-		))
+		), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NOT_NONE(inserted)
 		ASSERT_IS_EQUAL(inserted.colBool, True)
@@ -256,7 +256,7 @@ class TestTable(Case):
 			colTime=datetime.now().time(),
 			colVector=[1,2,3],
 			colDataModel=o,
-		))
+		), fetch=SampleTable)
 		o = SampleModel(
 			attrBool=False,
 			attrInteger=2,
@@ -300,7 +300,7 @@ class TestTable(Case):
 			colTime=datetime.now().time(),
 			colVector=[4,5,6],
 			colDataModel=o,
-		))
+		), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NOT_NONE(inserted)
 		ASSERT_IS_NOT_NONE(updated)
@@ -365,7 +365,7 @@ class TestTable(Case):
 			colTime=datetime.now().time(),
 			colVector=[1,2,3],
 			colDataModel=o,
-		))
+		), fetch=SampleTable)
 		o = SampleModel(
 			attrBool=False,
 			attrInteger=2,
@@ -409,7 +409,7 @@ class TestTable(Case):
 		inserted.colVector=[4,5,6]
 		inserted.colDataModel=o
 		# ASSERT
-		updated = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)).to(SampleTable))
+		updated = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)), fetch=SampleTable)
 		ASSERT_IS_NOT_NONE(inserted)
 		ASSERT_IS_NOT_NONE(updated)
 		ASSERT_IS_EQUAL(inserted.colBool, updated.colBool)
@@ -480,9 +480,9 @@ class TestTable(Case):
 			colDataModelString=o.attrString,
 			colDataModelList=o.attrList,
 			colDataModelDictionary=dict(o.attrDictionary),
-		))
+		), fetch=SampleTable)
 		self.con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)))
-		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)).to(SampleTable))
+		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NONE(_)
 		return
