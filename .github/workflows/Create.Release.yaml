@@ -3,11 +3,12 @@ on:
   pull_request:
     types:
       - closed
-    branches:
-      - 'release/*'
 jobs:
   create-release:
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'master' &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -24,7 +25,6 @@ jobs:
           echo "MERGED=${{github.event.pull_request.head.ref}}"
           echo "MERGED=${{github.event.pull_request.head.ref}}" >> $GITHUB_ENV
       - name: Create Tag
-        if: github.event.pull_request.base.ref == 'master'
         run: |
           # Check version file
           if [ ! -f "VERSION" ]; then
@@ -38,7 +38,6 @@ jobs:
           git tag -a -f "$VERSION" -m "Release - $VERSION"
           git push -f origin "$VERSION"
       - name: Create Release
-        if: github.event.pull_request.base.ref == 'master'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{env.VERSION}}
@@ -46,3 +45,4 @@ jobs:
           body_path: docs/VERSION/${{env.VERSION}}.md
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+

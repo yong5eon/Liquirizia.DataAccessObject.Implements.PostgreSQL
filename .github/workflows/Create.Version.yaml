@@ -3,13 +3,15 @@ on:
   pull_request:
     types:
       - closed
-    branches:
-      - 'feature/*'
-      - 'bug/*'
-      - 'fix/*'
 jobs:
   create-version:
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event.pull_request.merged == true && 
+      (
+        startsWith(github.event.pull_request.head.ref, 'feature/') ||
+        startsWith(github.event.pull_request.head.ref, 'bug/') ||
+        startsWith(github.event.pull_request.head.ref, 'fix/')
+      )
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -60,32 +62,34 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "UPDATED=$UPDATED" >> $GITHUB_ENV
       - name: Create Release Branch and Commit Changes
-        if: env.UPDATED == 'true'
+        if: ${{env.UPDATED == 'true'}}
         run: |
           RELEASE_BRANCH="release/${{env.NEW_VERSION}}"
-          git chekcout -b $RELEASE_BRANCH
+          git checkout -b $RELEASE_BRANCH
           if [ ! -f "docs/${{env.MERGED}}.md" ]; then
             echo "docs/${{env.MERGED}}.md file is not found"
             exit 1
           fi
           echo "${{env.NEW_VERSION}}" > VERSION
           CHANGES=$(cat docs/${{env.MERGED}}.md)
+          echo "$CHANGES" > docs/VERSION/${{env.NEW_VERSION}}.md
           git config user.name "${{vars.ACTION_USERNAME}}"
           git config user.email "${{vars.ACTION_USEREMAIL}}"
           git add VERSION
           git add docs/VERSION/${{env.NEW_VERSION}}.md
           git commit -m "Update VERSION from $OLD_VERSION to ${{env.NEW_VERSION}}"
           git push origin $RELEASE_BRANCH
-      - name: Create Pull Requestt
-        if: env.UPDATED == 'true'
+      - name: Create Pull Request
+        if: ${{env.UPDATED == 'true'}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
           RELEASE_BRANCH="release/${{env.NEW_VERSION}}"
           TITLE="Release - ${{env.NEW_VERSION}}"
-          BODY=$(cat docs/VERSION/${{env.NEW_VERSION}}.md)
+          BODY=$(cat docs/VERSION/${{env.NEW_VERSION}}.md | jq -Rs .)
           API_URL="https://api.github.com/repos/${{github.repository}}/pulls"
           curl -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -d "{\"title\":\"$TITLE\",\"head\":\"$RELEASE_BRANCH\",\"base\":\"${{github.event.pull_request.base.ref}}\",\"body\":\"$BODY\"}" \
             $API_URL
+
