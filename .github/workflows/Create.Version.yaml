@@ -14,6 +14,7 @@ jobs:
       )
     permissions:
       contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -87,9 +88,9 @@ jobs:
           RELEASE_BRANCH="release/${{env.NEW_VERSION}}"
           TITLE="Release - ${{env.NEW_VERSION}}"
           BODY=$(cat docs/VERSION/${{env.NEW_VERSION}}.md | jq -Rs .)
-          API_URL="https://api.github.com/repos/${{github.repository}}/pulls"
+          URL="https://api.github.com/repos/${{github.repository}}/pulls"
           curl -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -d "{\"title\":\"$TITLE\",\"head\":\"$RELEASE_BRANCH\",\"base\":\"${{github.event.pull_request.base.ref}}\",\"body\":\"$BODY\"}" \
-            $API_URL
+            $URL
 
