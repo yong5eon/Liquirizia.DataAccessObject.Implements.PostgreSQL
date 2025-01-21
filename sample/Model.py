@@ -263,10 +263,10 @@ if __name__ == '__main__':
 	con.run(Create(StatOfClass))
 
 	STUDENT = [
-		['SU970001', 'Koo Hayoon', 'README.md'],
-		['SU970002', 'Ma Youngin', 'README.md'],
-		['SU970003', 'Kang Miran', 'README.md'],
-		['SU970004', 'Song Hahee', 'README.md'],
+		['SU970001', 'Koo Hayoon', 'Connection.py'],
+		['SU970002', 'Ma Youngin', 'Connection.py'],
+		['SU970003', 'Kang Miran', 'Connection.py'],
+		['SU970004', 'Song Hahee', 'Connection.py'],
 	]
 
 	CLASS = [
@@ -317,7 +317,8 @@ if __name__ == '__main__':
 				code=_[0],
 				name=_[1],
 				metadata=open(_[2], mode='rb').read(),
-			)
+			),
+			fetch=Student,
 		)
 		PrettyPrint(s)
 		students.append(s)
@@ -328,7 +329,7 @@ if __name__ == '__main__':
 		_.isUpdated = True
 		PrettyPrint(_)
 	
-	students = con.run(Select(Student))
+	students = con.run(Select(Student), fetch=Student)
 	PrettyPrint(students)
 
 	classes = []
@@ -337,7 +338,8 @@ if __name__ == '__main__':
 			Insert(Class).values(
 				code=_[0],
 				name=_[1],
-			)
+			),
+			fetch=Class,
 		))
 	
 	for _ in classes:
@@ -346,12 +348,12 @@ if __name__ == '__main__':
 		_.isUpdated = True
 		PrettyPrint(_)
 	
-	classes = con.run(Select(Class))
+	classes = con.run(Select(Class), fetch=Class)
 	PrettyPrint(classes)
 	
 	for scode, ccode in STUDENT_OF_CLASS:
-		s = con.run(Get(Student).where(IsEqualTo(Student.code, scode)).to(Student))
-		c = con.run(Get(Class).where(IsEqualTo(Class.code, ccode)).to(Class))
+		s = con.run(Get(Student).where(IsEqualTo(Student.code, scode)), fetch=Student)
+		c = con.run(Get(Class).where(IsEqualTo(Class.code, ccode)), fetch=Class)
 		costs = []
 		for i in range(0, randrange(5, 10)):
 			costs.append(randrange(0, 100))
@@ -382,7 +384,7 @@ if __name__ == '__main__':
 		sc = con.run(exec)
 		PrettyPrint(sc)
 	
-	studentsOfClasses = con.run(Select(StudentOfClass).to(StudentOfClass))
+	studentsOfClasses = con.run(Select(StudentOfClass), fetch=StudentOfClass)
 	PrettyPrint(studentsOfClasses)
 
 	for _ in studentsOfClasses:
@@ -396,7 +398,7 @@ if __name__ == '__main__':
 		_.isUpdated=True
 		PrettyPrint(_)
 	
-	studentsOfClasses = con.run(Select(StudentOfClass).to(StudentOfClass))
+	studentsOfClasses = con.run(Select(StudentOfClass), fetch=StudentOfClass)
 	PrettyPrint(studentsOfClasses)
 
 	for _ in studentsOfClasses:
@@ -417,11 +419,12 @@ if __name__ == '__main__':
 			).where(
 				IsEqualTo(StudentOfClass.studentId, _.studentId),
 				IsEqualTo(StudentOfClass.classId, _.classId),
-			)
+			),
+			fetch=StudentOfClass,
 		)
 		PrettyPrint(o)
 	
-	studentsOfClasses = con.run(Select(StudentOfClass).to(StudentOfClass))
+	studentsOfClasses = con.run(Select(StudentOfClass), fetch=StudentOfClass)
 	PrettyPrint(studentsOfClasses)
 	
 	for _ in studentsOfClasses:
@@ -480,7 +483,7 @@ if __name__ == '__main__':
 	PrettyPrint(statOfStudent)
 	
 	statOfClass = con.run(Select(StatOfClass))
-	PrettyPrint(StatOfClass)
+	PrettyPrint(statOfClass)
 	
 	statOfClass = con.run(
 		Select(StatOfClass).where(
@@ -496,3 +499,4 @@ if __name__ == '__main__':
 	con.run(Drop(Student))
 
 	con.commit()
+

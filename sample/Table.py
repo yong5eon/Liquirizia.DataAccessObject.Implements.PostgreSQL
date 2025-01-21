@@ -161,7 +161,8 @@ _ = con.run(
 		colTime=datetime.now().time(),
 		colVector=[1,2,3],
 		colDataModel=o,
-	)
+	),
+	fetch=SampleTable
 )
 
 PrettyPrint(_)
@@ -216,17 +217,18 @@ _.colVector=[4,5,6]
 _.colDataModel=o
 
 # SELECT
-_ = con.run(Select(SampleTable).to(SampleTable))
+_ = con.run(Select(SampleTable), fetch=SampleTable)
 PrettyPrint(_)
 
 # GET
-_ = con.run(Get(SampleTable).to(SampleTable))
+_ = con.run(Get(SampleTable), fetch=SampleTable)
 PrettyPrint(_)
 
 # DELETE
 _ = con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, 1)))
-_ = con.run(Select(SampleTable))
+_ = con.run(Select(SampleTable), fetch=SampleTable)
 PrettyPrint(_)
 
 con.run(Drop(SampleTable))
 con.commit()
+
