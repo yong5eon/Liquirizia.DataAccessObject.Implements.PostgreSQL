@@ -12,6 +12,8 @@ from .View import View
 from .Sequence import Sequence
 from .Constraint import Constraint
 from .Index import Index
+
+from .Expr import Expr
 from .Function import Function
 
 __all__ = (
@@ -25,5 +27,6 @@ __all__ = (
 	'Sequence',
 	'Constraint',
 	'Index',
+	'Expr',
 	'Function',
 )

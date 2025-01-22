@@ -9,8 +9,6 @@ from .Delete import Delete
 
 from .Get import Get
 
-from .Expr import Expr
-
 __all__ = (
 	'Create',
 	'Drop',
@@ -19,5 +17,4 @@ __all__ = (
 	'Update',
 	'Delete',
 	'Get',
-	'Expr',
 )

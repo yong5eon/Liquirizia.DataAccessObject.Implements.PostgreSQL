@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..Join import Join
+from .Join import Join
 
 from Liquirizia.DataModel import Model
 
@@ -8,13 +8,13 @@ from Liquirizia.DataModel import Model
 from typing import Type
 
 __all__ = (
-	'LeftOuter'
+	'Inner'
 )
 
 
-class LeftOuter(Join):
-	"""Left Outer Class"""
+class Inner(Join):
+	"""Inner Join Class"""
 
 	def __init__(self, table: Type[Model], *args) -> None:
-		super(LeftOuter, self).__init__('LEFT OUTER', table, *args)
+		super(Inner, self).__init__('INNER', table, *args)
 		return

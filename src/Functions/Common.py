@@ -3,7 +3,6 @@
 from ..Function import Function
 
 from ..Type import Type
-from ..Executors import Expr
 
 from typing import Union
 

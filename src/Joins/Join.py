@@ -2,7 +2,7 @@
 
 from Liquirizia.DataModel import Model
 
-from .Expr import Expr
+from ..Expr import Expr
 
 from typing import Type
 

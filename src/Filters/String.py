@@ -2,7 +2,7 @@
 
 from ..Expr import Expr
 
-from ...Type import Type
+from ..Type import Type
 
 from typing import Union
 
