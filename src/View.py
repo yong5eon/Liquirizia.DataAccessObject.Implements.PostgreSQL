@@ -3,7 +3,9 @@
 from Liquirizia.DataModel import Model, Handler
 from Liquirizia.DataModel.Format import Object
 
-from Liquirizia.DataAccessObject.Properties.Database import Executor, Executors
+from Liquirizia.DataAccessObject.Properties.Database import Executor
+
+from .Schema import Schema
 
 __all__ = (
 	'View'
@@ -34,11 +36,14 @@ class View(Model):
 		cls,
 		executor: Executor,
 		name: str = None,
-		schema: str = 'public',
+		schema: Schema = None,
 		description: str = None,
 		format: Object = None,
 		fn: Handler = None,
 	):
-		cls.__model__ = '{}.{}'.format(schema, name if name else cls.__name__)
+		cls.__model__ = '{}{}'.format(
+			'{}.'.format(str(schema)) if schema else '',
+			name if name else cls.__name__,
+		)
 		cls.__executor__ = executor
 		return super().__init_subclass__(description, format, fn)
