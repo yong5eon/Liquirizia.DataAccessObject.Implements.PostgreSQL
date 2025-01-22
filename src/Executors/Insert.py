@@ -3,7 +3,6 @@
 from Liquirizia.DataAccessObject.Properties.Database import (
 	Executor,
 	Fetch,
-	Mapper,
 	Filter,
 )
 from Liquirizia.DataModel import Model
@@ -74,9 +73,8 @@ class Insert(Executor, Fetch):
 			kwargs.update(self.onkwargs)
 		return kwargs
 
-	def fetch(self, cursor: Cursor, mapper: Mapper = None, filter: Filter = None, fetch: T[Model] = None):
+	def fetch(self, cursor: Cursor, filter: Filter = None, fetch: T[Model] = None):
 		row = cursor.row()
-		if mapper: row = {mapper(k): v for k, v in row.items()}
 		if filter: row = filter(row)
 		if fetch:
 			obj = fetch(**row)
@@ -85,4 +83,3 @@ class Insert(Executor, Fetch):
 			return obj
 		else:
 			return row
-

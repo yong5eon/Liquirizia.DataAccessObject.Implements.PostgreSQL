@@ -3,6 +3,7 @@
 from Liquirizia.Test import *
 
 from Liquirizia.DataAccessObject import Helper
+from Liquirizia.DataAccessObject.Properties.Database import Filter
 
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
@@ -14,55 +15,10 @@ from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Joins import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors.Exprs import *
 
+from Liquirizia.DataModel import Handler
 
-from Liquirizia.DataModel import Model, Value, Handler
-from Liquirizia.Validator import Validator, Pattern
-from Liquirizia.Validator.Patterns import (
-	IsToNone,
-	IsBool,
-	IsInteger,
-	IsFloat,
-	IsDecimal,
-	IsString,
-	IsList,
-	IsDictionary,
-	IsDateTime,
-	IsDate,
-	IsTime,
-	If,
-	ToDecimal,
-)
-
-from datetime import datetime, date, time
-from time import mktime
+from datetime import datetime, date
 from decimal import Decimal
-from copy import deepcopy
-
-
-class StrToDateTime(Pattern):
-	def __call__(self, parameter):
-		return datetime.fromisoformat(parameter)
-
-class StrToDate(Pattern):
-	def __call__(self, parameter):
-		return date.fromisoformat(parameter)
-	
-class StrToTime(Pattern):
-	def __call__(self, parameter):
-		return time.fromisoformat(parameter)
-
-
-class SampleModel(Model):
-	attrBool : bool = Value(Validator(IsToNone(IsBool())))
-	attrInteger : int = Value(Validator(IsToNone(IsInteger())))
-	attrFloat : float = Value(Validator(IsToNone(IsFloat())))
-	attrDecimal : Decimal = Value(Validator(IsToNone(If(IsString(ToDecimal())),IsDecimal())))
-	attrString : str = Value(Validator(IsToNone(IsString())))
-	attrList : list = Value(Validator(IsToNone(IsList())))
-	attrDictionary : dict = Value(Validator(IsToNone(IsDictionary())))
-	attrDateTime : datetime = Value(Validator(IsToNone(If(IsString(StrToDateTime())),IsDateTime())))
-	attrDate : date = Value(Validator(IsToNone(If(IsString(StrToDate())),IsDate())))
-	attrTime : time = Value(Validator(IsToNone(If(IsString(StrToTime())),IsTime())))
 
 
 class SampleTableUpdated(Handler):
@@ -100,7 +56,6 @@ class SampleTable(
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
 	colVector : list = VECTOR('COL_VECTOR', size=3, null=True)
-	colDataModel : Model = JSON('COL_DATAMODEL', null=True)
 
 
 class TestTable(Case):
@@ -146,317 +101,171 @@ class TestTable(Case):
 		self.con.run(Drop(SampleTable))
 		return
 
+	@Parameterized(
+		{'i': {
+			'colBool': True,
+			'colShort': 1,
+			'colInteger': 2,
+			'colLong': 3,
+			'colFloat': 4.0,
+			'colDecimal': Decimal(5.0),
+			'colChar': 'C',
+			'colString': 'String',
+			'colText': 'Text',
+			'colList': [1,2,3],
+			'colDictionary': {'a': 1, 'b': 2},
+			'colTimestamp': datetime.now(),
+			'colDate': datetime.now().date(),
+			'colTime': datetime.now().time(),
+			'colVector': [1,2,3],
+		}, 'status': True},
+	)
 	@Order(3)
-	def testInsert(self):
+	def testInsert(self, i, status):
 		self.con.run(Create(SampleTable))
-		o = SampleModel(
-			attrBool=True,
-			attrInteger=0,
-			attrFloat=0.0,
-			attrDecimal=Decimal(0.0),
-			attrString='String',
-			attrList=[0,2,3],
-			attrDictionary={
-				'Bool': True,
-				'Integer': 0,
-				'Float': 0.0,
-				'Decimal': Decimal(0.0),
-				'String': 'String',
-				'List': [0,2,3],
-				'Dictionary': {
-					'Bool': True,
-					'Integer': 0,
-					'Float': 0.0,
-					'Decimal': Decimal(0.0),
-					'String': 'String',
-				}
-			},
-			attrDateTime=datetime.now(),
-			attrDate=datetime.now().date(),
-			attrTime=datetime.now().time(),
-		)
-		inserted = self.con.run(Insert(SampleTable).values(
-			colBool=True,
-			colShort=1,
-			colInteger=2,
-			colLong=3,
-			colFloat=4.0,
-			colDecimal=Decimal(5.0),
-			colChar='C',
-			colString='String',
-			colText='Text',
-			colList=[1,2,3],
-			colDictionary={'a': 1, 'b': 2},
-			colTimestamp=datetime.now(),
-			colDate=datetime.now().date(),
-			colTime=datetime.now().time(),
-			colVector=[1,2,3],
-			colDataModel=o,
-		), fetch=SampleTable)
-		# ASSERT
-		ASSERT_IS_NOT_NONE(inserted)
-		ASSERT_IS_EQUAL(inserted.colBool, True)
-		ASSERT_IS_EQUAL(inserted.colShort, 1)
-		ASSERT_IS_EQUAL(inserted.colInteger, 2)
-		ASSERT_IS_EQUAL(inserted.colLong, 3)
-		ASSERT_IS_EQUAL(inserted.colFloat, 4.0)
-		ASSERT_IS_EQUAL(inserted.colDecimal, Decimal(5.0))
-		ASSERT_IS_EQUAL(inserted.colChar, 'C')
-		ASSERT_IS_EQUAL(inserted.colString, 'String')
-		ASSERT_IS_EQUAL(inserted.colText, 'Text')
-		ASSERT_IS_EQUAL(list(inserted.colList), [1,2,3])
-		ASSERT_IS_EQUAL(dict(inserted.colDictionary), {'a':1, 'b': 2})
-		ASSERT_IS_EQUAL(list(inserted.colVector), [1,2,3])
-		# ASSERT_IS_EQUAL(inserted.colDataModel, o)
+		try:
+			_ = self.con.run(Insert(SampleTable).values(**i), fetch=SampleTable)
+		finally:
+			if status:
+				ASSERT_IS_NOT_NONE(_)
+			else:
+				ASSERT_IS_NONE(_)
 		return
 
+	@Parameterized(
+		{
+			'i': {
+				'colBool': True,
+				'colShort': 1,
+				'colInteger': 2,
+				'colLong': 3,
+				'colFloat': 4.0,
+				'colDecimal': Decimal(5.0),
+				'colChar': 'C',
+				'colString': 'String',
+				'colText': 'Text',
+				'colList': [1,2,3],
+				'colDictionary': {'a': 1, 'b': 2},
+				'colTimestamp': datetime.now(),
+				'colDate': datetime.now().date(),
+				'colTime': datetime.now().time(),
+				'colVector': [1,2,3],
+			},
+			'u': {
+				'colBool': False,
+				'colShort': 2,
+				'colInteger': 3,
+				'colLong': 4,
+				'colFloat': 5.0,
+				'colDecimal': Decimal(6.0),
+				'colChar': 'c',
+				'colString': 'string',
+				'colText': 'text',
+				'colList': [4,5,6],
+				'colDictionary': {'a': 3, 'b': 4},
+				'colTimestamp': datetime.now(),
+				'colDate': datetime.now().date(),
+				'colTime': datetime.now().time(),
+				'colVector': [4,5,6],
+			},
+			'status': True
+		},
+	)
 	@Order(4)
-	def testUpdate(self):
+	def testUpdate(self, i, u, status):
 		self.con.run(Create(SampleTable))
-		o = SampleModel(
-			attrBool=True,
-			attrInteger=0,
-			attrFloat=0.0,
-			attrDecimal=Decimal(0.0),
-			attrString='String',
-			attrList=[0,2,3],
-			attrDictionary={
-				'Bool': True,
-				'Integer': 0,
-				'Float': 0.0,
-				'Decimal': Decimal(0.0),
-				'String': 'String',
-				'List': [0,2,3],
-				'Dictionary': {
-					'Bool': True,
-					'Integer': 0,
-					'Float': 0.0,
-					'Decimal': Decimal(0.0),
-					'String': 'String',
-				}
-			},
-			attrDateTime=datetime.now(),
-			attrDate=datetime.now().date(),
-			attrTime=datetime.now().time(),
-		)
-		inserted = self.con.run(Insert(SampleTable).values(
-			colBool=True,
-			colShort=1,
-			colInteger=2,
-			colLong=3,
-			colFloat=4.0,
-			colDecimal=Decimal(5.0),
-			colChar='C',
-			colString='String',
-			colText='Text',
-			colList=[1,2,3],
-			colDictionary={'a': 1, 'b': 2},
-			colTimestamp=datetime.now(),
-			colDate=datetime.now().date(),
-			colTime=datetime.now().time(),
-			colVector=[1,2,3],
-			colDataModel=o,
-		), fetch=SampleTable)
-		o = SampleModel(
-			attrBool=False,
-			attrInteger=2,
-			attrFloat=2.0,
-			attrDecimal=Decimal(2.0),
-			attrString='string',
-			attrList=[4,5,6],
-			attrDictionary={
-				'Bool': False,
-				'Integer': 2,
-				'Float': 2.0,
-				'Decimal': Decimal(2.0),
-				'String': 'string',
-				'List': [4,5,6],
-				'Dictionary': {
-					'Bool': False,
-					'Integer': 2,
-					'Float': 2.0,
-					'Decimal': Decimal(2.0),
-					'String': 'string',
-				}
-			},
-			attrDateTime=datetime.now(),
-			attrDate=datetime.now().date(),
-			attrTime=datetime.now().time(),
-		)
-		updated = self.con.run(Update(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)).set(
-			colBool=False,
-			colShort=2,
-			colInteger=3,
-			colLong=4,
-			colFloat=5.0,
-			colDecimal=Decimal(6.0),
-			colChar='c',
-			colString='string',
-			colText='text',
-			colList=[4,5,6],
-			colDictionary={'a': 3, 'b': 4},
-			colTimestamp=datetime.now(),
-			colDate=datetime.now().date(),
-			colTime=datetime.now().time(),
-			colVector=[4,5,6],
-			colDataModel=o,
-		), fetch=SampleTable)
-		# ASSERT
-		ASSERT_IS_NOT_NONE(inserted)
-		ASSERT_IS_NOT_NONE(updated)
-		ASSERT_IS_NOT_EQUAL(inserted.colBool, updated.colBool)
-		ASSERT_IS_NOT_EQUAL(inserted.colShort, updated.colShort)
-		ASSERT_IS_NOT_EQUAL(inserted.colInteger, updated.colInteger)
-		ASSERT_IS_NOT_EQUAL(inserted.colLong, updated.colLong)
-		ASSERT_IS_NOT_EQUAL(inserted.colFloat, updated.colFloat)
-		ASSERT_IS_NOT_EQUAL(inserted.colDecimal, updated.colDecimal)
-		ASSERT_IS_NOT_EQUAL(inserted.colChar, updated.colChar)
-		ASSERT_IS_NOT_EQUAL(inserted.colString, updated.colString)
-		ASSERT_IS_NOT_EQUAL(inserted.colText, updated.colText)
-		ASSERT_IS_NOT_EQUAL(inserted.colList, updated.colList)
-		ASSERT_IS_NOT_EQUAL(inserted.colDictionary, updated.colDictionary)
-		ASSERT_IS_NOT_EQUAL(inserted.colVector, updated.colVector)
-		ASSERT_IS_NOT_EQUAL(inserted.colDataModel, updated.colDataModel)
+		try:
+			_ = self.con.run(Insert(SampleTable).values(**i), fetch=SampleTable)
+			_ = self.con.run(Update(SampleTable).where(IsEqualTo(SampleTable.id, _.id)).set(**u), fetch=SampleTable)
+		finally:
+			if status:
+				ASSERT_IS_NOT_NONE(_)
+			else:
+				ASSERT_IS_NONE(_)
 		return
 
+	@Parameterized(
+		{
+			'i': {
+				'colBool': True,
+				'colShort': 1,
+				'colInteger': 2,
+				'colLong': 3,
+				'colFloat': 4.0,
+				'colDecimal': Decimal(5.0),
+				'colChar': 'C',
+				'colString': 'String',
+				'colText': 'Text',
+				'colList': [1,2,3],
+				'colDictionary': {'a': 1, 'b': 2},
+				'colTimestamp': datetime.now(),
+				'colDate': datetime.now().date(),
+				'colTime': datetime.now().time(),
+				'colVector': [1,2,3],
+			},
+			'u': {
+				'colBool': False,
+				'colShort': 2,
+				'colInteger': 3,
+				'colLong': 4,
+				'colFloat': 5.0,
+				'colDecimal': Decimal(6.0),
+				'colChar': 'c',
+				'colString': 'string',
+				'colText': 'text',
+				'colList': [4,5,6],
+				'colDictionary': {'a': 3, 'b': 4},
+				'colTimestamp': datetime.now(),
+				'colDate': datetime.now().date(),
+				'colTime': datetime.now().time(),
+				'colVector': [4,5,6],
+			},
+		},
+	)
 	@Order(5)
-	def testUpdateWithHandler(self):
+	def testUpdateWithHandler(self, i, u):
 		self.con.run(Create(SampleTable))
-		o = SampleModel(
-			attrBool=True,
-			attrInteger=0,
-			attrFloat=0.0,
-			attrDecimal=Decimal(0.0),
-			attrString='String',
-			attrList=[0,2,3],
-			attrDictionary={
-				'Bool': True,
-				'Integer': 0,
-				'Float': 0.0,
-				'Decimal': Decimal(0.0),
-				'String': 'String',
-				'List': [0,2,3],
-				'Dictionary': {
-					'Bool': True,
-					'Integer': 0,
-					'Float': 0.0,
-					'Decimal': Decimal(0.0),
-					'String': 'String',
-				}
-			},
-			attrDateTime=datetime.now(),
-			attrDate=datetime.now().date(),
-			attrTime=datetime.now().time(),
-		)
-		inserted = self.con.run(Insert(SampleTable).values(
-			colBool=True,
-			colShort=1,
-			colInteger=2,
-			colLong=3,
-			colFloat=4.0,
-			colDecimal=Decimal(5.0),
-			colChar='C',
-			colString='String',
-			colText='Text',
-			colList=[1,2,3],
-			colDictionary={'a': 1, 'b': 2},
-			colTimestamp=datetime.now(),
-			colDate=datetime.now().date(),
-			colTime=datetime.now().time(),
-			colVector=[1,2,3],
-			colDataModel=o,
-		), fetch=SampleTable)
-		o = SampleModel(
-			attrBool=False,
-			attrInteger=2,
-			attrFloat=2.0,
-			attrDecimal=Decimal(2.0),
-			attrString='string',
-			attrList=[4,5,6],
-			attrDictionary={
-				'Bool': False,
-				'Integer': 2,
-				'Float': 2.0,
-				'Decimal': Decimal(2.0),
-				'String': 'string',
-				'List': [4,5,6],
-				'Dictionary': {
-					'Bool': False,
-					'Integer': 2,
-					'Float': 2.0,
-					'Decimal': Decimal(2.0),
-					'String': 'string',
-				}
-			},
-			attrDateTime=datetime.now(),
-			attrDate=datetime.now().date(),
-			attrTime=datetime.now().time(),
-		)
-		inserted.colBool=False
-		inserted.colShort=2
-		inserted.colInteger=3
-		inserted.colLong=4
-		inserted.colFloat=5.0
-		inserted.colDecimal=Decimal(6.0)
-		inserted.colChar='c'
-		inserted.colString='string'
-		inserted.colText='text'
-		inserted.colList=[4,5,6]
-		inserted.colDictionary={'a': 3, 'b': 4}
-		inserted.colTimestamp=datetime.now()
-		inserted.colDate=datetime.now().date()
-		inserted.colTime=datetime.now().time()
-		inserted.colVector=[4,5,6]
-		inserted.colDataModel=o
-		# ASSERT
-		updated = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)), fetch=SampleTable)
-		ASSERT_IS_NOT_NONE(inserted)
-		ASSERT_IS_NOT_NONE(updated)
-		ASSERT_IS_EQUAL(inserted.colBool, updated.colBool)
-		ASSERT_IS_EQUAL(inserted.colShort, updated.colShort)
-		ASSERT_IS_EQUAL(inserted.colInteger, updated.colInteger)
-		ASSERT_IS_EQUAL(inserted.colLong, updated.colLong)
-		ASSERT_IS_EQUAL(inserted.colFloat, updated.colFloat)
-		ASSERT_IS_EQUAL(inserted.colDecimal, updated.colDecimal)
-		ASSERT_IS_EQUAL(inserted.colChar, updated.colChar)
-		ASSERT_IS_EQUAL(inserted.colString, updated.colString)
-		ASSERT_IS_EQUAL(inserted.colText, updated.colText)
-		ASSERT_IS_EQUAL(list(inserted.colList), list(updated.colList))
-		ASSERT_IS_EQUAL(dict(inserted.colDictionary), dict(updated.colDictionary))
-		ASSERT_IS_EQUAL(list(inserted.colVector), list(updated.colVector))
-		# ASSERT_IS_EQUAL(inserted.colDataModel, updated.colDataModel)
+		try:
+			_ = self.con.run(Insert(SampleTable).values(**i), fetch=SampleTable)
+			_.colBool=u['colBool']
+			_.colShort=u['colShort']
+			_.colInteger=u['colInteger']
+			_.colLong=u['colLong']
+			_.colFloat=u['colFloat']
+			_.colDecimal=u['colDecimal']
+			_.colChar=u['colChar']
+			_.colString=u['colString']
+			_.colText=u['colText']
+			_.colList=u['colList']
+			_.colDictionary=u['colDictionary']
+			_.colTimestamp=u['colTimestamp']
+			_.colDate=u['colDate']
+			_.colTime=u['colTime']
+			_.colVector=u['colVector']
+			_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
+		finally:
+			ASSERT_IS_NOT_NONE(_)
+			ASSERT_IS_EQUAL(_.colBool, u['colBool'])
+			ASSERT_IS_EQUAL(_.colShort, u['colShort'])
+			ASSERT_IS_EQUAL(_.colInteger, u['colInteger'])
+			ASSERT_IS_EQUAL(_.colLong, u['colLong'])
+			ASSERT_IS_EQUAL(_.colFloat, u['colFloat'])
+			ASSERT_IS_EQUAL(_.colDecimal, u['colDecimal'])
+			ASSERT_IS_EQUAL(_.colChar, u['colChar'])
+			ASSERT_IS_EQUAL(_.colString, u['colString'])
+			ASSERT_IS_EQUAL(_.colText, u['colText'])
+			ASSERT_IS_EQUAL(list(_.colList), u['colList'])
+			ASSERT_IS_EQUAL(dict(_.colDictionary), u['colDictionary'])
+			ASSERT_IS_EQUAL(_.colTimestamp, u['colTimestamp'])
+			ASSERT_IS_EQUAL(_.colDate, u['colDate'])
+			ASSERT_IS_EQUAL(_.colTime, u['colTime'])
+			ASSERT_IS_EQUAL(list(_.colVector), u['colVector'])
 		return
 
 	@Order(6)
 	def testDelete(self):
 		self.con.run(Create(SampleTable))
-		o = SampleModel(
-			attrBool=False,
-			attrInteger=2,
-			attrFloat=2.0,
-			attrDecimal=Decimal(2.0),
-			attrString='string',
-			attrList=[4,5,6],
-			attrDictionary={
-				'Bool': False,
-				'Integer': 2,
-				'Float': 2.0,
-				'Decimal': Decimal(2.0),
-				'String': 'string',
-				'List': [4,5,6],
-				'Dictionary': {
-					'Bool': False,
-					'Integer': 2,
-					'Float': 2.0,
-					'Decimal': Decimal(2.0),
-					'String': 'string',
-				}
-			},
-			attrDateTime=datetime.now(),
-			attrDate=datetime.now().date(),
-			attrTime=datetime.now().time(),
-		)
-		inserted = self.con.run(Insert(SampleTable).values(
+		_ = self.con.run(Insert(SampleTable).values(
 			colBool=True,
 			colShort=1,
 			colInteger=2,
@@ -472,18 +281,43 @@ class TestTable(Case):
 			colDate=datetime.now().date(),
 			colTime=datetime.now().time(),
 			colVector=[1,2,3],
-			colDataModel=o,
-			colDataModelBool=o.attrBool,
-			colDataModelInteger=o.attrInteger,
-			colDataModelFloat=o.attrFloat,
-			colDataModelDecimal=o.attrDecimal,
-			colDataModelString=o.attrString,
-			colDataModelList=o.attrList,
-			colDataModelDictionary=dict(o.attrDictionary),
 		), fetch=SampleTable)
-		self.con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)))
-		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)), fetch=SampleTable)
+		ASSERT_IS_NOT_NONE(_)
+		self.con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, _.id)))
+		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NONE(_)
 		return
 	
+	@Order(7)
+	def testGet(self):
+		self.con.run(Create(SampleTable))
+		_ = self.con.run(Insert(SampleTable).values(
+			colBool=True,
+			colShort=1,
+			colInteger=2,
+			colLong=3,
+			colFloat=4.0,
+			colDecimal=Decimal(5.0),
+			colChar='C',
+			colString='String',
+			colText='Text',
+			colList=[1,2,3],
+			colDictionary={'a': 1, 'b': 2},
+			colTimestamp=datetime.now(),
+			colDate=datetime.now().date(),
+			colTime=datetime.now().time(),
+			colVector=[1,2,3],
+		), fetch=SampleTable)
+		# ASSERT
+		ASSERT_IS_NOT_NONE(_)
+		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
+		ASSERT_IS_NOT_NONE(_)
+		class RowFilter(Filter):
+			def __call__(self, row):
+				return {
+					'id': row['id'],
+				}
+		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), filter=RowFilter())
+		ASSERT_IS_NOT_NONE(_)
+		return
