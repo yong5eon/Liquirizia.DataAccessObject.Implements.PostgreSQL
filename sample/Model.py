@@ -2,6 +2,8 @@
 
 from Liquirizia.DataAccessObject import Helper
 
+from Liquirizia.DataAccessObject.Properties.Database import Filter
+
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
@@ -27,6 +29,7 @@ from random import randrange, sample
 from datetime import datetime
 from decimal import Decimal as decimal, Context as context
 
+from typing import Dict
 
 # table
 class StudentUpdated(Handler):
@@ -464,7 +467,16 @@ if __name__ == '__main__':
 			Ascend(Sum(StudentOfClass.score)),
 		).limit(0, 10)
 
-	PrettyPrint(con.run(exec))
+	class RowFilter(Filter):
+		def __call__(self, row: Dict) -> Dict:
+			return {
+				'id': row['student'],
+				'name': row['name'],
+				'sum': row['sum'],
+				'avg': row['avg'],
+				'updated': max(row['at_created'].isoformat(), row['at_updated'].isoformat()),
+			}
+	PrettyPrint(con.run(exec, filter=RowFilter()))
 
 	con.run(Delete(StudentOfClass).where(
 		IsEqualTo(StudentOfClass.studentName, 'Song Hahee')
