@@ -18,7 +18,7 @@ from datetime import datetime
 
 class SampleModel(
 	Table,
-	table='SAMPLE',
+	name='SAMPLE',
 	sequences=(
 		Sequence(name='SEQ_SAMPLE', type=INT),
 	),
