@@ -75,7 +75,7 @@ class SampleTableUpdated(Handler):
 		return
 class SampleTable(
 	Table,
-	table='SAMPLE',
+	name='SAMPLE',
 	sequences=(
 		Sequence('SEQ_SAMPLE', type=INT)
 	),

@@ -47,7 +47,7 @@ class StudentUpdated(Handler):
 		return
 class Student(
 	Table,
-	table='STUDENT',
+	name='STUDENT',
 	sequences=(
 		Sequence(name='SEQ_STUDENT', type=INT),
 	),
@@ -91,7 +91,7 @@ class ClassUpdated(Handler):
 		return
 class Class(
 	Table,
-	table='CLASS',
+	name='CLASS',
 	sequences=(
 		Sequence('SEQ_CLASS', type=INT),
 	),
@@ -135,7 +135,7 @@ class StudentClassUpdated(Handler):
 		return
 class StudentOfClass(
 	Table,
-	table='STUDENT_CLASS',
+	name='STUDENT_CLASS',
 	constraints=(
 		PrimaryKey(name='PK_STUDENT_CLASS', cols=('STUDENT', 'CLASS')),
 		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols='STUDENT', reference='STUDENT', referenceCols='ID'),
@@ -169,7 +169,7 @@ class StudentOfClass(
 # View 
 class StatOfStudent(
 	View,
-	view='STAT_STUDENT',
+	name='STAT_STUDENT',
 	executor=Select(Student).join(
 		LeftOuter(StudentOfClass, IsEqualTo(Student.id, StudentOfClass.studentId)),
 		LeftOuter(Class, IsEqualTo(StudentOfClass.classId, Class.id)),
@@ -200,7 +200,7 @@ class StatOfStudent(
 
 class StatOfClass(
 	View,
-	view='STAT_CLASS',
+	name='STAT_CLASS',
 	executor=Select(Class).join(
 		LeftOuter(StudentOfClass, IsEqualTo(Class.id, StudentOfClass.classId)),
 		LeftOuter(Student), IsEqualTo(StudentOfClass.studentId, Student.id)
@@ -263,10 +263,10 @@ if __name__ == '__main__':
 	con.run(Create(StatOfClass))
 
 	STUDENT = [
-		['SU970001', 'Koo Hayoon', 'Connection.py'],
-		['SU970002', 'Ma Youngin', 'Connection.py'],
-		['SU970003', 'Kang Miran', 'Connection.py'],
-		['SU970004', 'Song Hahee', 'Connection.py'],
+		['SU970001', 'Koo Hayoon', 'README.md'],
+		['SU970002', 'Ma Youngin', 'README.md'],
+		['SU970003', 'Kang Miran', 'README.md'],
+		['SU970004', 'Song Hahee', 'README.md'],
 	]
 
 	CLASS = [

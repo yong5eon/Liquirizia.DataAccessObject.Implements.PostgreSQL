@@ -33,12 +33,12 @@ class View(Model):
 	def __init_subclass__(
 		cls,
 		executor: Executor,
-		view: str = None,
-		schema: str = 'PUBLIC',
+		name: str = None,
+		schema: str = 'public',
 		description: str = None,
 		format: Object = None,
 		fn: Handler = None,
 	):
-		cls.__model__ = '{}.{}'.format(schema, view if view else cls.__name__)
+		cls.__model__ = '{}.{}'.format(schema, name if name else cls.__name__)
 		cls.__executor__ = executor
 		return super().__init_subclass__(description, format, fn)
