@@ -6,6 +6,7 @@ from .Context import Context
 from .Cursor import Cursor
 from .Session import Session
 
+from .Schema import Schema
 from .Table import Table
 from .View import View
 
@@ -22,6 +23,7 @@ __all__ = (
 	'Context',
 	'Cursor',
 	'Session',
+	'Schema',
 	'Table',
 	'View',
 	'Sequence',
