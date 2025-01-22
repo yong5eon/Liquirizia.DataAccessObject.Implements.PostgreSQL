@@ -430,26 +430,53 @@ class TestTable(Case):
 	@Order(6)
 	def testDelete(self):
 		self.con.run(Create(SampleTable))
+		_ = self.con.run(Insert(SampleTable).values(
+			colBool=True,
+			colShort=1,
+			colInteger=2,
+			colLong=3,
+			colFloat=4.0,
+			colDecimal=Decimal(5.0),
+			colChar='C',
+			colString='String',
+			colText='Text',
+			colList=[1,2,3],
+			colDictionary={'a': 1, 'b': 2},
+			colTimestamp=datetime.now(),
+			colDate=datetime.now().date(),
+			colTime=datetime.now().time(),
+			colVector=[1,2,3],
+		), fetch=SampleTable)
+		ASSERT_IS_NOT_NONE(_)
+		self.con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, _.id)))
+		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
+		# ASSERT
+		ASSERT_IS_NONE(_)
+		return
+	
+	@Order(7)
+	def testSelect(self):
+		self.con.run(Create(SampleTable))
 		o = SampleModel(
-			attrBool=False,
-			attrInteger=2,
-			attrFloat=2.0,
-			attrDecimal=Decimal(2.0),
-			attrString='string',
-			attrList=[4,5,6],
+			attrBool=True,
+			attrInteger=0,
+			attrFloat=0.0,
+			attrDecimal=Decimal(0.0),
+			attrString='String',
+			attrList=[0,2,3],
 			attrDictionary={
-				'Bool': False,
-				'Integer': 2,
-				'Float': 2.0,
-				'Decimal': Decimal(2.0),
-				'String': 'string',
-				'List': [4,5,6],
+				'Bool': True,
+				'Integer': 0,
+				'Float': 0.0,
+				'Decimal': Decimal(0.0),
+				'String': 'String',
+				'List': [0,2,3],
 				'Dictionary': {
-					'Bool': False,
-					'Integer': 2,
-					'Float': 2.0,
-					'Decimal': Decimal(2.0),
-					'String': 'string',
+					'Bool': True,
+					'Integer': 0,
+					'Float': 0.0,
+					'Decimal': Decimal(0.0),
+					'String': 'String',
 				}
 			},
 			attrDateTime=datetime.now(),
@@ -473,17 +500,20 @@ class TestTable(Case):
 			colTime=datetime.now().time(),
 			colVector=[1,2,3],
 			colDataModel=o,
-			colDataModelBool=o.attrBool,
-			colDataModelInteger=o.attrInteger,
-			colDataModelFloat=o.attrFloat,
-			colDataModelDecimal=o.attrDecimal,
-			colDataModelString=o.attrString,
-			colDataModelList=o.attrList,
-			colDataModelDictionary=dict(o.attrDictionary),
 		), fetch=SampleTable)
-		self.con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)))
-		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, inserted.id)), fetch=SampleTable)
 		# ASSERT
-		ASSERT_IS_NONE(_)
+		ASSERT_IS_NOT_NONE(inserted)
+		ASSERT_IS_EQUAL(inserted.colBool, True)
+		ASSERT_IS_EQUAL(inserted.colShort, 1)
+		ASSERT_IS_EQUAL(inserted.colInteger, 2)
+		ASSERT_IS_EQUAL(inserted.colLong, 3)
+		ASSERT_IS_EQUAL(inserted.colFloat, 4.0)
+		ASSERT_IS_EQUAL(inserted.colDecimal, Decimal(5.0))
+		ASSERT_IS_EQUAL(inserted.colChar, 'C')
+		ASSERT_IS_EQUAL(inserted.colString, 'String')
+		ASSERT_IS_EQUAL(inserted.colText, 'Text')
+		ASSERT_IS_EQUAL(list(inserted.colList), [1,2,3])
+		ASSERT_IS_EQUAL(dict(inserted.colDictionary), {'a':1, 'b': 2})
+		ASSERT_IS_EQUAL(list(inserted.colVector), [1,2,3])
+		# ASSERT_IS_EQUAL(inserted.colDataModel, o)
 		return
-	
