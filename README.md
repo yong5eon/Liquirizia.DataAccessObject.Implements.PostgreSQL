@@ -2,14 +2,12 @@
 
 DataAccessObject of PostgreSQL for Liquirizia
 
-## 일반적인 사용 방법
+## 예제
 
-- [샘플 코드](sample/Sample.py)
-
-## 데이터 모델과 함께 사용
-
-- [샘플 코드](sample/Sample.Model.py)
-- [타입 샘플 코드](sample/Sample.Model.Type.py)
+- [연결 및 실행 예제](sample/Connection.py)
+- [테이블과 데이터 유형 예제](sample/Table.py)
+- [표현식 예제](sample/Expression.py)
+- [모델링 예제](sample/Model.py)
 
 ## 도커 빌드 및 실행
 
