@@ -10,6 +10,7 @@ from .Schema import Schema
 from .Table import Table
 from .View import View
 from .Column import Column
+from .Value import Value
 
 from .Sequence import Sequence
 from .Constraint import Constraint
@@ -28,6 +29,7 @@ __all__ = (
 	'Table',
 	'View',
 	'Column',
+	'Value',
 	'Sequence',
 	'Constraint',
 	'Index',

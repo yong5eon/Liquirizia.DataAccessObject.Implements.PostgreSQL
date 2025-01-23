@@ -28,7 +28,7 @@ class ColumnToSQL(object):
 			col.key,
 			col.type,
 			' NOT NULL' if not col.null else '',
-			' DEFAULT {}'.format(col.default) if col.default is not None else '',
+			' DEFAULT {}'.format(col.typedefault) if col.typedefault is not None else '',
 		)
 
 class PrimaryKeyToSQL(object):

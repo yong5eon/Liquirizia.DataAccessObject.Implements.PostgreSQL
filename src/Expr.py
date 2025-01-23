@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod
 
 __all__ = (
 	'Expr'
 )
 
 
-class Expr(ABC, metaclass=ABCMeta):
+class Expr(metaclass=ABCMeta):
 	"""Filter Interface"""
-	
-	def encode(self, o):
-		try:
-			if isinstance(o, str): return '\'{}\''.format(o)
-			return o
-		except Exception as e:
-			return o
-
 	@abstractmethod
 	def __str__(self):
 		raise NotImplementedError('{} must be implemented __str__'.format(self.__class__.__name__))

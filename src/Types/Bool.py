@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Type import Type
+from ..Function import Function
+from ..Value import Value
 
 from Liquirizia.DataModel import Handler
 
@@ -9,9 +11,8 @@ from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
 	IsBool,
+	SetDefault,
 )
-
-from ..Function import Function
 
 from typing import Union
 
@@ -25,21 +26,40 @@ class Bool(Type, typestr='BOOLEAN'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[bool, Function] = None,
+			default: Union[bool, Value, Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsBool()))
+				vargs.append(IsToNone(IsBool()))
 			else:
-				va = Validator(IsNotToNone(IsBool()))
+				vargs.append(IsNotToNone(IsBool()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='BOOLEAN',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va, 
 			fn=fn,

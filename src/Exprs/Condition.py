@@ -4,6 +4,7 @@ from ..Expr import Expr
 from ..Function import Function
 from ..Type import Type
 from ..Column import Column
+from ..Value import Value
 
 from typing import Union, Sequence, Any
 
@@ -18,17 +19,25 @@ class In(Expr):
 	def __init__(
 		self,
 		col: Union[Column, Type],
-		args: Sequence[Any],
+		args: Sequence[Union[Any, Value, Function, Expr]] = None,
 	):
 		self.col = col
-		self.args = list(args) if isinstance(args, (list, tuple)) else [args]
+		self.args = []
+		if args:
+			args = args if isinstance(args, (list, tuple)) else [args]
+			for arg in args:
+				if not isinstance(arg, (Value, Function, Expr)):
+					arg = Value(arg)
+				self.args.append(arg)
 		return
 	def __str__(self):
 		return '{} IN ({})'.format(
 			str(self.col),
-			', '.join([self.encode(arg) for arg in self.args])
+			', '.join([str(arg) for arg in self.args])
 		)
-	def add(self, arg: Any):
+	def where(self, arg: Union[Any, Value, Function, Expr]):
+		if not isinstance(arg, (Value, Function, Expr)):
+			arg = Value(arg)
 		self.args.append(arg)
 		return self
 

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Type import Type
+from ..Function import Function
+from ..Value import Value
 
 from Liquirizia.DataModel import Handler
 
@@ -11,9 +13,8 @@ from Liquirizia.Validator.Patterns import (
 	IsArray,
 	If,
 	IsString,
+	SetDefault,
 )
-
-from ..Function import Function
 
 from typing import Union, Sequence
 
@@ -37,10 +38,28 @@ class Vector(Type, typestr='VECTOR'):
 			def __call__(self, parameter):
 				return eval(parameter)
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(If(IsString(Eval())), IsArray()))
+				vargs.append(IsToNone(If(IsString(Eval())), IsArray()))
 			else:
-				va = Validator(IsNotToNone(If(IsString(Eval())), IsArray()))
+				vargs.append(IsNotToNone(If(IsString(Eval())), IsArray()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		args = None
 		if size:
 			args = []
@@ -49,8 +68,9 @@ class Vector(Type, typestr='VECTOR'):
 		super().__init__(
 			key=name, 
 			type='{}({})'.format('VECTOR', size),
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,

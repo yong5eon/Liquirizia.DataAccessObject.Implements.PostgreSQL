@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Type import Type
+from ..Function import Function
+from ..Value import Value
 
 from Liquirizia.DataModel import Model, Handler
 from Liquirizia.DataModel.Utils import ToDict
@@ -15,8 +17,6 @@ from Liquirizia.Validator.Patterns import (
 	If,
 	IsTypeOf,
 )
-
-from ..Function import Function
 
 from typing import Union, Dict
 
@@ -59,21 +59,40 @@ class JavaScriptObjectNotation(Type, typestr='JSON'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[Dict, Function]= None,
+			default: Union[Dict, Value, Function]= None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(If(IsModel(ModelToDict())), Any(IsDictionary(), IsArray())))
+				vargs.append(IsToNone(If(IsModel(ModelToDict())), Any(IsDictionary(), IsArray())))
 			else:
-				va = Validator(IsNotToNone(If(IsModel(ModelToDict())), Any(IsDictionary(), IsArray())))
+				vargs.append(IsNotToNone(IsNotToNone(If(IsModel(ModelToDict())), Any(IsDictionary(), IsArray()))))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='JSON',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -86,21 +105,40 @@ class JavaScriptObjectNotationByteArray(Type, typestr='JSONB'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[Dict, Function]= None,
+			default: Union[Dict, Value, Function]= None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(If(IsTypeOf(Model, ModelToDict())), Any(IsDictionary(), IsArray())))
+				vargs.append(IsToNone(If(IsTypeOf(Model, ModelToDict())), Any(IsDictionary(), IsArray())))
 			else:
-				va = Validator(IsNotToNone(If(IsTypeOf(Model, ModelToDict())), Any(IsDictionary(), IsArray())))
+				vargs.append(IsNotToNone(If(IsTypeOf(Model, ModelToDict())), Any(IsDictionary(), IsArray())))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='JSONB',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,

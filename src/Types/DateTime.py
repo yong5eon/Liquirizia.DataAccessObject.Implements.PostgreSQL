@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Type import Type
+from ..Function import Function
+from ..Value import Value
 
 from Liquirizia.DataModel import Handler
 
@@ -11,9 +13,8 @@ from Liquirizia.Validator.Patterns import (
 	IsDateTime,
 	IsDate,
 	IsTime,
+	SetDefault,
 )
-
-from ..Function import Function
 
 from datetime import date, time, datetime
 
@@ -32,21 +33,40 @@ class Timestamp(Type, typestr='TIMESTAMP'):
 			name: str, 
 			timezone: bool = False,
 			null: bool = False,
-			default: Union[datetime, Function] = None,
+			default: Union[datetime, Value, Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsDateTime()))
+				vargs.append(IsToNone(IsDateTime()))
 			else:
-				va = Validator(IsNotToNone(IsDateTime()))
+				vargs.append(IsNotToNone(IsDateTime()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			name,
 			type='{}{}'.format(str(self.__class__), ' WITH TIME ZONE' if timezone else ''),
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -60,21 +80,40 @@ class Date(Type, typestr='DATE'):
 			name: str, 
 			timezone: bool = False,
 			null: bool = False,
-			default: date = None,
+			default: Union[date, Value, Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsDate()))
+				vargs.append(IsToNone(IsDate()))
 			else:
-				va = Validator(IsNotToNone(IsDate()))
+				vargs.append(IsNotToNone(IsDate()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(str(self.__class__), ' WITH TIME ZONE' if timezone else ''),
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va, 
 			fn=fn,
@@ -88,21 +127,40 @@ class Time(Type, typestr='TIME'):
 			name: str, 
 			timezone: bool = False,
 			null: bool = False,
-			default: Union[time, Function] = None,
+			default: Union[time, Value, Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsTime()))
+				vargs.append(IsToNone(IsTime()))
 			else:
-				va = Validator(IsNotToNone(IsTime()))
+				vargs.append(IsNotToNone(IsTime()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(str(self.__class__), ' WITH TIME ZONE' if timezone else ''),
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va, 
 			fn=fn,
