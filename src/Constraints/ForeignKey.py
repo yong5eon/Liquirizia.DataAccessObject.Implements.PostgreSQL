@@ -23,9 +23,19 @@ class ForeignKey(Constraint):
 		onUpdate: str = None,
 	):
 		super().__init__(name)
-		self.cols = cols if isinstance(cols, (tuple, list)) else [cols]
+		self.cols = []
+		cols = cols if isinstance(cols, (tuple, list)) else [cols]
+		for col in cols:
+			if not isinstance(col, Column):
+				col = Column(col)
+			self.cols.append(col)
 		self.reference = reference
-		self.referenceCols = cols if isinstance(referenceCols, (tuple, list)) else [referenceCols]
+		self.referenceCols = []
+		referenceCols = referenceCols if isinstance(referenceCols, (tuple, list)) else [referenceCols]
+		for col in referenceCols:
+			if not isinstance(col, (Column, Type)):
+				col = Column(col)
+			self.referenceCols.append(col)
 		self.onDelete = onDelete
 		self.onUpdate = onUpdate
 		return

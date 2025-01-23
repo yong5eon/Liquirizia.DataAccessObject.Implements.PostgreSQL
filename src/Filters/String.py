@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ..Expr import Expr
-
+from ..Function import Function
 from ..Type import Type
 from ..Column import Column
 
@@ -19,9 +19,10 @@ class IsLike(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 		other: str,
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		self.other = other
 		return
@@ -38,9 +39,10 @@ class IsLikeStartWith(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 		other: str,
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		self.other = other
 		return
@@ -57,9 +59,10 @@ class IsLikeEndWith(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 		other: str,
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		self.other = other
 		return

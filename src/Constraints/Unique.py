@@ -18,7 +18,12 @@ class Unique(Constraint):
 		null: bool = False
 	):
 		super().__init__(name)
-		self.cols = cols if isinstance(cols, (tuple, list)) else [cols]
+		self.cols = []
+		cols = cols if isinstance(cols, (tuple, list)) else [cols]
+		for col in cols:
+			if not isinstance(col, Column):
+				col = Column(col)
+			self.cols.append(col)
 		self.null = null
 		return
 	

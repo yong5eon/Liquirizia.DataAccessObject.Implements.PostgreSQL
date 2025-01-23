@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ..Function import Function
-
+from ..Expr import Expr
 from ..Type import Type
 from ..Column import Column
 
@@ -16,8 +16,11 @@ __all__ = (
 class AggregateToJSON(Function):
 	def __init__(
 		self,
-		**kwargs: Dict[str, Union[Column, Type]],
+		**kwargs: Dict[str, Union[Column, Type, Function, Expr]],
 	):
+		for k, v in kwargs.items():
+			if not isinstance(v, (Column, Type, Function, Expr)):
+				kwargs[k] = Column(v)
 		self.kwargs = kwargs
 		return
 	def __str__(self):
@@ -31,8 +34,11 @@ class AggregateToJSON(Function):
 class AggregateToJSONB(Function):
 	def __init__(
 		self,
-		**kwargs: Dict[str, Union[Column, Type]],
+		**kwargs: Dict[str, Union[Column, Type, Function, Expr]],
 	):
+		for k, v in kwargs.items():
+			if not isinstance(v, (Column, Type, Function, Expr)):
+				kwargs[k] = Column(v)
 		self.kwargs = kwargs
 		return
 	def __str__(self):

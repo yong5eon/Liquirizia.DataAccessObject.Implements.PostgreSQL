@@ -40,6 +40,8 @@ class Insert(Executor, Fetch):
 		for arg in args:
 			if isinstance(arg, Type):
 				self.ons.append(arg.key)
+			elif isinstance(arg, Column):
+				self.ons.append(str(arg))
 			else:
 				self.ons.append(str(arg))
 		return self
