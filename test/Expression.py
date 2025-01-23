@@ -113,7 +113,7 @@ class TestExpression(Case):
 					IsNotNull(
 						SampleModel.description
 					)
-				).then(Value('Y')).els(Value('N')), 'STATUS'
+				).then_(Value('Y')).else_(Value('N')), 'STATUS'
 			),
 		))
 		con.commit()

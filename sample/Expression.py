@@ -86,7 +86,7 @@ if __name__ == '__main__':
 				IsNotNull(
 					SampleModel.description
 				)
-			).then(Value('Y')).els(Value('N')), 'STATUS'
+			).then_(Value('Y')).else_(Value('N')), 'STATUS'
 		),
 	))
 	for row in rows:

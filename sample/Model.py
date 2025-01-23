@@ -54,8 +54,8 @@ class Student(
 		Sequence(name='SEQ_STUDENT', type=INT),
 	),
 	constraints=(
-		PrimaryKey(name='PK_STUDENT', cols='ID'),
-		Unique(name='UK_STUDENT_CODE', cols='CODE'),
+		PrimaryKey(name='PK_STUDENT', cols=Column('ID')),
+		Unique(name='UK_STUDENT_CODE', cols=Column('CODE')),
 		Check(name='CHK_STUDENT_IS_DELETED', expr=In('IS_DELETED', ('Y', 'N'))),
 	),
 	indexes=(
@@ -98,8 +98,8 @@ class Class(
 		Sequence('SEQ_CLASS', type=INT),
 	),
 	constraints=(
-		PrimaryKey(name='PK_CLASS', cols='ID'),
-		Unique(name='UK_CLASS_CODE', cols='CODE'),
+		PrimaryKey(name='PK_CLASS', cols=Column('ID')),
+		Unique(name='UK_CLASS_CODE', cols=Column('CODE')),
 		Check(name='CHK_CLASS_IS_DELETED', expr=In('IS_DELETED', ('Y', 'N'))),
 	),
 	indexes=(
@@ -139,9 +139,9 @@ class StudentOfClass(
 	Table,
 	name='STUDENT_CLASS',
 	constraints=(
-		PrimaryKey(name='PK_STUDENT_CLASS', cols=('STUDENT', 'CLASS')),
-		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols='STUDENT', reference='STUDENT', referenceCols='ID'),
-		ForeignKey(name='FK_STUDENT_CLASS_CLASS', cols='STUDENT', reference='CLASS', referenceCols='ID'),
+		PrimaryKey(name='PK_STUDENT_CLASS', cols=(Column('STUDENT'), Column('CLASS'))),
+		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols=Column('STUDENT'), reference='STUDENT', referenceCols=Column('ID')),
+		ForeignKey(name='FK_STUDENT_CLASS_CLASS', cols=Column('STUDENT'), reference='CLASS', referenceCols=Column('ID')),
 	),
 	indexes=(
 		Index(name='IDX_STUDENT_CLASS_SCORE', colexprs='SCORE'),

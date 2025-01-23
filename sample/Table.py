@@ -69,7 +69,7 @@ class SampleTable(
 		Sequence('SEQ_SAMPLE', type=INT)
 	),
 	constraints=(
-		PrimaryKey('PK_SAMPLE', cols='ID'),
+		PrimaryKey('PK_SAMPLE', cols=Column('ID')),
 	),
 	fn=SampleTableUpdated()
 ):
@@ -83,7 +83,7 @@ class SampleTable(
 	colChar : str = CHAR('COL_CHAR', size=1, null=True)
 	colString : str = VARCHAR('COL_VARCHAR', size=256, null=True)
 	colText : str = TEXT('COL_TEXT', null=True)
-	colList : list = ARRAY('COL_LIST', type='INTEGER', null=True)
+	colList : list = ARRAY('COL_LIST', type=INTEGER, null=True)
 	colDictionary : dict = JSON('COL_DICTIONARY', null=True)
 	colTimestamp: datetime = TIMESTAMP('COL_TIMESTAMP', null=True)
 	colDate: date = DATE('COL_DATE', null=True)

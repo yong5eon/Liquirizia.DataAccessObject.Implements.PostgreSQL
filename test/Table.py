@@ -36,7 +36,7 @@ class SampleTable(
 		Sequence('SEQ_SAMPLE', type=INT)
 	),
 	constraints=(
-		PrimaryKey('PK_SAMPLE', cols='ID'),
+		PrimaryKey('PK_SAMPLE', cols=Column('ID')),
 	),
 	fn=SampleTableUpdated(),
 ):
