@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ..Expr import Expr
-
+from ..Function import Function
 from ..Type import Type
 from ..Column import Column
 
@@ -17,9 +17,10 @@ class Descend(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type], 
+		col: Union[Column, Type, Function, Expr], 
 		null='LAST'
-	) -> None:
+	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col 
 		self.null = null
 		return

@@ -26,7 +26,7 @@ class Table(Model):
 		_ = {}
 		for k, v in kwargs.items():
 			for c, t in self.__mapper__.items():
-				if k == t.key.lower():
+				if k == t.key:
 					k = c
 			_[k] = v
 		return super().__init__(**_)
@@ -46,6 +46,10 @@ class Table(Model):
 		format: Object = None,
 		fn: Handler = None,
 	):
+		if schema:
+			if isinstance(schema, str): schema = Schema(schema)
+		cls.__schema__ = schema
+		cls.__table__ = name if name else cls.__name__
 		if sequences:
 			if isinstance(sequences, Sequence): sequences = [sequences]
 		cls.__sequences__ = sequences
@@ -56,10 +60,7 @@ class Table(Model):
 			if isinstance(indexes, Index): indexes = [indexes]
 		cls.__indexes__ = indexes
 		return super().__init_subclass__(
-			name='{}{}'.format(
-				'{}.'.format(str(schema)) if schema else '',
-				name if name else cls.__name__,
-			),
+			name=None,
 			description=description,
 			format=format,
 			fn=fn,

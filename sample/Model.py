@@ -466,11 +466,11 @@ if __name__ == '__main__':
 	class RowFilter(Filter):
 		def __call__(self, row: Dict) -> Dict:
 			return {
-				'id': row['student'],
-				'name': row['name'],
-				'sum': row['sum'],
-				'avg': row['avg'],
-				'updated': max(row['at_created'].isoformat(), row['at_updated'].isoformat()),
+				'id': row['STUDENT'],
+				'name': row['NAME'],
+				'sum': row['SUM'],
+				'avg': row['AVG'],
+				'updated': max(row['AT_CREATED'].isoformat(), row['AT_UPDATED'].isoformat()),
 			}
 	PrettyPrint(con.run(exec, filter=RowFilter()))
 
@@ -496,7 +496,8 @@ if __name__ == '__main__':
 	statOfClass = con.run(
 		Select(StatOfClass).where(
 			IsEqualTo(StatOfClass.count, 0)
-		)
+		),
+		fetch=StatOfClass,
 	)
 	PrettyPrint(statOfClass)
 

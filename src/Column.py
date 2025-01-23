@@ -18,7 +18,7 @@ class Column(object):
 		return
 	
 	def __str__(self):
-		return '{}{}'.format(
+		return '"{}"{}'.format(
 			self.name,
 			'::{}'.format(self.typecast) if self.typecast else '',
 		)

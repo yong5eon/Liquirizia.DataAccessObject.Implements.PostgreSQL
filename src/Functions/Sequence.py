@@ -17,4 +17,4 @@ class NextVal(Function):
 		self.seqence = str(sequence)
 		return
 	def __str__(self):
-		return 'NEXTVAL(\'{}\')'.format(self.seqence)
+		return 'NEXTVAL(\'"{}"\')'.format(self.seqence)

@@ -87,7 +87,7 @@ class TestExpression(Case):
 		))
 		con.commit()
 		for row in rows:
-			ASSERT_IS_EQUAL('nm' in row, True)
+			ASSERT_IS_EQUAL('NM' in row, True)
 		return
 
 	@Order(2)
@@ -99,7 +99,7 @@ class TestExpression(Case):
 		))
 		con.commit()
 		for row in rows:
-			ASSERT_IS_EQUAL(isinstance(row['id'], float), True)
+			ASSERT_IS_EQUAL(isinstance(row['ID'], float), True)
 		return
 
 	@Order(3)
@@ -118,10 +118,10 @@ class TestExpression(Case):
 		))
 		con.commit()
 		for row in rows:
-			if row['description']:
-				ASSERT_IS_EQUAL(row['status'], 'Y')
+			if row['DESCRIPTION']:
+				ASSERT_IS_EQUAL(row['STATUS'], 'Y')
 			else:
-				ASSERT_IS_EQUAL(row['status'], 'N')
+				ASSERT_IS_EQUAL(row['STATUS'], 'N')
 		return
 
 	@Order(4)

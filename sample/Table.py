@@ -76,7 +76,7 @@ class SampleTable(
 	id : int = INT('ID', default=NextVal('SEQ_SAMPLE'))
 	colBool : bool = BOOL('COL_BOOL', null=True)
 	colShort : int = INT2('COL_INT2', null=True)
-	colInteger : int = INT4('COL_INT', null=True)
+	colInteger : int = INT4('COL_INT4', null=True)
 	colLong : int = INT4('COL_INT8', null=True)
 	colFloat : float = REAL('COL_FLOAT', null=True)
 	colDecimal: Decimal = DECIMAL('COL_DECIMAL', scale=10, precision=1, null=True)

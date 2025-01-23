@@ -45,10 +45,20 @@ class Type(Value, metaclass=TypeCreator):
 		return
 
 	def __str__(self):
-		return '{}.{}'.format(
-			str(self.model), # attribute's model name
-			self.key,
-		)
+		from .Table import Table
+		from .View import View
+		if issubclass(self.model, Table):
+			return '{}"{}"."{}"'.format(
+				'"{}".'.format(self.model.__schema__) if self.model.__schema__ else '',
+				self.model.__table__, # attribute's model name
+				self.key,
+			)
+		if issubclass(self.model, View):
+			return '{}"{}"."{}"'.format(
+				'"{}".'.format(self.model.__schema__) if self.model.__schema__ else '',
+				self.model.__view__, # attribute's model name
+				self.key,
+			)
 
 	def encode(self, o: any): return o
 
