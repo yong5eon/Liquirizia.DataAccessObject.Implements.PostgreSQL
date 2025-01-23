@@ -83,7 +83,7 @@ class IndexToSQL(object):
 			index.name,
 			o.__model__,
 			index.using,
-			', '.join(index.colexprs),
+			', '.join(str(expr) for expr in index.exprs),
 		)
 
 
