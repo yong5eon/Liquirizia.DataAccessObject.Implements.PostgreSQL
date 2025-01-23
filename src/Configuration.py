@@ -30,7 +30,7 @@ class Configuration(BaseConfiguration):
 		username: str = None,
 		password: str = None,
 		autocommit: bool = False,
-		persistent: bool = False,
+		pool: bool = False,
 		min: int = 0,
 		max: int = 0,
 		dumpers: Map[Type, Dumper] = None,
@@ -41,7 +41,7 @@ class Configuration(BaseConfiguration):
 		self.database = database
 		self.user = username
 		self.password = password
-		self.persistent = persistent
+		self.pool = pool
 		self.min = min
 		self.max = max
 		self.autocommit = autocommit
