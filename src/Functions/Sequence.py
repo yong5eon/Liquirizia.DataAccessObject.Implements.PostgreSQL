@@ -3,6 +3,7 @@
 from ..Function import Function
 
 from ..Sequence import Sequence
+from ..Schema import Schema
 
 __all__ = (
 	'NextVal',
@@ -12,9 +13,14 @@ __all__ = (
 class NextVal(Function):
 	def __init__(
 		self,
-		sequence: Sequence
+		sequence: Sequence,
+		schema: Schema = None,
 	):
-		self.seqence = str(sequence)
+		self.seqence = sequence
+		self.schema = schema
 		return
 	def __str__(self):
-		return 'NEXTVAL(\'"{}"\')'.format(self.seqence)
+		return 'NEXTVAL(\'{}"{}"\')'.format(
+			'"{}".'.format(str(self.schema)) if self.schema else '',
+			str(self.seqence),
+		)
