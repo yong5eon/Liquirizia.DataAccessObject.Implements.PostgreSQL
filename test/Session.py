@@ -19,6 +19,9 @@ class TestSession(Case):
 				database='postgres',  # Database Name
 				username='postgres',  # Database User
 				password='password',  # Database Password for User
+				pool=True,
+				min=1,
+				max=100,
 			)
 		)
 		return super().setUpClass()
