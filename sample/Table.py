@@ -101,9 +101,6 @@ Helper.Set(
 		database='postgres',  # Database Name
 		username='postgres',  # Database User
 		password='password',  # Database Password for User
-		persistent=True,  # Is Use Connection Pool, True/False
-		min=1, # Minimum Connections in Pool
-		max=1, # Maximum Connections in Pool
 	)
 )
 

@@ -19,9 +19,6 @@ class TestCursor(Case):
 				database='postgres',  # Database Name
 				username='postgres',  # Database User
 				password='password',  # Database Password for User
-				persistent=True,  # Is Persistent Connection, True/False
-				min=1,
-				max=100,
 			)
 		)
 		return super().setUpClass()

@@ -243,9 +243,6 @@ if __name__ == '__main__':
 			database='postgres',  # Database Name
 			username='postgres',  # Database User
 			password='password',  # Database Password for User
-			persistent=True,  # Is Use Connection Pool, True/False
-			min=1, # Minimum Connections in Pool
-			max=2, # Maximum Connections in Pool
 		)
 	)
 
