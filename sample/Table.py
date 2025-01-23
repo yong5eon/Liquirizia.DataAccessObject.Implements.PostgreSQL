@@ -105,10 +105,8 @@ Helper.Set(
 )
 
 con = Helper.Get('Sample')
-
 con.begin()
 
-# con.execute('CREATE EXTENSION VECTOR')
 con.run(Drop(SampleTable))
 con.run(Create(SampleTable))
 
@@ -227,5 +225,6 @@ _ = con.run(Select(SampleTable), fetch=SampleTable)
 PrettyPrint(_)
 
 con.run(Drop(SampleTable))
+
 con.commit()
 
