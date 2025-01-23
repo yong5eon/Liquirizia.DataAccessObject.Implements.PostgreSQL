@@ -46,7 +46,7 @@ class Connection(BaseConnection, Database, Run):
 		return
 
 	def connect(self):
-		if self.conf.persistent:
+		if self.conf.pool:
 			self.connection = Pool.Get(self.conf)
 		else:
 			dsn = 'postgresql://'
@@ -70,7 +70,7 @@ class Connection(BaseConnection, Database, Run):
 	def close(self):
 		if self.conf.autocommit:
 			self.commit()
-		if self.conf.persistent:
+		if self.conf.pool:
 			Pool.Release(self.conf, self.connection)
 			del self.connection
 			self.connection = None

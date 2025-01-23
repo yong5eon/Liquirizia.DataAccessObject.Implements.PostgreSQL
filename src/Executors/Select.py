@@ -11,8 +11,11 @@ from ..Cursor import Cursor
 
 from ..Table import Table
 from ..View import View
+from ..Type import Type
+from ..Expr import Expr
+from ..Joins import Join
 
-from typing import Type
+from typing import Type as T, Sequence
 
 __all__ = (
 	'Select'
@@ -20,7 +23,7 @@ __all__ = (
 
 
 class Select(Executor, Fetch):
-	def __init__(self, o: Type[Model]):
+	def __init__(self, o: T[Model]):
 		self.obj = o
 		self.table = o.__model__
 		self.kwargs = {}
@@ -34,23 +37,23 @@ class Select(Executor, Fetch):
 		self.size = None
 		return
 
-	def join(self, *args):
+	def join(self, *args: Sequence[Join]):
 		self.joins = args
 		return self
 
-	def where(self, *args):
+	def where(self, *args: Sequence[Expr]):
 		self.conds = args
 		return self
 
-	def groupBy(self, *args):
+	def groupBy(self, *args: Sequence[Expr]):
 		self.grps = args
 		return self
 	
-	def having(self, *args):
+	def having(self, *args: Sequence[Expr]):
 		self.havs = args
 		return self
 
-	def orderBy(self, *args):
+	def orderBy(self, *args: Sequence[Expr]):
 		self.ords = args
 		return self
 
@@ -59,7 +62,7 @@ class Select(Executor, Fetch):
 		self.offset = offset
 		return self
 	
-	def values(self, *args):
+	def values(self, *args: Sequence[Type]):
 		self.vals = args
 		return self
 	
@@ -88,7 +91,7 @@ class Select(Executor, Fetch):
 	def args(self):
 		return list(self.kwargs.values())
 
-	def fetch(self, cursor: Cursor, filter: Filter = None, fetch: Type[Model] = None):
+	def fetch(self, cursor: Cursor, filter: Filter = None, fetch: T[Model] = None):
 		_ = []
 		for i, row in enumerate(cursor.rows()):
 			if filter: row = filter(row)

@@ -48,7 +48,7 @@ class Vector(Type, typestr='VECTOR'):
 				args.append('[{}]'.format(s))
 		super().__init__(
 			key=name, 
-			type='{}({})'.format(self.typestr, size),
+			type='{}({})'.format('VECTOR', size),
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,

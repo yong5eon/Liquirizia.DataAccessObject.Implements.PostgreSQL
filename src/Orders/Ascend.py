@@ -3,6 +3,7 @@
 from ..Expr import Expr
 
 from ..Type import Type
+from ..Column import Column
 
 from typing import Union
 
@@ -16,7 +17,7 @@ class Ascend(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 		null='LAST'
 	) -> None:
 		self.col = col
@@ -25,6 +26,6 @@ class Ascend(Expr):
 
 	def __str__(self):
 		return '{} ASC{}'.format(
-			str(self.col) if isinstance(self.col, Type) else self.col,
+			str(self.col),
 			' NULLS {}'.format(self.null) if self.null else '',
 		)

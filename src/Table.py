@@ -46,10 +46,6 @@ class Table(Model):
 		format: Object = None,
 		fn: Handler = None,
 	):
-		cls.__model__ = '{}{}'.format(
-			'{}.'.format(str(schema)) if schema else '',
-			name if name else cls.__name__,
-		)	
 		if sequences:
 			if isinstance(sequences, Sequence): sequences = [sequences]
 		cls.__sequences__ = sequences
@@ -59,4 +55,12 @@ class Table(Model):
 		if indexes:
 			if isinstance(indexes, Index): indexes = [indexes]
 		cls.__indexes__ = indexes
-		return super().__init_subclass__(description, format, fn)
+		return super().__init_subclass__(
+			name='{}{}'.format(
+				'{}.'.format(str(schema)) if schema else '',
+				name if name else cls.__name__,
+			),
+			description=description,
+			format=format,
+			fn=fn,
+		)

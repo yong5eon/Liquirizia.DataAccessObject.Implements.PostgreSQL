@@ -4,6 +4,7 @@ from ..Expr import Expr
 
 from ..Function import Function
 from ..Type import Type
+from ..Column import Column
 
 from typing import Union, Any
 
@@ -22,7 +23,7 @@ class IsEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type, Function],
+		col: Union[Column, Type, Function],
 		other: Union[Any, Type, Function],
 	):
 		self.col = col
@@ -41,7 +42,7 @@ class IsNotEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type, Function],
+		col: Union[Column, Type, Function],
 		other: Union[Any, Type, Function],
 	):
 		self.col = col
@@ -60,7 +61,7 @@ class IsGreaterThan(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type, Function],
+		col: Union[Column, Type, Function],
 		other: Union[Any, Type, Function],
 	):
 		self.col = col
@@ -79,7 +80,7 @@ class IsGreaterEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type, Function],
+		col: Union[Column, Type, Function],
 		other: Union[Any, Type, Function],
 	):
 		self.col = col
@@ -98,7 +99,7 @@ class IsLessThan(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type, Function],
+		col: Union[Column, Type, Function],
 		other: Union[Any, Type, Function],
 	):
 		self.col = col
@@ -117,7 +118,7 @@ class IsLessEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type, Function],
+		col: Union[Column, Type, Function],
 		other: Union[Any, Type, Function],
 	):
 		self.col = col

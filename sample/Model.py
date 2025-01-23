@@ -54,14 +54,14 @@ class Student(
 		Sequence(name='SEQ_STUDENT', type=INT),
 	),
 	constraints=(
-		PrimaryKey(name='PK_STUDENT', cols='ID'),
-		Unique(name='UK_STUDENT_CODE', cols='CODE'),
-		Check(name='CHK_STUDENT_IS_DELETED', expr=In('IS_DELETED', ('Y', 'N'))),
+		PrimaryKey(name='PK_STUDENT', cols=Column('ID')),
+		Unique(name='UK_STUDENT_CODE', cols=Column('CODE')),
+		Check(name='CHK_STUDENT_IS_DELETED', expr=In(Column('IS_DELETED'), ('Y', 'N'))),
 	),
 	indexes=(
-		Index(name='IDX_STUDENT_IS_DELETED', colexprs='IS_DELETED'),
-		Index(name='IDX_STUDENT_AT_CREATED', colexprs='AT_CREATED DESC'),
-		Index(name='IDX_STUDENT_AT_UPDATED', colexprs='AT_UPDATED DESC'),
+		Index(name='IDX_STUDENT_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
+		Index(name='IDX_STUDENT_AT_CREATED', exprs=Descend(Column('AT_CREATED'))),
+		Index(name='IDX_STUDENT_AT_UPDATED', exprs=Descend(Column('AT_UPDATED'))),
 	),
 	fn=StudentUpdated(),
 ):
@@ -98,14 +98,14 @@ class Class(
 		Sequence('SEQ_CLASS', type=INT),
 	),
 	constraints=(
-		PrimaryKey(name='PK_CLASS', cols='ID'),
-		Unique(name='UK_CLASS_CODE', cols='CODE'),
-		Check(name='CHK_CLASS_IS_DELETED', expr=In('IS_DELETED', ('Y', 'N'))),
+		PrimaryKey(name='PK_CLASS', cols=Column('ID')),
+		Unique(name='UK_CLASS_CODE', cols=Column('CODE')),
+		Check(name='CHK_CLASS_IS_DELETED', expr=In(Column('IS_DELETED'), ('Y', 'N'))),
 	),
 	indexes=(
-		Index(name='IDX_CLASS_IS_DELETED', colexprs='IS_DELETED'),
-		Index(name='IDX_CLASS_AT_CREATED', colexprs='AT_CREATED DESC'),
-		Index(name='IDX_CLASS_AT_UPDATED', colexprs='AT_UPDATED DESC'),
+		Index(name='IDX_CLASS_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
+		Index(name='IDX_CLASS_AT_CREATED', exprs=Descend(Column('AT_CREATED'))),
+		Index(name='IDX_CLASS_AT_UPDATED', exprs=Descend(Column('AT_UPDATED'))),
 	),
 	fn=ClassUpdated(),
 ):
@@ -139,14 +139,14 @@ class StudentOfClass(
 	Table,
 	name='STUDENT_CLASS',
 	constraints=(
-		PrimaryKey(name='PK_STUDENT_CLASS', cols=('STUDENT', 'CLASS')),
-		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols='STUDENT', reference='STUDENT', referenceCols='ID'),
-		ForeignKey(name='FK_STUDENT_CLASS_CLASS', cols='STUDENT', reference='CLASS', referenceCols='ID'),
+		PrimaryKey(name='PK_STUDENT_CLASS', cols=(Column('STUDENT'), Column('CLASS'))),
+		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols=Column('STUDENT'), reference=Student, referenceCols=Student.id),
+		ForeignKey(name='FK_STUDENT_CLASS_CLASS', cols=Column('STUDENT'), reference=Class, referenceCols=Class.id),
 	),
 	indexes=(
-		Index(name='IDX_STUDENT_CLASS_SCORE', colexprs='SCORE'),
-		Index(name='IDX_STUDENT_CLASS_AT_CREATED', colexprs='AT_CREATED DESC'),
-		Index(name='IDX_STUDENT_CLASS_AT_UPDATED', colexprs='AT_UPDATED DESC'),
+		Index(name='IDX_STUDENT_CLASS_SCORE', exprs='SCORE'),
+		Index(name='IDX_STUDENT_CLASS_AT_CREATED', exprs='AT_CREATED DESC'),
+		Index(name='IDX_STUDENT_CLASS_AT_UPDATED', exprs='AT_UPDATED DESC'),
 	),
 	fn=StudentClassUpdated(),
 ):
@@ -243,9 +243,6 @@ if __name__ == '__main__':
 			database='postgres',  # Database Name
 			username='postgres',  # Database User
 			password='password',  # Database Password for User
-			persistent=True,  # Is Use Connection Pool, True/False
-			min=1, # Minimum Connections in Pool
-			max=2, # Maximum Connections in Pool
 		)
 	)
 

@@ -3,6 +3,7 @@
 from ..Function import Function
 
 from ..Type import Type
+from ..Column import Column
 
 from typing import Union, Any
 
@@ -14,8 +15,8 @@ __all__ = (
 class IfNull(Function):
 	def __init__(
 		self,
-		col: Union[str, Type, Function],
-		value: Any,
+		col: Union[Column, Type, Function],
+		value: Union[Any, Type, Function],
 	):
 		self.col = col
 		self.value = value
@@ -23,5 +24,5 @@ class IfNull(Function):
 	def __str__(self):
 		return 'COALESCE({}, {})'.format(
 			str(self.col),
-			self.value,
+			str(self.value),
 		)

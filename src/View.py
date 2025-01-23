@@ -41,9 +41,13 @@ class View(Model):
 		format: Object = None,
 		fn: Handler = None,
 	):
-		cls.__model__ = '{}{}'.format(
-			'{}.'.format(str(schema)) if schema else '',
-			name if name else cls.__name__,
-		)
 		cls.__executor__ = executor
-		return super().__init_subclass__(description, format, fn)
+		return super().__init_subclass__(
+			name='{}{}'.format(
+				'{}.'.format(str(schema)) if schema else '',
+				name if name else cls.__name__,
+			),
+			description=description,
+			format=format,
+			fn=fn,
+		)

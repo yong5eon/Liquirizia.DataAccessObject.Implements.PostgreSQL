@@ -3,11 +3,14 @@
 from ..Expr import Expr
 
 from ..Type import Type
+from ..Column import Column
 
 from typing import Union
 
 __all__ = (
-	'IsLike'
+	'IsLike',
+	'IsLikeStartWith',
+	'IsLikeEndWith',
 )
 
 
@@ -16,7 +19,7 @@ class IsLike(Expr):
 
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 		other,
 	):
 		self.col = col
@@ -27,4 +30,42 @@ class IsLike(Expr):
 		return '{} LIKE {}'.format(
 			str(self.col),
 			self.encode('%%{}%%'.format(self.other)),
+		)
+
+
+class IsLikeStartWith(Expr):
+	"""Is Like Filter Class"""
+
+	def __init__(
+		self,
+		col: Union[Column, Type],
+		other,
+	):
+		self.col = col
+		self.other = other
+		return
+
+	def __str__(self):
+		return '{} LIKE {}'.format(
+			str(self.col),
+			self.encode('{}%%'.format(self.other)),
+		)
+
+
+class IsLikeEndWith(Expr):
+	"""Is Like Filter Class"""
+
+	def __init__(
+		self,
+		col: Union[Column, Type],
+		other,
+	):
+		self.col = col
+		self.other = other
+		return
+
+	def __str__(self):
+		return '{} LIKE {}'.format(
+			str(self.col),
+			self.encode('%%{}'.format(self.other)),
 		)

@@ -9,8 +9,9 @@ from Liquirizia.DataModel import Model
 
 from ..Cursor import Cursor
 from ..Table import Table
+from ..Expr import Expr
 
-from typing import Type
+from typing import Type, Dict, Any, Sequence
 
 __all__ = (
 	'Update'
@@ -25,13 +26,13 @@ class Update(Executor, Fetch):
 		self.cond = None
 		return
 	
-	def set(self, **kwargs):
+	def set(self, **kwargs: Dict[str, Any]):
 		for k, v in self.obj.__mapper__.items():
 			if k not in kwargs.keys(): continue
 			self.kwargs[v.key] = v.encode(v.validator(kwargs[k]))
 		return self
 	
-	def where(self, *args):
+	def where(self, *args: Sequence[Expr]):
 		self.conds = args
 		return self
 	

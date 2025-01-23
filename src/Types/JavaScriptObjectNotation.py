@@ -3,7 +3,7 @@
 from ..Type import Type
 
 from Liquirizia.DataModel import Model, Handler
-from Liquirizia.DataModel.Util import ToDict
+from Liquirizia.DataModel.Utils import ToDict
 
 from Liquirizia.Validator import Validator, Pattern
 from Liquirizia.Validator.Patterns import (
@@ -42,7 +42,7 @@ class IsModel(Pattern):
 				raise self.error
 			raise TypeError('{} must be based {}'.format(
 				'\'{}\''.format(parameter) if isinstance(parameter, str) else parameter, 
-				self.type.__name__,
+				Model.__name__,
 			))
 		for pattern in self.patterns:
 			parameter = pattern(parameter)

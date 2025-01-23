@@ -4,7 +4,7 @@ from ..Type import Type
 
 from Liquirizia.DataModel import Handler
 
-from Liquirizia.Validator import Validator, Pattern
+from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
@@ -17,7 +17,7 @@ from ..Function import Function
 
 from datetime import date, time, datetime
 
-from typing import Union, Sequence
+from typing import Union
 
 __all__ = (
 	'Timestamp',
@@ -44,7 +44,7 @@ class Timestamp(Type, typestr='TIMESTAMP'):
 				va = Validator(IsNotToNone(IsDateTime()))
 		super().__init__(
 			name,
-			type='{}{}'.format(self.typestr, ' WITH TIME ZONE' if timezone else ''),
+			type='{}{}'.format(str(self.__class__), ' WITH TIME ZONE' if timezone else ''),
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,
@@ -72,7 +72,7 @@ class Date(Type, typestr='DATE'):
 				va = Validator(IsNotToNone(IsDate()))
 		super().__init__(
 			key=name, 
-			type='{}{}'.format(self.typestr, ' WITH TIME ZONE' if timezone else ''),
+			type='{}{}'.format(str(self.__class__), ' WITH TIME ZONE' if timezone else ''),
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,
@@ -100,7 +100,7 @@ class Time(Type, typestr='TIME'):
 				va = Validator(IsNotToNone(IsTime()))
 		super().__init__(
 			key=name, 
-			type='{}{}'.format(self.typestr, ' WITH TIME ZONE' if timezone else ''),
+			type='{}{}'.format(str(self.__class__), ' WITH TIME ZONE' if timezone else ''),
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,

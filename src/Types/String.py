@@ -4,7 +4,7 @@ from ..Type import Type
 
 from Liquirizia.DataModel import Handler
 
-from Liquirizia.Validator import Validator, Pattern
+from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
@@ -51,7 +51,7 @@ class Char(Type, typestr='CHAR'):
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
-				self.typestr,
+				'CHAR',
 				'({})'.format(size) if size else ''
 			),
 			null=null,
@@ -90,7 +90,7 @@ class String(Type, typestr='VARCHAR'):
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
-				self.typestr,
+				'VARCHAR',
 				'({})'.format(size) if size else ''
 			),
 			null=null,
@@ -121,7 +121,7 @@ class Text(Type, typestr='TEXT'):
 		if isinstance(default, str): default = '\'{}\''.format(default)
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='TEXT',
 			null=null,
 			default=default,
 			description=description,

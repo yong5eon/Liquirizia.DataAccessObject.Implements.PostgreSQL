@@ -35,16 +35,16 @@ class PrimaryKeyToSQL(object):
 	def __call__(self, key: PrimaryKey) -> str:
 		return 'CONSTRAINT {} PRIMARY KEY({})'.format(
 			key.name,
-			', '.join(key.cols)
+			', '.join([str(col) for col in key.cols])
 		)
 
 class ForeignKeyToSQL(object):
 	def __call__(self, key: ForeignKey) -> str:
 		return 'CONSTRAINT {} FOREIGN KEY({}) REFERENCES {}({})'.format(
 			key.name,
-			', '.join(key.cols),
+			', '.join([str(col) for col in key.cols]),
 			key.reference if isinstance(key.reference, str) else key.reference.__model__,
-			', '.join([col.key if isinstance(col, Type) else col for col in key.referenceCols])
+			', '.join([col.key if isinstance(col, Type) else str(col) for col in key.referenceCols])
 		)
 	
 
@@ -53,7 +53,7 @@ class UniqueToSQL(object):
 		return 'CONSTRAINT {} UNIQUE{}({})'.format(
 			key.name,
 			' NULLS NOT DISTINCT' if key.null else '',
-			', '.join(key.cols),
+			', '.join([str(col) for col in key.cols]),
 		)
 
 
@@ -78,11 +78,12 @@ class SequenceToSQL(object):
 
 class IndexToSQL(object):
 	def __call__(self, o: T[Table], index: Index) -> str:
-		return 'CREATE INDEX {}{} ON {}({})'.format(
+		return 'CREATE INDEX {}{} ON {} USING {} ({})'.format(
 			'IF NOT EXISTS ' if index.notexists else '',
 			index.name,
 			o.__model__,
-			', '.join(index.colexprs),
+			index.using,
+			', '.join(str(expr) for expr in index.exprs),
 		)
 
 
@@ -152,4 +153,3 @@ class Create(Executors):
 	
 	def __iter__(self):
 		return self.executors.__iter__()
-	

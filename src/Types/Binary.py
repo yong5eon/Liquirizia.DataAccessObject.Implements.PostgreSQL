@@ -4,7 +4,7 @@ from ..Type import Type
 
 from Liquirizia.DataModel import Handler
 
-from Liquirizia.Validator import Validator, Pattern
+from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
@@ -14,7 +14,7 @@ from Liquirizia.Validator.Patterns import (
 
 from ..Function import Function
 
-from typing import Union, Sequence
+from typing import Union
 
 __all__ = (
 	'ByteArray',
@@ -38,7 +38,7 @@ class ByteArray(Type, typestr='BYTEA'):
 				va = Validator(IsNotToNone(ToByteArray(), IsByteArray()))
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='BYTEA',
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,

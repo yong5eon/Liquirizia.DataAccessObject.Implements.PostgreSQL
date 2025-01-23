@@ -43,9 +43,6 @@ if __name__ == '__main__':
 			database='postgres',  # Database Name
 			username='postgres',  # Database User
 			password='password',  # Database Password for User
-			persistent=True,  # Is Persistent Connection, True/False
-			min=1,
-			max=100,
 		)
 	)
 	con = Helper.Get('Sample')
@@ -86,7 +83,7 @@ if __name__ == '__main__':
 				IsNotNull(
 					SampleModel.description
 				)
-			).then(Value('Y')).els(Value('N')), 'STATUS'
+			).then_(Value('Y')).else_(Value('N')), 'STATUS'
 		),
 	))
 	for row in rows:

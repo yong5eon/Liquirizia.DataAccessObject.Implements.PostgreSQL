@@ -2,6 +2,8 @@
 
 from ..Expr import Expr
 
+from typing import Sequence
+
 __all__ = (
 	'And',
 	'Or',
@@ -9,7 +11,7 @@ __all__ = (
 
 
 class And(Expr):
-	def __init__(self, *args) -> None:
+	def __init__(self, *args: Sequence[Expr]):
 		self.args = args
 		return
 
@@ -18,7 +20,7 @@ class And(Expr):
 
 
 class Or(Expr):
-	def __init__(self, *args) -> None:
+	def __init__(self, *args: Sequence[Expr]):
 		self.args = args
 		return
 

@@ -4,9 +4,8 @@ from ..Type import Type
 
 from Liquirizia.DataModel import Handler
 
-from Liquirizia.Validator import Validator, Pattern
+from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
-	SetDefault,
 	IsToNone,
 	IsNotToNone,
 	IsArray,
@@ -25,7 +24,7 @@ class Array(Type, typestr='ARRAY'):
 	def __init__(
 			self, 
 			name: str,
-			type: Union[str, T[Type]],
+			type: T[Type],
 			size: Union[int, Sequence[int]] = None,
 			null: bool = False,
 			default: Union[Any, Function] = None,
@@ -46,7 +45,7 @@ class Array(Type, typestr='ARRAY'):
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
-				type,
+				str(type),
 				''.join(args) if args else []
 			),
 			null=null,

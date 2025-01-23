@@ -36,7 +36,7 @@ class SampleTable(
 		Sequence('SEQ_SAMPLE', type=INT)
 	),
 	constraints=(
-		PrimaryKey('PK_SAMPLE', cols='ID'),
+		PrimaryKey('PK_SAMPLE', cols=Column('ID')),
 	),
 	fn=SampleTableUpdated(),
 ):
@@ -70,9 +70,9 @@ class TestTable(Case):
 				database='postgres',  # Database Name
 				username='postgres',  # Database User
 				password='password',  # Database Password for User
-				persistent=True,  # Is Persistent Connection, True/False
+				pool=True,
 				min=1,
-				max=10,
+				max=100,
 			)
 		)
 		con = Helper.Get('Sample')
