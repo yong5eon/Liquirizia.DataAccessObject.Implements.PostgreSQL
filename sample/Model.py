@@ -60,8 +60,8 @@ class Student(
 	),
 	indexes=(
 		Index(name='IDX_STUDENT_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
-		Index(name='IDX_STUDENT_AT_CREATED', exprs=Descend('AT_CREATED')),
-		Index(name='IDX_STUDENT_AT_UPDATED', exprs=Descend('AT_UPDATED')),
+		Index(name='IDX_STUDENT_AT_CREATED', exprs=Descend(Column('AT_CREATED'))),
+		Index(name='IDX_STUDENT_AT_UPDATED', exprs=Descend(Column('AT_UPDATED'))),
 	),
 	fn=StudentUpdated(),
 ):
@@ -100,12 +100,12 @@ class Class(
 	constraints=(
 		PrimaryKey(name='PK_CLASS', cols=Column('ID')),
 		Unique(name='UK_CLASS_CODE', cols=Column('CODE')),
-		Check(name='CHK_CLASS_IS_DELETED', expr=In('IS_DELETED', ('Y', 'N'))),
+		Check(name='CHK_CLASS_IS_DELETED', expr=In(Column('IS_DELETED'), ('Y', 'N'))),
 	),
 	indexes=(
-		Index(name='IDX_CLASS_IS_DELETED', exprs=Ascend('IS_DELETED')),
-		Index(name='IDX_CLASS_AT_CREATED', exprs=Descend('AT_CREATED')),
-		Index(name='IDX_CLASS_AT_UPDATED', exprs=Descend('AT_UPDATED')),
+		Index(name='IDX_CLASS_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
+		Index(name='IDX_CLASS_AT_CREATED', exprs=Descend(Column('AT_CREATED'))),
+		Index(name='IDX_CLASS_AT_UPDATED', exprs=Descend(Column('AT_UPDATED'))),
 	),
 	fn=ClassUpdated(),
 ):
@@ -140,8 +140,8 @@ class StudentOfClass(
 	name='STUDENT_CLASS',
 	constraints=(
 		PrimaryKey(name='PK_STUDENT_CLASS', cols=(Column('STUDENT'), Column('CLASS'))),
-		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols=Column('STUDENT'), reference='STUDENT', referenceCols=Column('ID')),
-		ForeignKey(name='FK_STUDENT_CLASS_CLASS', cols=Column('STUDENT'), reference='CLASS', referenceCols=Column('ID')),
+		ForeignKey(name='FK_STUDENT_CLASS_STUDENT', cols=Column('STUDENT'), reference=Student, referenceCols=Student.id),
+		ForeignKey(name='FK_STUDENT_CLASS_CLASS', cols=Column('STUDENT'), reference=Class, referenceCols=Class.id),
 	),
 	indexes=(
 		Index(name='IDX_STUDENT_CLASS_SCORE', exprs='SCORE'),
