@@ -52,6 +52,8 @@ class Table(Model):
 		cls.__table__ = name if name else cls.__name__
 		if sequences:
 			if isinstance(sequences, Sequence): sequences = [sequences]
+			for sequence in sequences:
+				sequence.schema = cls.__schema__
 		cls.__sequences__ = sequences
 		if constraints:
 			if isinstance(constraints, Constraint): constraints = [constraints]

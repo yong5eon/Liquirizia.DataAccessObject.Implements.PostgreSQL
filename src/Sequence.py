@@ -22,8 +22,7 @@ class Sequence(object):
 		notexists: bool = True,
 	):
 		self.name = name
-		self.table = None
-		self.col = None
+		self.schema = None
 		self.type = type if isinstance(type, str) else str(type)
 		self.increment = increment
 		self.min = min
