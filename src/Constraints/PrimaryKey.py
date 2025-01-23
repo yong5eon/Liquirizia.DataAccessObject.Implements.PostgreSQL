@@ -17,6 +17,11 @@ class PrimaryKey(Constraint):
 		cols: Union[Column, Sequence[Column]],
 	):
 		super().__init__(name)
-		self.cols = cols if isinstance(cols, (tuple, list)) else [cols]
+		self.cols = []
+		cols = cols if isinstance(cols, (tuple, list)) else [cols]
+		for col in cols:
+			if not isinstance(col, Column):
+				col = Column(col)
+			self.cols.append(col)
 		return
 	

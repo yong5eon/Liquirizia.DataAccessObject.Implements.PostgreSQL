@@ -20,6 +20,7 @@ class Alias(Expr):
 		col: Union[Column, Type, Function, Expr],
 		name: str
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		self.name = name
 		return
@@ -36,6 +37,7 @@ class TypeTo(Expr):
 		col: Union[Column, Type, Function, Expr],
 		type: T[Type],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		self.type = type
 		return

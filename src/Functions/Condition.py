@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ..Function import Function
-
+from ..Expr import Expr
 from ..Type import Type
 from ..Column import Column
 from ..Value import Value
@@ -16,9 +16,10 @@ __all__ = (
 class IfNull(Function):
 	def __init__(
 		self,
-		col: Union[Column, Type, Function],
+		col: Union[Column, Type, Function, Expr],
 		value: Union[Any, Value, Type, Function],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		if not isinstance(value, (Value, Type, Function)):
 			value = Value(value)

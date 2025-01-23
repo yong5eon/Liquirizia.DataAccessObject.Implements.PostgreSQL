@@ -18,9 +18,10 @@ __all__ = (
 class In(Expr):
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 		args: Sequence[Union[Any, Value, Function, Expr]] = None,
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		self.args = []
 		if args:
@@ -47,6 +48,7 @@ class IsNull(Expr):
 		self,
 		col: Union[Column, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		return
 	def __str__(self):
@@ -60,6 +62,7 @@ class IsNotNull(Expr):
 		self,
 		col: Union[Column, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
 		return
 	def __str__(self):

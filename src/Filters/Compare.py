@@ -24,11 +24,12 @@ class IsEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type, Function],
-		other: Union[Any, Value, Type, Function],
+		col: Union[Column, Type, Function, Expr],
+		other: Union[Any, Value, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
-		if not isinstance(other, (Value, Type, Function)):
+		if not isinstance(other, (Value, Type, Function, Expr)):
 			other = Value(other)
 		self.other = other
 		return
@@ -45,11 +46,12 @@ class IsNotEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type, Function],
-		other: Union[Any, Value, Type, Function],
+		col: Union[Column, Type, Function, Expr],
+		other: Union[Any, Value, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
-		if not isinstance(other, (Value, Type, Function)):
+		if not isinstance(other, (Value, Type, Function, Expr)):
 			other = Value(other)
 		self.other = other
 		return
@@ -66,11 +68,12 @@ class IsGreaterThan(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type, Function],
-		other: Union[Any, Value, Type, Function],
+		col: Union[Column, Type, Function, Expr],
+		other: Union[Any, Value, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
-		if not isinstance(other, (Value, Type, Function)):
+		if not isinstance(other, (Value, Type, Function, Expr)):
 			other = Value(other)
 		self.other = other
 		return
@@ -87,11 +90,12 @@ class IsGreaterEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type, Function],
-		other: Union[Any, Value, Type, Function],
+		col: Union[Column, Type, Function, Expr],
+		other: Union[Any, Value, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
-		if not isinstance(other, (Value, Type, Function)):
+		if not isinstance(other, (Value, Type, Function, Expr)):
 			other = Value(other)
 		self.other = other
 		return
@@ -108,11 +112,12 @@ class IsLessThan(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type, Function],
-		other: Union[Any, Value, Type, Function],
+		col: Union[Column, Type, Function, Expr],
+		other: Union[Any, Value, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
-		if not isinstance(other, (Value, Type, Function)):
+		if not isinstance(other, (Value, Type, Function, Expr)):
 			other = Value(other)
 		self.other = other
 		return
@@ -129,11 +134,12 @@ class IsLessEqualTo(Expr):
 
 	def __init__(
 		self,
-		col: Union[Column, Type, Function],
-		other: Union[Any, Value, Type, Function],
+		col: Union[Column, Type, Function, Expr],
+		other: Union[Any, Value, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col
-		if not isinstance(other, (Value, Type, Function)):
+		if not isinstance(other, (Value, Type, Function, Expr)):
 			other = Value(other)
 		self.other = other
 		return

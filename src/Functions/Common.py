@@ -42,12 +42,13 @@ class Count(Function):
 class Sum(Function):
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col 
 		self.conds = None
 		return
-	def where(self, *args):
+	def where(self, *args: Sequence[Expr]):
 		self.conds = args
 		return self
 	def __str__(self):
@@ -60,12 +61,13 @@ class Sum(Function):
 class Average(Function):
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col 
 		self.conds = None
 		return
-	def where(self, *args):
+	def where(self, *args: Sequence[Expr]):
 		self.conds = args
 		return self
 	def __str__(self):
@@ -78,8 +80,9 @@ class Average(Function):
 class Min(Function):
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col 
 		return
 	def __str__(self):
@@ -89,8 +92,9 @@ class Min(Function):
 class Max(Function):
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col 
 		return
 	def __str__(self):
@@ -100,8 +104,9 @@ class Max(Function):
 class AggregateToArray(Function):
 	def __init__(
 		self,
-		col: Union[Column, Type],
+		col: Union[Column, Type, Function, Expr],
 	):
+		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col 
 		return
 	def __str__(self):
