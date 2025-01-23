@@ -3,7 +3,7 @@
 from ..Type import Type
 
 from Liquirizia.DataModel import Model, Handler
-from Liquirizia.DataModel.Util import ToDict
+from Liquirizia.DataModel.Utils import ToDict
 
 from Liquirizia.Validator import Validator, Pattern
 from Liquirizia.Validator.Patterns import (
