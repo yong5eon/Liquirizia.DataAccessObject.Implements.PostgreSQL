@@ -20,7 +20,7 @@ class IsLike(Expr):
 	def __init__(
 		self,
 		col: Union[Column, Type],
-		other,
+		other: str,
 	):
 		self.col = col
 		self.other = other
@@ -39,7 +39,7 @@ class IsLikeStartWith(Expr):
 	def __init__(
 		self,
 		col: Union[Column, Type],
-		other,
+		other: str,
 	):
 		self.col = col
 		self.other = other
@@ -58,7 +58,7 @@ class IsLikeEndWith(Expr):
 	def __init__(
 		self,
 		col: Union[Column, Type],
-		other,
+		other: str,
 	):
 		self.col = col
 		self.other = other

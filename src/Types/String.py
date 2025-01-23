@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Type import Type
+from ..Function import Function
+from ..Value import Value
 
 from Liquirizia.DataModel import Handler
 
@@ -11,9 +13,8 @@ from Liquirizia.Validator.Patterns import (
 	IsString,
 	IsSizeOf,
 	IsSizeIn,
+	SetDefault,
 )
-
-from ..Function import Function
 
 from typing import Union
 
@@ -36,24 +37,41 @@ class Char(Type, typestr='CHAR'):
 			fn: Handler = None
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
 				if size:
-					va = Validator(IsToNone(IsString(IsSizeOf(size))))
+					vargs.append(IsToNone(IsString(IsSizeOf(size))))
 				else:
-					va = Validator(IsToNone(IsString()))
+					vargs.append(IsToNone(IsString()))
 			else:
 				if size:
-					va = Validator(IsNotToNone(IsString(IsSizeOf(size))))
+					vargs.append(IsNotToNone(IsString(IsSizeOf(size))))
 				else:
-					va = Validator(IsNotToNone(IsString()))
-		if isinstance(default, Function): default = str(default)
-		if isinstance(default, str): default = '\'{}\''.format(default)
+					vargs.append(IsNotToNone(IsString()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
 				'CHAR',
 				'({})'.format(size) if size else ''
 			),
+			typedefault=typedefault,
 			null=null,
 			default=default,
 			description=description,
@@ -69,30 +87,47 @@ class String(Type, typestr='VARCHAR'):
 			name: str, 
 			size: int = None,
 			null: bool = False,
-			default: Union[str, Function] = None,
+			default: Union[str, Value, Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
 				if size:
-					va = Validator(IsToNone(IsString(IsSizeIn(size))))
+					vargs.append(IsToNone(IsString(IsSizeIn(size))))
 				else:
-					va = Validator(IsToNone(IsString()))
+					vargs.append(IsToNone(IsString()))
 			else:
 				if size:
-					va = Validator(IsNotToNone(IsString(IsSizeIn(size))))
+					vargs.append(IsNotToNone(IsString(IsSizeIn(size))))
 				else:
-					va = Validator(IsNotToNone(IsString()))
-		if isinstance(default, Function): default = str(default)
-		if isinstance(default, str): default = '\'{}\''.format(default)
+					vargs.append(IsNotToNone(IsString()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
 				'VARCHAR',
 				'({})'.format(size) if size else ''
 			),
+			typedefault=typedefault,
 			null=null,
 			default=default,
 			description=description,
@@ -113,15 +148,32 @@ class Text(Type, typestr='TEXT'):
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsString()))
+				vargs.append(IsToNone(IsString()))
 			else:
-				va = Validator(IsNotToNone(IsString()))
-		if isinstance(default, Function): default = str(default)
-		if isinstance(default, str): default = '\'{}\''.format(default)
+				vargs.append(IsNotToNone(IsString()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='TEXT',
+			typedefault=typedefault,
 			null=null,
 			default=default,
 			description=description,

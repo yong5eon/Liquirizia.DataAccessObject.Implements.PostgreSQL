@@ -4,6 +4,7 @@ from ..Function import Function
 
 from ..Type import Type
 from ..Column import Column
+from ..Value import Value
 
 from typing import Union, Any
 
@@ -16,9 +17,11 @@ class IfNull(Function):
 	def __init__(
 		self,
 		col: Union[Column, Type, Function],
-		value: Union[Any, Type, Function],
+		value: Union[Any, Value, Type, Function],
 	):
 		self.col = col
+		if not isinstance(value, (Value, Type, Function)):
+			value = Value(value)
 		self.value = value
 		return
 	def __str__(self):

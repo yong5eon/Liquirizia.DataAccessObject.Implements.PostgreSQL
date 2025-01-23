@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from ..Type import Type
+from ..Function import Function
+from ..Value import Value
 
 from Liquirizia.DataModel import Handler
 
@@ -11,9 +13,9 @@ from Liquirizia.Validator.Patterns import (
 	IsInteger,
 	IsFloat,
 	IsDecimal,
+	SetDefault,
 )
 
-from ..Function import Function
 from decimal import Decimal as PyDecimal
 from typing import Union
 
@@ -32,21 +34,40 @@ class Short(Type, typestr='SMALLINT'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[int, Function]= None,
+			default: Union[int, Value, Function]= None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsInteger()))
+				vargs.append(IsToNone(IsInteger()))
 			else:
-				va = Validator(IsNotToNone(IsInteger()))
+				vargs.append(IsNotToNone(IsInteger()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='SMALLINT',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -59,21 +80,40 @@ class Integer(Type, typestr='INTEGER'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[int, Function]= None,
+			default: Union[int, Value, Function]= None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsInteger()))
+				vargs.append(IsToNone(IsInteger()))
 			else:
-				va = Validator(IsNotToNone(IsInteger()))
+				vargs.append(IsNotToNone(IsInteger()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='INTEGER',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -86,21 +126,40 @@ class Long(Type, typestr='BIGINT'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[int, Function]= None,
+			default: Union[int, Value, Function]= None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsInteger()))
+				vargs.append(IsToNone(IsInteger()))
 			else:
-				va = Validator(IsNotToNone(IsInteger()))
+				vargs.append(IsNotToNone(IsInteger()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='BIGINT',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -113,21 +172,40 @@ class Float(Type, typestr='REAL'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[float, Function] = None,
+			default: Union[float, Value, Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsFloat()))
+				vargs.append(IsToNone(IsFloat()))
 			else:
-				va = Validator(IsNotToNone(IsFloat()))
+				vargs.append(IsNotToNone(IsFloat()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='REAL',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -140,21 +218,40 @@ class Double(Type, typestr='DOUBLE PRECISION'):
 			self, 
 			name: str, 
 			null: bool = False,
-			default: Union[float, Function] = None,
+			default: Union[float, Value, Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsFloat()))
+				vargs.append(IsToNone(IsFloat()))
 			else:
-				va = Validator(IsNotToNone(IsFloat()))
+				vargs.append(IsNotToNone(IsFloat()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='DOUBLE PRECISION',
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,
@@ -169,21 +266,40 @@ class Decimal(Type, typestr='NUMERIC'):
 			scale: int,
 			precision: int,
 			null: bool = False,
-			default: Union[PyDecimal, Function]= None,
+			default: Union[PyDecimal, Value, Function]= None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
 		if not va:
+			vargs = []
+			if default:
+				if not isinstance(default, Function):
+					if isinstance(default, Value):
+						vargs.append(SetDefault(default.value))
+					else:
+						vargs.append(SetDefault(default))
 			if null:
-				va = Validator(IsToNone(IsDecimal()))
+				vargs.append(IsToNone(IsDecimal()))
 			else:
-				va = Validator(IsNotToNone(IsDecimal()))
+				vargs.append(IsNotToNone(IsDecimal()))
+			va = Validator(*vargs)
+		typedefault = None
+		if default is not None:
+			if isinstance(default, Value):
+				typedefault = str(default)
+				default = default.value
+			elif isinstance(default, Function):
+				typedefault = str(default)
+				default = None
+			else:
+				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
 			type='{}({},{})'.format('NUMERIC', scale, precision),
+			typedefault=typedefault,
 			null=null,
-			default=str(default) if isinstance(default, Function) else default,
+			default=default,
 			description=description,
 			va=va,
 			fn=fn,

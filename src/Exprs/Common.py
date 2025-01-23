@@ -8,23 +8,10 @@ from ..Column import Column
 from typing import Union, Type as T, Any
 
 __all__ = (
-	'Value',
 	'Alias',
 	'TypeTo',
 	'If',
 )
-
-
-class Value(Expr):
-	def __init__(self, value: Any):
-		self.value = value
-		return
-	def __str__(self):
-		fn ={
-			str: lambda x: "'{}'".format(x),
-		}.get(type(self.value), None)
-		if fn: return fn(self.value)
-		return str(self.value)
 
 
 class Alias(Expr):

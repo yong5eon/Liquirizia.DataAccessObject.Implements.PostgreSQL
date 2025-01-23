@@ -5,7 +5,7 @@ from Liquirizia.DataModel import Model
 
 from ..Expr import Expr
 
-from typing import Type, Iterable, Dict, Any
+from typing import Type, Iterable
 
 __all__ = (
 	'Update'
@@ -19,12 +19,6 @@ class Delete(Executor):
 		self.kwargs = {}
 		self.cond = None
 		return
-	
-	def set(self, **kwargs: Dict[str, Any]):
-		for k, v in self.obj.__mapper__.items():
-			if k not in kwargs.keys(): continue
-			self.kwargs[v.key] = v.validator(kwargs[k])
-		return self
 	
 	def where(self, *args: Iterable[Expr]):
 		self.conds = args

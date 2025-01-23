@@ -21,6 +21,7 @@ class Type(Value, metaclass=TypeCreator):
 			self, 
 			key: str,
 			type: str,
+			typedefault: str = None,
 			null: bool = False,
 			default: Any = None,
 			description: str = None,
@@ -29,14 +30,14 @@ class Type(Value, metaclass=TypeCreator):
 		):
 		super().__init__(
 			va=va,
-			default=None,
+			default=default,
 			description=description,
 			fn=fn,
 		)
 		self.key = key
 		self.type = type
+		self.typedefault = typedefault
 		self.null = null
-		self.default = default
 		return
 
 	def __init_subclass__(cls, typestr: str = None):
