@@ -3,6 +3,7 @@
 from Liquirizia.DataAccessObject.Properties.Database import Executors
 from Liquirizia.DataModel import Model
 
+from ..Schema import Schema
 from ..Table import Table
 from ..View import View
 from ..Index import Index
@@ -24,7 +25,7 @@ __all__ = (
 
 class ColumnToSQL(object):
 	def __call__(self, col: Type) -> str:
-		return '{} {}{}{}'.format(
+		return '"{}" {}{}{}'.format(
 			col.key,
 			col.type,
 			' NOT NULL' if not col.null else '',
@@ -33,24 +34,33 @@ class ColumnToSQL(object):
 
 class PrimaryKeyToSQL(object):
 	def __call__(self, key: PrimaryKey) -> str:
-		return 'CONSTRAINT {} PRIMARY KEY({})'.format(
+		return 'CONSTRAINT "{}" PRIMARY KEY({})'.format(
 			key.name,
 			', '.join([str(col) for col in key.cols])
 		)
 
 class ForeignKeyToSQL(object):
 	def __call__(self, key: ForeignKey) -> str:
-		return 'CONSTRAINT {} FOREIGN KEY({}) REFERENCES {}({})'.format(
+		referenceSchema = None
+		if issubclass(key.reference, Table):
+			referenceSchema = key.reference.__schema__
+		referenceTable = None
+		if issubclass(key.reference, Table):
+			referenceTable = key.reference.__table__
+		else:
+			referenceTable = key.reference
+		return 'CONSTRAINT "{}" FOREIGN KEY({}) REFERENCES {}"{}"({})'.format(
 			key.name,
 			', '.join([str(col) for col in key.cols]),
-			key.reference if isinstance(key.reference, str) else key.reference.__model__,
-			', '.join([col.key if isinstance(col, Type) else str(col) for col in key.referenceCols])
+			'"{}".'.format(str(referenceSchema)) if referenceSchema else '',
+			referenceTable,
+			', '.join(['"{}"'.format(col.key) if isinstance(col, Type) else str(col) for col in key.referenceCols])
 		)
 	
 
 class UniqueToSQL(object):
 	def __call__(self, key: Unique) -> str:
-		return 'CONSTRAINT {} UNIQUE{}({})'.format(
+		return 'CONSTRAINT "{}" UNIQUE{}({})'.format(
 			key.name,
 			' NULLS NOT DISTINCT' if key.null else '',
 			', '.join([str(col) for col in key.cols]),
@@ -59,16 +69,17 @@ class UniqueToSQL(object):
 
 class CheckToSQL(object):
 	def __call__(self, chk: Check) -> str:
-		return 'CONSTRAINT {} CHECK({})'.format(
+		return 'CONSTRAINT "{}" CHECK({})'.format(
 			chk.name,
 			chk.expr,
 		)
 	
 
 class SequenceToSQL(object):
-	def __call__(self, seq: Sequence):
-		return 'CREATE SEQUENCE {}{} AS {}{}{}{}'.format(
+	def __call__(self, seq: Sequence, schema: Schema = None) -> str:
+		return 'CREATE SEQUENCE {}{}"{}" AS {}{}{}{}'.format(
 			'IF NOT EXISTS ' if seq.notexists else '',
+			'"{}".'.format(str(schema)) if schema else '',
 			seq.name,
 			seq.type,
 			' INCREMENT BY {}'.format(seq.increment) if seq.increment else '',
@@ -78,10 +89,11 @@ class SequenceToSQL(object):
 
 class IndexToSQL(object):
 	def __call__(self, o: T[Table], index: Index) -> str:
-		return 'CREATE INDEX {}{} ON {} USING {} ({})'.format(
+		return 'CREATE INDEX {}"{}" ON {}"{}" USING {} ({})'.format(
 			'IF NOT EXISTS ' if index.notexists else '',
 			index.name,
-			o.__model__,
+			'"{}".'.format(str(o.__schema__)) if o.__schema__ else '',
+			o.__table__,
 			index.using,
 			', '.join(str(expr) for expr in index.exprs),
 		)
@@ -115,11 +127,12 @@ class TableToSQL(object):
 				_.append(self.CheckToSQL(constraint))
 				continue
 		for sequence in o.__sequences__ if o.__sequences__ else []:
-			__.append((self.SequenceToSQL(sequence), ()))
+			__.append((self.SequenceToSQL(sequence, o.__schema__), ()))
 			pass
-		__.append(('CREATE TABLE {}{}({})'.format(
+		__.append(('CREATE TABLE {}{}"{}"({})'.format(
 			'IF NOT EXISTS ' if notexist else '',
-			o.__model__,
+			'"{}".'.format(str(o.__schema__)) if o.__schema__ else '',
+			o.__table__,
 			', '.join(_)
 		), ()))
 		for index in o.__indexes__ if o.__indexes__ else []:
@@ -130,9 +143,10 @@ class TableToSQL(object):
 
 class ViewToSQL(object):
 	def __call__(self, o: T[View], notexist) -> str:
-		return [('CREATE {}VIEW {} AS {}'.format(
+		return [('CREATE {}VIEW {}"{}" AS {}'.format(
 			'OR REPLACE ' if notexist else '',
-			o.__model__,
+			'"{}".'.format(str(o.__schema__)) if o.__schema__ else '',	
+			o.__view__,
 			o.__executor__.query,
 		), ())]
 

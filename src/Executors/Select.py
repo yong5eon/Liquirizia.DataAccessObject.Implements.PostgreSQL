@@ -15,7 +15,7 @@ from ..Type import Type
 from ..Expr import Expr
 from ..Joins import Join
 
-from typing import Type as T, Sequence
+from typing import Type as T, Sequence, Union
 
 __all__ = (
 	'Select'
@@ -23,9 +23,8 @@ __all__ = (
 
 
 class Select(Executor, Fetch):
-	def __init__(self, o: T[Model]):
+	def __init__(self, o: Union[T[Table], T[View]]):
 		self.obj = o
-		self.table = o.__model__
 		self.kwargs = {}
 		self.joins = None
 		self.conds = None
@@ -75,9 +74,14 @@ class Select(Executor, Fetch):
 		else:
 			for v in self.vals:
 				args.append(str(v))
-		sql = 'SELECT {} FROM {}{}{}{}{}{}{}'.format(
+		if issubclass(self.obj, Table):
+			obj = self.obj.__table__
+		if issubclass(self.obj, View):
+			obj = self.obj.__view__
+		sql = 'SELECT {} FROM {}"{}"{}{}{}{}{}{}'.format(
 			', '.join(args),
-			self.table,
+			'"{}".'.format(self.obj.__schema__) if self.obj.__schema__ else '',
+			obj,
 			''.join([' {}'.format(str(join)) for join in self.joins]) if self.joins else '',
 			' WHERE {}'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
 			' GROUP BY {}'.format(', '.join([str(grp) for grp in self.grps])) if self.grps else '',

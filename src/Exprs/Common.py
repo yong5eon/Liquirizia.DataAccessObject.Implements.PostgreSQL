@@ -25,7 +25,7 @@ class Alias(Expr):
 		self.name = name
 		return
 	def __str__(self):
-		return '{} AS {}'.format(
+		return '{} AS "{}"'.format(
 			str(self.col),
 			self.name,
 		)

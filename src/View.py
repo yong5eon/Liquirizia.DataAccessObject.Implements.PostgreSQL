@@ -23,7 +23,7 @@ class View(Model):
 		_ = {}
 		for k, v in kwargs.items():
 			for c, t in self.__mapper__.items():
-				if k == t.key.lower():
+				if k == t.key:
 					k = c
 			_[k] = v
 		return super().__init__(**_)
@@ -42,11 +42,12 @@ class View(Model):
 		fn: Handler = None,
 	):
 		cls.__executor__ = executor
+		if schema:
+			if isinstance(schema, str): schema = Schema(schema)
+		cls.__schema__ = schema
+		cls.__view__ = name if name else cls.__name__
 		return super().__init_subclass__(
-			name='{}{}'.format(
-				'{}.'.format(str(schema)) if schema else '',
-				name if name else cls.__name__,
-			),
+			name=None,
 			description=description,
 			format=format,
 			fn=fn,

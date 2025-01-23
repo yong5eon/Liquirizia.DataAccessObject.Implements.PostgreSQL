@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from Liquirizia.DataAccessObject.Properties.Database import Executor
-from Liquirizia.DataModel import Model
 
+from ..Table import Table
 from ..Expr import Expr
 
 from typing import Type, Iterable
@@ -13,9 +13,8 @@ __all__ = (
 
 
 class Delete(Executor):
-	def __init__(self, o: Type[Model]):
+	def __init__(self, o: Type[Table]):
 		self.obj = o
-		self.table = o.__model__
 		self.kwargs = {}
 		self.cond = None
 		return
@@ -26,8 +25,9 @@ class Delete(Executor):
 	
 	@property
 	def query(self):
-		return 'DELETE FROM {}{}'.format(
-			self.table,
+		return 'DELETE FROM {}"{}"{}'.format(
+			'"{}".'.format(self.obj.__schema__) if self.obj.__schema__ else '',
+			self.obj.__table__,
 			' WHERE {}'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
 		)
 
