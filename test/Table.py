@@ -316,7 +316,7 @@ class TestTable(Case):
 		class RowFilter(Filter):
 			def __call__(self, row):
 				return {
-					'id': row['id'],
+					'id': row['ID'],
 				}
 		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), filter=RowFilter())
 		ASSERT_IS_NOT_NONE(_)
