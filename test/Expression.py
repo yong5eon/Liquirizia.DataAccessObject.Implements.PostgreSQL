@@ -129,7 +129,7 @@ class TestExpression(Case):
 		con = Helper.Get('Sample')
 		con.begin()
 		rows = con.run(Select(SampleModel).where(
-			In(SampleModel.name, ('A', 'B'))
+			In(SampleModel.name, (Value('A'), Value('B')))
 		))
 		con.commit()
 		ASSERT_IS_EQUAL(len(rows), 2)
@@ -156,4 +156,3 @@ class TestExpression(Case):
 		con.commit()
 		ASSERT_IS_EQUAL(len(rows), 1)
 		return
-

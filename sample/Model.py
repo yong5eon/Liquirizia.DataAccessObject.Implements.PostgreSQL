@@ -56,7 +56,7 @@ class Student(
 	constraints=(
 		PrimaryKey(name='PK_STUDENT', cols=Column('ID')),
 		Unique(name='UK_STUDENT_CODE', cols=Column('CODE')),
-		Check(name='CHK_STUDENT_IS_DELETED', expr=In(Column('IS_DELETED'), ('Y', 'N'))),
+		Check(name='CHK_STUDENT_IS_DELETED', expr=In(Column('IS_DELETED'), (Value('Y'), Value('N')))),
 	),
 	indexes=(
 		Index(name='IDX_STUDENT_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
@@ -71,8 +71,8 @@ class Student(
 	metadata = BYTEARRAY(name='METADATA')
 	atCreated = TIMESTAMP(name='AT_CREATED', default=Now())
 	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
-	isDeleted = CHAR(name='IS_DELETED', size=1, default='N', va=Validator(IsString(IsSizeOf(1), IsIn('Y', 'N'))))
-	isUpdated = BOOL(name='IS_UPDATED', default=False)
+	isDeleted = CHAR(name='IS_DELETED', size=1, default=Value('N'), va=Validator(IsString(IsSizeOf(1), IsIn('Y', 'N'))))
+	isUpdated = BOOL(name='IS_UPDATED', default=Value(False))
 
 
 class ClassUpdated(Handler):
@@ -100,7 +100,7 @@ class Class(
 	constraints=(
 		PrimaryKey(name='PK_CLASS', cols=Column('ID')),
 		Unique(name='UK_CLASS_CODE', cols=Column('CODE')),
-		Check(name='CHK_CLASS_IS_DELETED', expr=In(Column('IS_DELETED'), ('Y', 'N'))),
+		Check(name='CHK_CLASS_IS_DELETED', expr=In(Column('IS_DELETED'), (Value('Y'), Value('N')))),
 	),
 	indexes=(
 		Index(name='IDX_CLASS_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
@@ -114,8 +114,8 @@ class Class(
 	name = TEXT(name='NAME')
 	atCreated = TIMESTAMP(name='AT_CREATED', default=Now())
 	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
-	isDeleted = CHAR(name='IS_DELETED', size=1, default='N', va=Validator(IsIn('Y', 'N')))
-	isUpdated = BOOL(name='IS_UPDATED', default=False)
+	isDeleted = CHAR(name='IS_DELETED', size=1, default=Value('N'), va=Validator(IsIn('Y', 'N')))
+	isUpdated = BOOL(name='IS_UPDATED', default=Value(False))
 
 
 class StudentClassUpdated(Handler):
@@ -144,9 +144,9 @@ class StudentOfClass(
 		ForeignKey(name='FK_STUDENT_CLASS_CLASS', cols=Column('STUDENT'), reference=Class, referenceCols=Class.id),
 	),
 	indexes=(
-		Index(name='IDX_STUDENT_CLASS_SCORE', exprs='SCORE'),
-		Index(name='IDX_STUDENT_CLASS_AT_CREATED', exprs='AT_CREATED DESC'),
-		Index(name='IDX_STUDENT_CLASS_AT_UPDATED', exprs='AT_UPDATED DESC'),
+		Index(name='IDX_STUDENT_CLASS_SCORE', exprs=Ascend(Column('SCORE'))),
+		Index(name='IDX_STUDENT_CLASS_AT_CREATED', exprs=Descend('AT_CREATED')),
+		Index(name='IDX_STUDENT_CLASS_AT_UPDATED', exprs=Descend('AT_UPDATED')),
 	),
 	fn=StudentClassUpdated(),
 ):
@@ -165,7 +165,7 @@ class StudentOfClass(
 	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
 	atUpdatedDate = DATE(name='AT_UPDATED_DATE', null=True)
 	atUpdatedTime = TIME(name='AT_UPDATED_TIME', null=True)
-	isUpdated = BOOL(name='IS_UPDATED', default=False)
+	isUpdated = BOOL(name='IS_UPDATED', default=Value(False))
 
 
 # View 
@@ -507,4 +507,3 @@ if __name__ == '__main__':
 	con.run(Drop(Student))
 
 	con.commit()
-
