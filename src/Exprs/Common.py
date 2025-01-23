@@ -3,6 +3,7 @@
 from ..Expr import Expr
 from ..Function import Function
 from ..Type import Type
+from ..Column import Column
 
 from typing import Union, Type as T, Any
 
@@ -29,7 +30,7 @@ class Value(Expr):
 class Alias(Expr):
 	def __init__(
 		self,
-		col: Union[str, Type, Function, Expr],
+		col: Union[Column, Type, Function, Expr],
 		name: str
 	):
 		self.col = col
@@ -45,36 +46,36 @@ class Alias(Expr):
 class TypeTo(Expr):
 	def __init__(
 		self,
-		col: Union[str, Type, Function, Expr],
-		type: Union[str, T[Type]]
+		col: Union[Column, Type, Function, Expr],
+		type: T[Type],
 	):
 		self.col = col
 		self.type = type
 		return
 	def __str__(self):
-		return '{}::{}'.format(str(self.col), self.type)
+		return '{}::{}'.format(str(self.col), str(self.type))
 
 
 class If(Expr):
 	def __init__(
 		self,
-		cond: Union[str, Type, Function, Expr],
-		thenexpr: Union[str, Type, Function, Expr] = None,
-		elseexpr: Union[str, Type, Function, Expr] = None,
+		cond: Expr,
+		thenexpr: Expr = None,
+		elseexpr: Expr = None,
 	):
 		self.condexpr = cond
 		self.thenexpr = thenexpr
 		self.elseexpr = elseexpr
 		return
-	def then(
+	def then_(
 		self,
-		expr: Union[str, Type, Function, Expr],
+		expr: Expr,
 	):
 		self.thenexpr = expr
 		return self
-	def els(
+	def else_(
 		self,
-		expr: Union[str, Type, Function, Expr],
+		expr: Expr,
 	):
 		self.elseexpr = expr
 		return self

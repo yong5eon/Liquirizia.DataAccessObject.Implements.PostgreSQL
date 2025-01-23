@@ -3,8 +3,9 @@
 from ..Function import Function
 
 from ..Type import Type
+from ..Column import Column
 
-from typing import Union
+from typing import Union, Dict
 
 __all__ = (
 	'AggregateToJSON',
@@ -15,7 +16,7 @@ __all__ = (
 class AggregateToJSON(Function):
 	def __init__(
 		self,
-		**kwargs,
+		**kwargs: Dict[str, Union[Column, Type]],
 	):
 		self.kwargs = kwargs
 		return
@@ -30,7 +31,7 @@ class AggregateToJSON(Function):
 class AggregateToJSONB(Function):
 	def __init__(
 		self,
-		**kwargs,
+		**kwargs: Dict[str, Union[Column, Type]],
 	):
 		self.kwargs = kwargs
 		return

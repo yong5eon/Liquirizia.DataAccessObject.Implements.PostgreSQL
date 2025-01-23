@@ -4,8 +4,6 @@ from ..Function import Function
 
 from ..Sequence import Sequence
 
-from typing import Union
-
 __all__ = (
 	'NextVal',
 )
@@ -14,9 +12,9 @@ __all__ = (
 class NextVal(Function):
 	def __init__(
 		self,
-		sequence: Union[str, Sequence]
+		sequence: Sequence
 	):
-		self.seqence = sequence.name if isinstance(sequence, Sequence) else sequence
+		self.seqence = str(sequence)
 		return
 	def __str__(self):
 		return 'NEXTVAL(\'{}\')'.format(self.seqence)

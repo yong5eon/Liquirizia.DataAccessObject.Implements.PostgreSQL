@@ -12,11 +12,11 @@ __all__ = (
 )
 
 
-class TypeCreateor(ABCMeta):
-	def __repr__(cls): return cls.typestr
+class TypeCreator(ABCMeta):
+	def __repr__(cls): return cls.__typestr__
 
 
-class Type(Value, metaclass=TypeCreateor):
+class Type(Value, metaclass=TypeCreator):
 	def __init__(
 			self, 
 			key: str,
@@ -40,16 +40,16 @@ class Type(Value, metaclass=TypeCreateor):
 		return
 
 	def __init_subclass__(cls, typestr: str = None):
-		cls.typestr = typestr
+		cls.__typestr__ = typestr
 		return
 
 	def __str__(self):
 		return '{}.{}'.format(
-			self.model.__model__, # attribute's model name
+			str(self.model), # attribute's model name
 			self.key,
 		)
 
 	def encode(self, o: any): return o
 
 	@classmethod
-	def ToTypeString(cls): return cls.typestr
+	def ToString(cls): return cls.__typestr__

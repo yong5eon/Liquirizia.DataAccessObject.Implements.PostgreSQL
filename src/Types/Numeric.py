@@ -4,7 +4,7 @@ from ..Type import Type
 
 from Liquirizia.DataModel import Handler
 
-from Liquirizia.Validator import Validator, Pattern
+from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
@@ -15,7 +15,7 @@ from Liquirizia.Validator.Patterns import (
 
 from ..Function import Function
 from decimal import Decimal as PyDecimal
-from typing import Union, Sequence
+from typing import Union
 
 __all__ = (
 	'Short',
@@ -44,7 +44,7 @@ class Short(Type, typestr='SMALLINT'):
 				va = Validator(IsNotToNone(IsInteger()))
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='SMALLINT',
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,
@@ -71,7 +71,7 @@ class Integer(Type, typestr='INTEGER'):
 				va = Validator(IsNotToNone(IsInteger()))
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='INTEGER',
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,
@@ -98,7 +98,7 @@ class Long(Type, typestr='BIGINT'):
 				va = Validator(IsNotToNone(IsInteger()))
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='BIGINT',
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,
@@ -125,7 +125,7 @@ class Float(Type, typestr='REAL'):
 				va = Validator(IsNotToNone(IsFloat()))
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='REAL',
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,
@@ -152,7 +152,7 @@ class Double(Type, typestr='DOUBLE PRECISION'):
 				va = Validator(IsNotToNone(IsFloat()))
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='DOUBLE PRECISION',
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,
@@ -181,7 +181,7 @@ class Decimal(Type, typestr='NUMERIC'):
 				va = Validator(IsNotToNone(IsDecimal()))
 		super().__init__(
 			key=name, 
-			type='{}({},{})'.format(self.typestr, scale, precision),
+			type='{}({},{})'.format('NUMERIC', scale, precision),
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,

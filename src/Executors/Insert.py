@@ -10,9 +10,10 @@ from Liquirizia.DataModel import Model
 from ..Cursor import Cursor
 
 from ..Table import Table
+from ..Column import Column
 from ..Type import Type
 
-from typing import Type as T
+from typing import Type as T, Dict, Any, Sequence, Union
 
 __all__ = (
 	'Insert'
@@ -28,13 +29,13 @@ class Insert(Executor, Fetch):
 		self.onkwargs = None
 		return
 	
-	def values(self, **kwargs):
+	def values(self, **kwargs: Dict[str, Any]):
 		for k, v in self.obj.__mapper__.items():
 			if k not in kwargs.keys(): continue
 			self.kwargs[v.key] = v.encode(v.validator(kwargs[k]))
 		return self
 	
-	def on(self, *args):
+	def on(self, *args: Sequence[Union[Column, Type]]):
 		self.ons = []
 		for arg in args:
 			if isinstance(arg, Type):
@@ -43,7 +44,7 @@ class Insert(Executor, Fetch):
 				self.ons.append(str(arg))
 		return self
 
-	def set(self, **kwargs):
+	def set(self, **kwargs: Dict[str, Any]):
 		self.onkwargs = {}
 		for k, v in self.obj.__mapper__.items():
 			if k not in kwargs.keys(): continue

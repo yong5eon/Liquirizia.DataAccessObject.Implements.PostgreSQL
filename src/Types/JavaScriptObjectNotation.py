@@ -42,7 +42,7 @@ class IsModel(Pattern):
 				raise self.error
 			raise TypeError('{} must be based {}'.format(
 				'\'{}\''.format(parameter) if isinstance(parameter, str) else parameter, 
-				self.type.__name__,
+				Model.__name__,
 			))
 		for pattern in self.patterns:
 			parameter = pattern(parameter)

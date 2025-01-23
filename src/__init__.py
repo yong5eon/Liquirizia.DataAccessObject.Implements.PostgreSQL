@@ -9,6 +9,7 @@ from .Session import Session
 from .Schema import Schema
 from .Table import Table
 from .View import View
+from .Column import Column
 
 from .Sequence import Sequence
 from .Constraint import Constraint
@@ -26,6 +27,7 @@ __all__ = (
 	'Schema',
 	'Table',
 	'View',
+	'Column',
 	'Sequence',
 	'Constraint',
 	'Index',

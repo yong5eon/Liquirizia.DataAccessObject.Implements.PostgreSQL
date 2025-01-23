@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from .Type import Type
+from .Types import BIGINT
+
+from typing import Type as T
+
 __all__ = (
 	'Sequence'
 )
@@ -9,7 +14,7 @@ class Sequence(object):
 	def __init__(
 		self, 
 		name: str,
-		type: str = 'BIGINT',
+		type: T[Type] = BIGINT,
 		increment: int = 1,
 		min: int = 1,
 		max: int = None,
@@ -19,7 +24,7 @@ class Sequence(object):
 		self.name = name
 		self.table = None
 		self.col = None
-		self.type = type
+		self.type = type if isinstance(type, str) else str(type)
 		self.increment = increment
 		self.min = min
 		self.max = max
@@ -27,3 +32,5 @@ class Sequence(object):
 		self.notexists = notexists
 		return
 	
+	def __str__(self):
+		return self.name

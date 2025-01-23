@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ..Constraint import Constraint
+from ..Column import Column
 
 from typing import Union, Sequence
 
@@ -13,7 +14,7 @@ class Unique(Constraint):
 	def __init__(
 		self, 
 		name: str,
-		cols: Union[str, Sequence[str]],
+		cols: Union[Column, Sequence[Column]],
 		null: bool = False
 	):
 		super().__init__(name)

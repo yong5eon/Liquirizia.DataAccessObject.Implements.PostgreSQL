@@ -3,8 +3,10 @@
 from ..Function import Function
 
 from ..Type import Type
+from ..Column import Column
+from ..Expr import Expr
 
-from typing import Union
+from typing import Union, Sequence
 
 __all__ = (
 	'Count',
@@ -22,7 +24,7 @@ __all__ = (
 class Count(Function):
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 	):
 		self.col = col 
 		self.conds = None
@@ -40,7 +42,7 @@ class Count(Function):
 class Sum(Function):
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 	):
 		self.col = col 
 		self.conds = None
@@ -58,7 +60,7 @@ class Sum(Function):
 class Average(Function):
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 	):
 		self.col = col 
 		self.conds = None
@@ -76,7 +78,7 @@ class Average(Function):
 class Min(Function):
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 	):
 		self.col = col 
 		return
@@ -87,7 +89,7 @@ class Min(Function):
 class Max(Function):
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 	):
 		self.col = col 
 		return
@@ -98,7 +100,7 @@ class Max(Function):
 class AggregateToArray(Function):
 	def __init__(
 		self,
-		col: Union[str, Type],
+		col: Union[Column, Type],
 	):
 		self.col = col 
 		return
@@ -107,14 +109,14 @@ class AggregateToArray(Function):
 
 
 class RowNumber(Function):
-	def __init__(self, *args):
+	def __init__(self, *args: Sequence[Expr]):
 		self.orders = args
 		self.partitions = None
 		return
-	def orderBy(self, *args):
+	def orderBy(self, *args: Sequence[Expr]):
 		self.orders = args
 		return
-	def partitionBy(self, *args):
+	def partitionBy(self, *args: Sequence[Expr]):
 		self.partitions = args
 		return
 	def __str__(self):
@@ -125,14 +127,14 @@ class RowNumber(Function):
 
 
 class Rank(Function):
-	def __init__(self, *args):
+	def __init__(self, *args: Sequence[Expr]):
 		self.orders = args
 		self.partitions = None
 		return
-	def orderBy(self, *args):
+	def orderBy(self, *args: Sequence[Expr]):
 		self.orders = args
 		return
-	def partitionBy(self, *args):
+	def partitionBy(self, *args: Sequence[Expr]):
 		self.partitions = args
 		return
 	def __str__(self):
@@ -143,14 +145,14 @@ class Rank(Function):
 
 
 class DenseRank(Function):
-	def __init__(self, *args):
+	def __init__(self, *args: Sequence[Expr]):
 		self.orders = args
 		self.partitions = None
 		return
-	def orderBy(self, *args):
+	def orderBy(self, *args: Sequence[Expr]):
 		self.orders = args
 		return
-	def partitionBy(self, *args):
+	def partitionBy(self, *args: Sequence[Expr]):
 		self.partitions = args
 		return
 	def __str__(self):

@@ -14,16 +14,23 @@ from .Compare import (
 )
 from .String import (
 	IsLike,
+	IsLikeEndWith,
+	IsLikeStartWith,
 )
 
 __all__ = (
+	# OPERATOR
 	'And',
 	'Or',
+	# COMPARE
 	'IsEqualTo',
 	'IsNotEqualTo',
-	'IsLike',
 	'IsGreaterThan',
 	'IsGreaterEqualTo',
 	'IsLessThan',
 	'IsLessEqualTo',
+	# STRING
+	'IsLike',
+	'IsLikeStartWith',
+	'IsLikeEndWith',
 )

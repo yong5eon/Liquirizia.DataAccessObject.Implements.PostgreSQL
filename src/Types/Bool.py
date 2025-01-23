@@ -4,7 +4,7 @@ from ..Type import Type
 
 from Liquirizia.DataModel import Handler
 
-from Liquirizia.Validator import Validator, Pattern
+from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
@@ -37,7 +37,7 @@ class Bool(Type, typestr='BOOLEAN'):
 				va = Validator(IsNotToNone(IsBool()))
 		super().__init__(
 			key=name, 
-			type=self.typestr,
+			type='BOOLEAN',
 			null=null,
 			default=str(default) if isinstance(default, Function) else default,
 			description=description,

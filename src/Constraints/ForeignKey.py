@@ -2,6 +2,7 @@
 
 from ..Constraint import Constraint
 from ..Table import Table
+from ..Column	import Column
 from ..Type import Type
 
 from typing import Union, Sequence, Type as T
@@ -15,9 +16,9 @@ class ForeignKey(Constraint):
 	def __init__(
 		self,
 		name: str,
-		cols: Union[str, Sequence[str]],
-		reference: Union[str, T[Table]] = None,
-		referenceCols: Union[str, Type] = None,
+		cols: Union[Column, Sequence[Column]],
+		reference: Union[T[Table]] = None,
+		referenceCols: Union[Column, Sequence[Column], Type, Sequence[Type]] = None,
 		onDelete: str = None,
 		onUpdate: str = None,
 	):
@@ -28,4 +29,3 @@ class ForeignKey(Constraint):
 		self.onDelete = onDelete
 		self.onUpdate = onUpdate
 		return
-	
