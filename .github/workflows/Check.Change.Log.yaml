@@ -23,7 +23,7 @@ jobs:
       - name: Check if File Exists
         run: |
           BRANCH_NAME="${{github.event.pull_request.head.ref}}"
-          TARGET_FILE="docs/$BRANCH_NAME.md"
+          TARGET_FILE="issues/$BRANCH_NAME.md"
           echo "Checking if file exists: $TARGET_FILE"
           if [ ! -f "$TARGET_FILE" ]; then
             echo "Error: File $TARGET_FILE does not exist."
