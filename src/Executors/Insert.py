@@ -49,7 +49,7 @@ class Insert(Executor, Fetch):
 		self.onkwargs = {}
 		for k, v in self.obj.__mapper__.items():
 			if k not in kwargs.keys(): continue
-			self.kwargs[v.key] = (uuid4().hex, v.encode(v.validator(kwargs[k])))
+			self.onkwargs[v.key] = (uuid4().hex, v.encode(v.validator(kwargs[k])))
 		return self
 
 	@property
