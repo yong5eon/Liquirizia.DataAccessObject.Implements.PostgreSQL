@@ -60,7 +60,8 @@ class Pool(Singleton):
 		return pool.release(conf, connection)
 
 	def release(self, conf: Configuration, connection):
-		if conf not in self.pool:
-			return
-		self.pool[conf].putconn(connection)
+		try:
+			self.pool[conf].putconn(connection)
+		except Exception as e:
+			pass
 		return
