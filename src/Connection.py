@@ -81,7 +81,8 @@ class Connection(BaseConnection, Database, Run):
 		return
 
 	def begin(self):
-		self.connection.autocommit = False
+		if self.conf.autocommit:
+			self.connection.autocommit = False
 		return
 
 	def execute(self, sql, *args):
