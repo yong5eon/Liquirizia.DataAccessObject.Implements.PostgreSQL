@@ -23,6 +23,8 @@ from .Sequence import (
 from .JavaScriptObjectNotation import (
 	AggregateToJSON,
 	AggregateToJSONB,
+	ToJSON,
+	ToJSONB,
 )
 
 __all__ = (
@@ -45,4 +47,6 @@ __all__ = (
 	# JSON
 	'AggregateToJSON',
 	'AggregateToJSONB',
+	'ToJSON',
+	'ToJSONB',
 )
