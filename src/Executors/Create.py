@@ -15,12 +15,13 @@ from ..Constraints import (
 )
 
 from ..Type import Type
-
+from inspect import isclass
 from typing import Type  as T
 
 __all__ = (
 	'Create'
 )
+
 
 class ColumnToSQL(object):
 	def __call__(self, col: Type) -> str:
@@ -31,6 +32,7 @@ class ColumnToSQL(object):
 			' DEFAULT {}'.format(col.typedefault) if col.typedefault is not None else '',
 		)
 
+
 class PrimaryKeyToSQL(object):
 	def __call__(self, key: PrimaryKey) -> str:
 		return 'CONSTRAINT "{}" PRIMARY KEY({})'.format(
@@ -38,13 +40,14 @@ class PrimaryKeyToSQL(object):
 			', '.join([str(col) for col in key.cols])
 		)
 
+
 class ForeignKeyToSQL(object):
 	def __call__(self, key: ForeignKey) -> str:
 		referenceSchema = None
-		if issubclass(key.reference, Table):
+		if isclass(key.reference) and issubclass(key.reference, Table) and key.reference.__schema__:
 			referenceSchema = key.reference.__schema__
 		referenceTable = None
-		if issubclass(key.reference, Table):
+		if isclass(key.reference) and issubclass(key.reference, Table):
 			referenceTable = key.reference.__table__
 		else:
 			referenceTable = key.reference
@@ -55,7 +58,7 @@ class ForeignKeyToSQL(object):
 			referenceTable,
 			', '.join(['"{}"'.format(col.key) if isinstance(col, Type) else str(col) for col in key.referenceCols])
 		)
-	
+
 
 class CheckToSQL(object):
 	def __call__(self, chk: Check) -> str:
@@ -63,7 +66,7 @@ class CheckToSQL(object):
 			chk.name,
 			chk.expr,
 		)
-	
+
 
 class SequenceToSQL(object):
 	def __call__(self, seq: Sequence, schema: Schema = None) -> str:
@@ -76,6 +79,7 @@ class SequenceToSQL(object):
 			' MINVALUE {}'.format(seq.min) if seq.min else '',
 			' MAXVALUE {}'.format(seq.max) if seq.max else '',
 		)
+
 
 class IndexToSQL(object):
 	def __call__(self, o: T[Table], index: Index) -> str:
@@ -129,7 +133,7 @@ class TableToSQL(object):
 			__.append((self.IndexToSQL(o, index), ()))
 		# TODO : CREATE COMMENT
 		return __
-	
+
 
 class ViewToSQL(object):
 	def __call__(self, o: T[View], notexist) -> str:
@@ -142,7 +146,6 @@ class ViewToSQL(object):
 
 
 class Create(Executors):
-
 	TableToSQL = TableToSQL()
 	ViewToSQL = ViewToSQL()
 
