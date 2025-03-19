@@ -16,6 +16,7 @@ from Liquirizia.Validator.Patterns import (
 	Any,
 	If,
 	IsTypeOf,
+	SetDefault,
 )
 
 from typing import Union, Dict
