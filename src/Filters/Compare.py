@@ -35,11 +35,16 @@ class IsEqualTo(Expr):
 		return
 
 	def __str__(self):
+		if isinstance(self.other, Value) and str(self.other) == 'NULL':
+			return '{} IS {}'.format(
+				str(self.col),
+				str(self.other),
+			)
 		return '{} = {}'.format(
 			str(self.col),
 			str(self.other),
 		)
-	
+
 
 class IsNotEqualTo(Expr):
 	"""Is Not Equal Filter Class"""
@@ -57,6 +62,11 @@ class IsNotEqualTo(Expr):
 		return
 
 	def __str__(self):
+		if isinstance(self.other, Value) and str(self.other) == 'NULL':
+			return '{} IS NOT {}'.format(
+				str(self.col),
+				str(self.other),
+			)
 		return '{} != {}'.format(
 			str(self.col),
 			str(self.other),
