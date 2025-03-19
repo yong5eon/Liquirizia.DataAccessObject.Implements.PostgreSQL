@@ -16,9 +16,9 @@ class ForeignKey(Constraint):
 	def __init__(
 		self,
 		name: str,
-		cols: Union[Column, Sequence[Column]],
-		reference: Union[T[Table]] = None,
-		referenceCols: Union[Column, Sequence[Column], Type, Sequence[Type]] = None,
+		cols: Union[str, Column, Sequence[Column]],
+		reference: Union[str, T[Table]] = None,
+		referenceCols: Union[str, Sequence[str], Column, Sequence[Column], Type, Sequence[Type]] = None,
 		onDelete: str = None,
 		onUpdate: str = None,
 	):
