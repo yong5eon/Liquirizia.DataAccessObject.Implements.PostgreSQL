@@ -26,6 +26,7 @@ class Array(Type, typestr='ARRAY'):
 			self, 
 			name: str,
 			type: T[Type],
+			typesize: int = None,
 			size: Union[int, Sequence[int]] = None,
 			null: bool = False,
 			default: Union[Any, Value, Function] = None,
@@ -64,7 +65,10 @@ class Array(Type, typestr='ARRAY'):
 		super().__init__(
 			key=name, 
 			type='{}{}'.format(
-				str(type),
+				'{}{}'.format(
+					str(type),
+					'({})'.format(typesize) if typesize else ''
+				),
 				''.join(args) if args else []
 			),
 			typedefault=typedefault,
