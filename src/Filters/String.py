@@ -16,7 +16,6 @@ __all__ = (
 
 class IsLike(Expr):
 	"""Is Like Filter Class"""
-
 	def __init__(
 		self,
 		col: Union[Column, Type, Function, Expr],
@@ -26,17 +25,15 @@ class IsLike(Expr):
 		self.col = col
 		self.other = other
 		return
-
 	def __str__(self):
 		return '{} LIKE {}'.format(
 			str(self.col),
-			self.encode('%%{}%%'.format(self.other)),
+			'\'%%{}%%\''.format(self.other),
 		)
 
 
 class IsLikeStartWith(Expr):
 	"""Is Like Filter Class"""
-
 	def __init__(
 		self,
 		col: Union[Column, Type, Function, Expr],
@@ -46,17 +43,15 @@ class IsLikeStartWith(Expr):
 		self.col = col
 		self.other = other
 		return
-
 	def __str__(self):
 		return '{} LIKE {}'.format(
 			str(self.col),
-			self.encode('{}%%'.format(self.other)),
+			'\'{}%%\''.format(self.other),
 		)
 
 
 class IsLikeEndWith(Expr):
 	"""Is Like Filter Class"""
-
 	def __init__(
 		self,
 		col: Union[Column, Type, Function, Expr],
@@ -66,9 +61,8 @@ class IsLikeEndWith(Expr):
 		self.col = col
 		self.other = other
 		return
-
 	def __str__(self):
 		return '{} LIKE {}'.format(
 			str(self.col),
-			self.encode('%%{}'.format(self.other)),
+			'\'%%{}\''.format(self.other),
 		)
