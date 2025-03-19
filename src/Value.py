@@ -15,6 +15,7 @@ class Value(object):
 		fn ={
 			str: lambda x: "'{}'".format(x),
 			bool: lambda x: 'TRUE' if x else 'FALSE',
+			type(None): lambda x: 'NULL',
 		}.get(type(self.value), None)
 		if fn: return fn(self.value)
 		return str(self.value)
