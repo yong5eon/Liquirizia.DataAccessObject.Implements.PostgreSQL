@@ -7,6 +7,7 @@ from .Common import (
 )
 from .Condition import (
 	In,
+	NotIn,
 	IsNull,
 	IsNotNull,
 )
@@ -18,6 +19,7 @@ __all__ = (
 	'If',
 	# CONDITION
 	'In',
+	'NotIn',
 	'IsNull',
 	'IsNotNull',
 )
