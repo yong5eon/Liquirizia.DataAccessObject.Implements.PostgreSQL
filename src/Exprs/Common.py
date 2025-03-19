@@ -4,6 +4,7 @@ from ..Expr import Expr
 from ..Function import Function
 from ..Type import Type
 from ..Column import Column
+from ..Value import Value
 
 from typing import Union, Type as T, Any
 
@@ -49,12 +50,14 @@ class If(Expr):
 	def __init__(
 		self,
 		cond: Expr,
-		thenexpr: Expr = None,
-		elseexpr: Expr = None,
+		thenexpr: Union[Any, Value, Expr] = None,
+		elseexpr: Union[Any, Value, Expr] = None,
 	):
 		self.condexpr = cond
 		self.thenexpr = thenexpr
+		if not isinstance(self.thenexpr, (Value, Expr)): self.thenexpr = Value(self.thenexpr)
 		self.elseexpr = elseexpr
+		if not isinstance(self.elseexpr, (Value, Expr)): self.elseexpr = Value(self.elseexpr)
 		return
 	def then_(
 		self,
