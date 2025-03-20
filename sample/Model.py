@@ -9,7 +9,6 @@ from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Filters import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Joins import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Exprs import *
@@ -22,7 +21,7 @@ from Liquirizia.Validator.Patterns import (
 )
 
 from Liquirizia.DataModel import Handler
-from Liquirizia.Util import *
+from Liquirizia.Utils import *
 
 from random import randrange, sample
 from datetime import datetime
@@ -55,10 +54,10 @@ class Student(
 	),
 	constraints=(
 		PrimaryKey(name='PK_STUDENT', cols=Column('ID')),
-		Unique(name='UK_STUDENT_CODE', cols=Column('CODE')),
 		Check(name='CHK_STUDENT_IS_DELETED', expr=In(Column('IS_DELETED'), (Value('Y'), Value('N')))),
 	),
 	indexes=(
+		IndexUnique(name='UK_STUDENT_CODE', exprs=Ascend(Column('CODE'))),
 		Index(name='IDX_STUDENT_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
 		Index(name='IDX_STUDENT_AT_CREATED', exprs=Descend(Column('AT_CREATED'))),
 		Index(name='IDX_STUDENT_AT_UPDATED', exprs=Descend(Column('AT_UPDATED'))),
@@ -99,10 +98,10 @@ class Class(
 	),
 	constraints=(
 		PrimaryKey(name='PK_CLASS', cols=Column('ID')),
-		Unique(name='UK_CLASS_CODE', cols=Column('CODE')),
 		Check(name='CHK_CLASS_IS_DELETED', expr=In(Column('IS_DELETED'), (Value('Y'), Value('N')))),
 	),
 	indexes=(
+		IndexUnique(name='UK_CLASS_CODE', exprs=Ascend(Column('CODE'))),
 		Index(name='IDX_CLASS_IS_DELETED', exprs=Ascend(Column('IS_DELETED'))),
 		Index(name='IDX_CLASS_AT_CREATED', exprs=Descend(Column('AT_CREATED'))),
 		Index(name='IDX_CLASS_AT_UPDATED', exprs=Descend(Column('AT_UPDATED'))),

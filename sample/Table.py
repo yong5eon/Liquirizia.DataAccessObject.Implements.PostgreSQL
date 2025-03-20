@@ -7,7 +7,6 @@ from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Filters import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Joins import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Exprs import *
@@ -28,7 +27,7 @@ from Liquirizia.Validator.Patterns import (
 	IsTime,
 )
 
-from Liquirizia.Util import PrettyPrint
+from Liquirizia.Utils import PrettyPrint
 
 from decimal import Decimal
 from datetime import datetime, date, time
