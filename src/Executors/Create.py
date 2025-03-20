@@ -11,6 +11,7 @@ from ..Sequence import Sequence
 from ..Constraints import (
 	PrimaryKey,
 	ForeignKey,
+	Unique,
 	Check,
 )
 
@@ -60,6 +61,15 @@ class ForeignKeyToSQL(object):
 		)
 
 
+class UniqueToSQL(object):
+	def __call__(self, key: Unique) -> str:
+		return 'CONSTRAINT "{}" UNIQUE{}({})'.format(
+			key.name,
+			' NULLS NOT DISTINCT' if key.null else '',
+			', '.join([str(col) for col in key.cols]),
+		)
+
+
 class CheckToSQL(object):
 	def __call__(self, chk: Check) -> str:
 		return 'CONSTRAINT "{}" CHECK({})'.format(
@@ -101,6 +111,7 @@ class TableToSQL(object):
 	ColumnToSQL = ColumnToSQL()
 	PrimaryKeyToSQL = PrimaryKeyToSQL()
 	ForeignKeyToSQL = ForeignKeyToSQL()
+	UniqueToSQL = UniqueToSQL()
 	CheckToSQL = CheckToSQL()
 	SequenceToSQL = SequenceToSQL()
 	IndexToSQL = IndexToSQL()
@@ -116,6 +127,9 @@ class TableToSQL(object):
 				continue
 			if isinstance(constraint, ForeignKey):
 				_.append(self.ForeignKeyToSQL(constraint))
+				continue
+			if isinstance(constraint, Unique):
+				_.append(self.UniqueToSQL(constraint))
 				continue
 			if isinstance(constraint, Check):
 				_.append(self.CheckToSQL(constraint))
