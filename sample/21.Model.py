@@ -246,7 +246,7 @@ if __name__ == '__main__':
 	)
 
 	# Get Connection
-	con = Helper.Get('Sample')
+	con: Connection = Helper.Get('Sample')
 	con.begin()
 	
 	con.run(Drop(StatOfClass))
@@ -385,7 +385,7 @@ if __name__ == '__main__':
 	studentsOfClasses = con.run(Select(StudentOfClass), fetch=StudentOfClass)
 	PrettyPrint(studentsOfClasses)
 
-	for _ in studentsOfClasses:
+	for _ in studentsOfClasses if studentsOfClasses else []:
 		PrettyPrint(_)
 		costs = []
 		for i in range(0, randrange(5, 10)):
@@ -399,7 +399,7 @@ if __name__ == '__main__':
 	studentsOfClasses = con.run(Select(StudentOfClass), fetch=StudentOfClass)
 	PrettyPrint(studentsOfClasses)
 
-	for _ in studentsOfClasses:
+	for _ in studentsOfClasses if studentsOfClasses else []:
 		costs = []
 		for i in range(0, randrange(5, 10)):
 			costs.append(randrange(0, 100))
@@ -425,7 +425,7 @@ if __name__ == '__main__':
 	studentsOfClasses = con.run(Select(StudentOfClass), fetch=StudentOfClass)
 	PrettyPrint(studentsOfClasses)
 	
-	for _ in studentsOfClasses:
+	for _ in studentsOfClasses if studentsOfClasses else []:
 		PrettyPrint(_)
 		costs = []
 		for i in range(0, randrange(5, 10)):

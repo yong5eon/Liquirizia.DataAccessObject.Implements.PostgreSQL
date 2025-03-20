@@ -96,8 +96,10 @@ class Select(Executor, Fetch):
 		return list(self.kwargs.values())
 
 	def fetch(self, cursor: Cursor, filter: Filter = None, fetch: T[Model] = None):
+		rows = cursor.rows()
+		if not rows: return None
 		_ = []
-		for i, row in enumerate(cursor.rows()):
+		for i, row in enumerate(rows):
 			if filter: row = filter(row)
 			if fetch:
 				obj = fetch(**row)
@@ -106,4 +108,4 @@ class Select(Executor, Fetch):
 				_.append(obj)
 			else:
 				_.append(row)
-		return _ if len(_) else None
+		return _

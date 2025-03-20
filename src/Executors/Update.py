@@ -54,6 +54,7 @@ class Update(Executor, Fetch):
 
 	def fetch(self, cursor: Cursor, filter: Filter = None, fetch: Type[Model] = None):
 		row = cursor.row()
+		if not row: return None
 		if filter: row = filter(row)
 		if fetch:
 			obj = fetch(**row)
