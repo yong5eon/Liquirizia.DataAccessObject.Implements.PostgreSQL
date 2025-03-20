@@ -61,10 +61,14 @@ class Cursor(BaseCursor, Run):
 			for i, row in enumerate(rows):  # iterate throw the sqlite3.Row objects
 				li.append(dict(row))
 			return li
-		return transform(self.cursor.fetchall())
+		rows = self.cursor.fetchall()
+		if rows is None: return None
+		return transform(rows)
 
 	def row(self):
-		return dict(self.cursor.fetchone())
+		row = self.cursor.fetchone()
+		if row is None: return None
+		return dict(row)
 
 	def count(self):
 		return self.cursor.rowcount
