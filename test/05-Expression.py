@@ -8,7 +8,6 @@ from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Filters import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Joins import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Exprs import *
