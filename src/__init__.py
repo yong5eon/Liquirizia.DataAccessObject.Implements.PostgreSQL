@@ -14,7 +14,7 @@ from .Value import Value
 
 from .Sequence import Sequence
 from .Constraint import Constraint
-from .Index import Index, IndexUnique
+from .Index import IndexType, Index, IndexUnique
 
 from .Expr import Expr
 from .Function import Function
@@ -32,6 +32,7 @@ __all__ = (
 	'Value',
 	'Sequence',
 	'Constraint',
+	'IndexType',
 	'Index',
 	'IndexUnique',
 	'Expr',

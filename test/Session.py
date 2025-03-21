@@ -21,7 +21,7 @@ class TestSession(Case):
 				password='password',  # Database Password for User
 				pool=True,
 				min=1,
-				max=100,
+				max=10,
 			)
 		)
 		return super().setUpClass()

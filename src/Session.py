@@ -44,7 +44,6 @@ class Session(BaseSession, Run):
 	def executes(self, sql, *args):
 		self.cursor.executemany(sql, args)
 		return Context(self.cursor)
-		return
 
 	def run(
 		self,

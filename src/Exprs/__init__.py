@@ -28,6 +28,9 @@ from .String import (
 	IsLikeEndWith,
 	IsLikeStartWith,
 )
+from .JavaScriptObjectNotation import (
+	Of,
+)
 
 
 __all__ = (
@@ -54,4 +57,6 @@ __all__ = (
 	'IsLike',
 	'IsLikeStartWith',
 	'IsLikeEndWith',
+	# JSON
+	'Of',
 )
