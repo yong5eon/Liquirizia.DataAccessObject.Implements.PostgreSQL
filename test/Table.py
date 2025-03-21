@@ -69,6 +69,9 @@ class TestTable(Case):
 				database='postgres',  # Database Name
 				username='postgres',  # Database User
 				password='password',  # Database Password for User
+				pool=True,
+				min=1,
+				max=10,
 			)
 		)
 		con = Helper.Get('Sample')
