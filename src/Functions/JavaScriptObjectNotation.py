@@ -24,13 +24,21 @@ class AggregateToJSON(Function):
 			if not isinstance(v, (Column, Type, Function, Expr)):
 				kwargs[k] = Column(v)
 		self.kwargs = kwargs
+		self.conds = None
 		return
+	def where(self, *args):
+		self.conds = args
+		return self
 	def __str__(self):
 		args = []
 		for k, v in self.kwargs.items():
 			args.append('\'{}\''.format(k))
 			args.append(str(v))
-		return 'JSON_AGG(JSON_BUILD_OBJECT({}))'.format(', '.join(args))
+		return 'JSON_AGG(JSON_BUILD_OBJECT({})){}'.format(
+			', '.join(args),
+			' FILTER (WHERE {})'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
+		)
+
 
 
 class AggregateToJSONB(Function):
@@ -42,13 +50,20 @@ class AggregateToJSONB(Function):
 			if not isinstance(v, (Column, Type, Function, Expr)):
 				kwargs[k] = Column(v)
 		self.kwargs = kwargs
+		self.conds = None,
 		return
+	def where(self, *args):
+		self.conds = args
+		return self
 	def __str__(self):
 		args = []
 		for k, v in self.kwargs.items():
 			args.append('\'{}\''.format(k))
 			args.append(str(v))
-		return 'JSONB_AGG(JSONB_BUILD_OBJECT({}))'.format(', '.join(args))
+		return 'JSONB_AGG(JSONB_BUILD_OBJECT({})){}'.format(
+			', '.join(args),
+			' FILTER (WHERE {})'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
+		)
 
 
 class ToJSON(Function):
@@ -60,13 +75,20 @@ class ToJSON(Function):
 			if not isinstance(v, (Column, Type, Function, Expr)):
 				kwargs[k] = Column(v)
 		self.kwargs = kwargs
+		self.conds = None
 		return
+	def where(self, *args):
+		self.conds = args
+		return self
 	def __str__(self):
 		args = []
 		for k, v in self.kwargs.items():
 			args.append('\'{}\''.format(k))
 			args.append(str(v))
-		return 'JSON_BUILD_OBJECT({})'.format(', '.join(args))
+		return 'JSON_BUILD_OBJECT({}){}'.format(
+			', '.join(args),
+			' FILTER (WHERE {})'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
+		)
 
 
 class ToJSONB(Function):
@@ -78,10 +100,17 @@ class ToJSONB(Function):
 			if not isinstance(v, (Column, Type, Function, Expr)):
 				kwargs[k] = Column(v)
 		self.kwargs = kwargs
+		self.conds = None
 		return
+	def where(self, *args):
+		self.conds = args
+		return self
 	def __str__(self):
 		args = []
 		for k, v in self.kwargs.items():
 			args.append('\'{}\''.format(k))
 			args.append(str(v))
-		return 'JSONB_BUILD_OBJECT({})'.format(', '.join(args))
+		return 'JSONB_BUILD_OBJECT({}){}'.format(
+			', '.join(args),
+			' FILTER (WHERE {})'.format(' AND '.join([str(cond) for cond in self.conds])) if self.conds else '',
+		)
