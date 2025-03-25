@@ -5,6 +5,7 @@ from ..Function import Function
 from ..Type import Type
 from ..Column import Column
 from ..Value import Value
+from ..Executors import Select
 
 from typing import Union, Type as T, Any
 
@@ -12,6 +13,7 @@ __all__ = (
 	'Alias',
 	'TypeTo',
 	'If',
+	'Query',
 )
 
 
@@ -77,3 +79,14 @@ class If(Expr):
 			str(self.thenexpr),
 			' ELSE {}'.format(str(self.elseexpr)) if self.elseexpr else '',
 		)
+
+
+class Query(Expr):
+	def __init__(
+		self,
+		executor : Select,
+	):
+		self.executor = executor
+		return
+	def __str__(self):
+		return '({})'.format(self.executor.query)
