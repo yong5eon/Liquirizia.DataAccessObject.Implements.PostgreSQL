@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from ..Type import Type
-from ..Function import Function
-from ..Value import Value
+from ..Patterns import IsPoint, TupleToPoint, StrToPoint
 
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
-
-from typing import Union, Tuple
+from Liquirizia.Validator.Patterns import (
+	IsToNone,
+	IsNotToNone,
+	Any,
+	IsTuple,
+	IsSizeOf,
+	IsString,
+)
 
 __all__ = (
 	'Geography',
@@ -21,27 +26,23 @@ class Geography(Type, typestr='GEOGRAPHY'):
 			subtype: str = 'POINT',
 			srid: int = 4326,
 			null: bool = False,
-			default: Union[Tuple[float, float], Function] = None,
 			description: str = None,
 			va: Validator = None,
 			fn: Handler = None,
 		):
-		typedefault = None
-		if default is not None:
-			if isinstance(default, Value):
-				typedefault = str(default)
-				default = default.value
-			elif isinstance(default, Function):
-				typedefault = str(default)
-				default = None
+		if not va:
+			vargs = []
+			if null:
+				vargs.append(IsToNone(Any(IsPoint(), IsTuple(IsSizeOf(2), TupleToPoint()), IsString(StrToPoint()))))
 			else:
-				typedefault = str(Value(default))
+				vargs.append(IsNotToNone(Any(IsPoint(), IsTuple(IsSizeOf(2), TupleToPoint()), IsString(StrToPoint()))))
+			va = Validator(*vargs)
 		super().__init__(
 			key=name, 
 			type='{}({}, {})'.format('GEOGRAPHY', subtype, srid),
-			typedefault=typedefault,
+			typedefault=None,
 			null=null,
-			default=default,
+			default=None,
 			description=description,
 			va=va,
 			fn=fn,
