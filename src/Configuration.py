@@ -6,6 +6,10 @@ from .Adapters import (
 	JavaScriptObjectNotationDumper,
 	ArrayDumper,
 	DataModelDumper,
+	PointDumper,
+)
+from .Values import (
+	Point,
 )
 
 from collections.abc import Sequence, Mapping
@@ -50,6 +54,7 @@ class Configuration(BaseConfiguration):
 			Sequence: ArrayDumper,
 			Mapping: JavaScriptObjectNotationDumper,
 			Model: DataModelDumper,
+			Point: PointDumper,
 		}
 		if dumpers: self.dumpers.update(dumpers)
 		# TODO : set Loaders
