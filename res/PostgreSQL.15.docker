@@ -1,16 +1,73 @@
 ARG TAG=15-alpine
+
+# Install PgVector
 FROM postgres:$TAG AS pgvector
-RUN apk add git
-RUN apk add build-base
-RUN apk add clang
-RUN apk add llvm19-dev llvm19
+RUN apk add --no-cache bash git curl build-base make gcc libc-dev clang llvm19-dev llvm19 proj proj-dev gdal gdal-dev geos geos-dev musl-dev
 WORKDIR /tmp
 RUN git clone --branch v0.7.4 https://github.com/pgvector/pgvector.git
 WORKDIR /tmp/pgvector
 RUN make
 RUN make install
+
+# Install PostGIS
+FROM postgres:$TAG AS postgis
+RUN apk add --no-cache bash \
+    git \
+    curl \
+    build-base \
+    make \
+    gcc \
+    libc-dev \
+    clang \
+    llvm19-dev \
+    llvm19 \
+    proj \
+    proj-dev \
+    gdal \
+    gdal-dev \
+    geos \
+    geos-dev \
+    musl-dev \
+    autoconf \
+    automake \
+    libtool \
+    postgresql-dev \
+    libxml2-dev \
+    protobuf-c-dev \
+    bison
+WORKDIR /tmp
+RUN git clone --branch 3.5.2 https://github.com/postgis/postgis.git
+WORKDIR /tmp/postgis
+RUN ./autogen.sh
+RUN ./configure \
+    --with-projdir=/usr \
+    --with-geosconfig=/usr/bin/geos-config \
+    --with-gdalconfig=/usr/bin/gdal-config
+RUN make
+RUN make install
+RUN ls -lh /usr/local/lib/postgresql
+RUN ls -lh /usr/local/lib/postgresql/bitcode
+RUN ls -lh /usr/local/lib/postgresql/bitcode/postgis-3
+
+# Build Final Image
 FROM postgres:$TAG
+RUN apk add \
+    curl \
+    llvm19 \
+    proj \
+    gdal \
+    geos \
+    musl \
+    libtool \
+    libxml2 \
+    protobuf-c
 COPY --from=pgvector /usr/local/lib/postgresql/bitcode/vector.index.bc /usr/local/lib/postgresql/bitcode/vector.index.bc
 COPY --from=pgvector /usr/local/lib/postgresql/vector.so /usr/local/lib/postgresql/vector.so
 COPY --from=pgvector /usr/local/share/postgresql/extension /usr/local/share/postgresql/extension
+COPY --from=postgis /usr/local/lib/postgresql/postgis-3.so /usr/local/lib/postgresql/postgis-3.so
+COPY --from=postgis /usr/local/lib/postgresql/postgis_raster-3.so /usr/local/lib/postgresql/postgis_raseter-3.so
+COPY --from=postgis /usr/local/lib/postgresql/postgis_topology-3.so /usr/local/lib/postgresql/postgis_topology-3.so
+COPY --from=postgis /usr/local/lib/postgresql/bitcode/postgis-3 /usr/local/lib/postgresql/bitcode/postgis-3
+COPY --from=postgis /usr/local/lib/postgresql/bitcode/postgis-3.index.bc /usr/local/lib/postgresql/bitcode/postgis-3.index.bc
+COPY --from=postgis /usr/local/share/postgresql/extension /usr/local/share/postgresql/extension
 ENV POSTGRES_PASSWORD=password

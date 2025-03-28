@@ -20,5 +20,5 @@ DataAccessObject of PostgreSQL for Liquirizia
 
 ```shell
 > docker image build --file=res/PostgreSQL.15.docker --tag=postgresql:15 .
-> docker container run --name=postgresql --detach --publish=5432:5432 postgresql:15
+> docker container run --name=PostgreSQL --detach --publish=5432:5432 postgresql:15
 ```

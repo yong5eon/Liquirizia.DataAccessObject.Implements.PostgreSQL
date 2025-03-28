@@ -3,11 +3,12 @@
 from ..Type import Type
 from ..Function import Function
 from ..Value import Value
+from ..Patterns import IsModel, ModelToDict
 
 from Liquirizia.DataModel import Model, Handler
 from Liquirizia.DataModel.Utils import ToDict
 
-from Liquirizia.Validator import Validator, Pattern
+from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
 	IsToNone,
 	IsNotToNone,
@@ -25,34 +26,6 @@ __all__ = (
 	'JavaScriptObjectNotation',
 	'JavaScriptObjectNotationByteArray',
 )
-
-
-class IsModel(Pattern):
-	def __init__(
-		self,
-		*args,
-		error: BaseException = None
-	):
-		self.patterns = args
-		self.error = error
-		return
-
-	def __call__(self, parameter):
-		if not isinstance(parameter, Model):
-			if self.error:
-				raise self.error
-			raise TypeError('{} must be based {}'.format(
-				'\'{}\''.format(parameter) if isinstance(parameter, str) else parameter, 
-				Model.__name__,
-			))
-		for pattern in self.patterns:
-			parameter = pattern(parameter)
-		return parameter
-
-
-class ModelToDict(Pattern):
-	def __call__(self, parameter):
-		return ToDict(parameter)
 
 
 class JavaScriptObjectNotation(Type, typestr='JSON'):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from Liquirizia.DataAccessObject import Helper
-
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Values import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
@@ -31,6 +31,8 @@ from Liquirizia.Utils import PrettyPrint
 
 from decimal import Decimal
 from datetime import datetime, date, time
+
+from typing import Tuple
 
 
 class SampleModel(Model):
@@ -88,6 +90,7 @@ class SampleTable(
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
 	colVector : list = VECTOR('COL_VECTOR', size=3, null=True)
+	colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
 	colDataModel : Model = JSON('COL_DATAMODEL', null=True)
 
 
@@ -103,8 +106,11 @@ Helper.Set(
 	)
 )
 
-con = Helper.Get('Sample')
+con: Connection = Helper.Get('Sample')
 con.begin()
+
+con.execute('CREATE EXTENSION IF NOT EXISTS vector')
+con.execute('CREATE EXTENSION IF NOT EXISTS postgis')
 
 con.run(Drop(SampleTable))
 con.run(Create(SampleTable))
@@ -137,7 +143,7 @@ o = SampleModel(
 )
 
 # INSERT
-_ = con.run(
+_: SampleTable = con.run(
 	Insert(SampleTable).values(
 		colBool=True,
 		colShort=1,
@@ -154,6 +160,7 @@ _ = con.run(
 		colDate=datetime.now().date(),
 		colTime=datetime.now().time(),
 		colVector=[1,2,3],
+		colGeography=Point(1.0, 2.0),
 		colDataModel=o,
 	),
 	fetch=SampleTable
@@ -208,6 +215,7 @@ _.colTimestamp=datetime.now()
 _.colDate=datetime.now().date()
 _.colTime=datetime.now().time()
 _.colVector=[4,5,6]
+_.colGeography=Point(4.0, 5.0)
 _.colDataModel=o
 
 # SELECT
@@ -224,6 +232,4 @@ _ = con.run(Select(SampleTable), fetch=SampleTable)
 PrettyPrint(_)
 
 con.run(Drop(SampleTable))
-
 con.commit()
-

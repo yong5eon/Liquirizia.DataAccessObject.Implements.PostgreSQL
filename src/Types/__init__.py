@@ -26,6 +26,7 @@ from .JavaScriptObjectNotation import (
 )
 from .Array import Array
 from .Vector import Vector
+from .Geography import Geography
 
 __all__ = (
 	'Bool', 'BOOL', 'BOOLEAN',
@@ -46,6 +47,7 @@ __all__ = (
 	'JavaScriptObjectNotationByteArray', 'JSONB',
 	'Array', 'ARRAY',
 	'Vector', 'VECTOR',
+	'Geography', 'GEOGRAPHY',
 )
 
 # PRE-DEFINED TYPE
@@ -89,3 +91,5 @@ JSONB = JavaScriptObjectNotationByteArray
 ARRAY = Array
 ## VECTOR
 VECTOR = Vector
+## GEOGRAPHY
+GEOGRAPHY = Geography
