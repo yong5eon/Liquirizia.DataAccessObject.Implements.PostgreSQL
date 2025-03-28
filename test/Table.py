@@ -7,6 +7,7 @@ from Liquirizia.DataAccessObject.Properties.Database import Filter
 
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
+from Liquirizia.DataAccessObject.Implements.PostgreSQL.Values import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
@@ -54,7 +55,8 @@ class SampleTable(
 	colTimestamp: datetime = TIMESTAMP('COL_TIMESTAMP', null=True)
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
-	colVector : list = VECTOR('COL_VECTOR', size=3, null=True)
+	colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
+	colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
 
 
 class TestTable(Case):
@@ -74,14 +76,14 @@ class TestTable(Case):
 				max=10,
 			)
 		)
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		con.execute('CREATE EXTENSION IF NOT EXISTS VECTOR')
 		con.commit()
 		return super().setUpClass()
 	
 	def setUp(self):
-		self.con = Helper.Get('Sample')
+		self.con: Connection = Helper.Get('Sample')
 		self.con.begin()
 		return super().setUp()
 	
@@ -117,6 +119,7 @@ class TestTable(Case):
 			'colDate': datetime.now().date(),
 			'colTime': datetime.now().time(),
 			'colVector': [1,2,3],
+			'colGeography': Point(1, 2),
 		}, 'status': True},
 	)
 	@Order(3)
@@ -149,6 +152,7 @@ class TestTable(Case):
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
 				'colVector': [1,2,3],
+				'colGeography': Point(1, 2),
 			},
 			'u': {
 				'colBool': False,
@@ -166,6 +170,7 @@ class TestTable(Case):
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
 				'colVector': [4,5,6],
+				'colGeography': Point(3, 4),
 			},
 			'status': True
 		},
@@ -201,6 +206,7 @@ class TestTable(Case):
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
 				'colVector': [1,2,3],
+				'colGeography': Point(1, 2),
 			},
 			'u': {
 				'colBool': False,
@@ -218,6 +224,7 @@ class TestTable(Case):
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
 				'colVector': [4,5,6],
+				'colGeography': Point(3, 4),
 			},
 		},
 	)
@@ -241,6 +248,7 @@ class TestTable(Case):
 			_.colDate=u['colDate']
 			_.colTime=u['colTime']
 			_.colVector=u['colVector']
+			_.colGeography=u['colGeography']
 			_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
 		finally:
 			ASSERT_IS_NOT_NONE(_)
@@ -259,6 +267,7 @@ class TestTable(Case):
 			ASSERT_IS_EQUAL(_.colDate, u['colDate'])
 			ASSERT_IS_EQUAL(_.colTime, u['colTime'])
 			ASSERT_IS_EQUAL(list(_.colVector), u['colVector'])
+			ASSERT_IS_EQUAL(_.colGeography, u['colGeography'])
 		return
 
 	@Order(6)
@@ -280,6 +289,7 @@ class TestTable(Case):
 			colDate=datetime.now().date(),
 			colTime=datetime.now().time(),
 			colVector=[1,2,3],
+			colGeography=Point(1, 2),
 		), fetch=SampleTable)
 		ASSERT_IS_NOT_NONE(_)
 		self.con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, _.id)))
@@ -307,6 +317,7 @@ class TestTable(Case):
 			colDate=datetime.now().date(),
 			colTime=datetime.now().time(),
 			colVector=[1,2,3],
+			colGeography=Point(1, 2),
 		), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NOT_NONE(_)
