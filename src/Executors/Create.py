@@ -52,12 +52,14 @@ class ForeignKeyToSQL(object):
 			referenceTable = key.reference.__table__
 		else:
 			referenceTable = key.reference
-		return 'CONSTRAINT "{}" FOREIGN KEY({}) REFERENCES {}"{}"({})'.format(
+		return 'CONSTRAINT "{}" FOREIGN KEY({}) REFERENCES {}"{}"({}){}{}'.format(
 			key.name,
 			', '.join([str(col) for col in key.cols]),
 			'"{}".'.format(str(referenceSchema)) if referenceSchema else '',
 			referenceTable,
-			', '.join(['"{}"'.format(col.key) if isinstance(col, Type) else str(col) for col in key.referenceCols])
+			', '.join(['"{}"'.format(col.key) if isinstance(col, Type) else str(col) for col in key.referenceCols]),
+			' ON UPDATE {}'.format(key.onUpdate) if key.onUpdate else '',
+			' ON DELETE {}'.format(key.onDelete) if key.onDelete else '',
 		)
 
 
