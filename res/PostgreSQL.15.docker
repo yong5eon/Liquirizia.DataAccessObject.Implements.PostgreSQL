@@ -33,13 +33,13 @@ RUN apk add --no-cache bash \
     libtool \
     postgresql-dev \
     libxml2-dev \
-    protobuf-c-dev
+    protobuf-c-dev \
+    bison
 WORKDIR /tmp
 RUN git clone --branch 3.5.2 https://github.com/postgis/postgis.git
 WORKDIR /tmp/postgis
 RUN ./autogen.sh
 RUN ./configure \
-    --with-llvm \
     --with-projdir=/usr \
     --with-geosconfig=/usr/bin/geos-config \
     --with-gdalconfig=/usr/bin/gdal-config
@@ -52,15 +52,15 @@ RUN ls -lh /usr/local/lib/postgresql/bitcode/postgis-3
 # Build Final Image
 FROM postgres:$TAG
 RUN apk add \
-	curl \
-	llvm19 \
-	proj \
-	gdal \
-	geos \
-	musl \
-	libtool \
-	libxml2 \
-	protobuf-c
+    curl \
+    llvm19 \
+    proj \
+    gdal \
+    geos \
+    musl \
+    libtool \
+    libxml2 \
+    protobuf-c
 COPY --from=pgvector /usr/local/lib/postgresql/bitcode/vector.index.bc /usr/local/lib/postgresql/bitcode/vector.index.bc
 COPY --from=pgvector /usr/local/lib/postgresql/vector.so /usr/local/lib/postgresql/vector.so
 COPY --from=pgvector /usr/local/share/postgresql/extension /usr/local/share/postgresql/extension
