@@ -37,6 +37,7 @@ setup(
 	install_requires=[
 		'Liquirizia@git+https://github.com/yong5eon/Liquirizia.git',
 		'psycopg[binary,pool]',
+		'shapely',
 	],
 	python_requires='>=3.8'
 )
