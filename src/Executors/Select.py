@@ -44,7 +44,7 @@ class Select(Executor, Fetch):
 		self.conds = args
 		return self
 
-	def groupBy(self, *args: Sequence[Expr]):
+	def group(self, *args: Sequence[Expr]):
 		self.grps = args
 		return self
 	
@@ -52,7 +52,7 @@ class Select(Executor, Fetch):
 		self.havs = args
 		return self
 
-	def orderBy(self, *args: Sequence[Expr]):
+	def order(self, *args: Sequence[Expr]):
 		self.ords = args
 		return self
 
