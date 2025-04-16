@@ -27,10 +27,10 @@ __all__ = (
 	'TimezoneHour',
 	'TimezoneMinute',
 	'TimezoneHourMinute',
-	'Millenium',
+	'Millennium',
 	'Century',
 	'Decade',
-	'EPoch',
+	'Epoch',
 )
 
 
@@ -59,10 +59,10 @@ class DatePartType(str, Enum):
 	TimezoneHour = 'TIMEZONE_HOUR'
 	TimezoneMinute = 'TIMEZONE_MINUTE'
 	TimezoneHourMinute = 'TIMEZONE_HOUR_MINUTE'
-	Millenium = 'MILLENNIUM'
+	Millennium = 'MILLENNIUM'
 	Century = 'CENTURY'
 	Decade = 'DECADE'
-	EPoch = 'EPOCH'
+	Epoch = 'EPOCH'
 	def __str__(self): return self.value
 
 
@@ -177,9 +177,9 @@ class TimezoneHourMinute(DatePart):
 		return
 
 
-class Millenium(DatePart):
+class Millennium(DatePart):
 	def __init__(self, expr: Union[Expr, Column, str]):
-		super().__init__(DatePartType.Millenium, expr)
+		super().__init__(DatePartType.Millennium, expr)
 		return
 
 
@@ -195,7 +195,7 @@ class Decade(DatePart):
 		return
 
 
-class EPoch(DatePart):
+class Epoch(DatePart):
 	def __init__(self, expr: Union[Expr, Column, str]):
-		super().__init__(DatePartType.EPoch, expr)
+		super().__init__(DatePartType.Epoch, expr)
 		return

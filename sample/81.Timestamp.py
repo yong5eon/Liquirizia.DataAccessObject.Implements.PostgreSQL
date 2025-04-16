@@ -89,10 +89,10 @@ _ = con.run(Get(SampleTable).values(
 	Alias(DayOfWeek(SampleTable.colTimestamp), 'dayofweek'),
 	Alias(DayOfWeekISO(SampleTable.colTimestamp), 'dayofweekiso'),
 	Alias(DayOfYear(SampleTable.colTimestamp), 'dayofyear'),
-	Alias(Millenium(SampleTable.colTimestamp), 'millenium'),
+	Alias(Millennium(SampleTable.colTimestamp), 'millenium'),
 	Alias(Century(SampleTable.colTimestamp), 'century'),
 	Alias(Decade(SampleTable.colTimestamp), 'decade'),
-	Alias(EPoch(SampleTable.colTimestamp), 'epoch'),
+	Alias(Epoch(SampleTable.colTimestamp), 'epoch'),
 ))
 PrettyPrint(_)
 
@@ -115,10 +115,10 @@ _ = con.run(Get(SampleTable).values(
 	Alias(TimezoneHour(SampleTable.colTimestampTZ), 'timezonehour'),
 	Alias(TimezoneMinute(SampleTable.colTimestampTZ), 'timezoneminute'),
 	Alias(TimezoneHourMinute(SampleTable.colTimestampTZ), 'timezonehourminute'),
-	Alias(Millenium(SampleTable.colTimestampTZ), 'millenium'),
+	Alias(Millennium(SampleTable.colTimestampTZ), 'millenium'),
 	Alias(Century(SampleTable.colTimestampTZ), 'century'),
 	Alias(Decade(SampleTable.colTimestampTZ), 'decade'),
-	Alias(EPoch(SampleTable.colTimestampTZ), 'epoch'),
+	Alias(Epoch(SampleTable.colTimestampTZ), 'epoch'),
 ))
 PrettyPrint(_)
 
@@ -132,10 +132,10 @@ _ = con.run(Get(SampleTable).values(
 	Alias(DayOfWeek(SampleTable.colDate), 'dayofweek'),
 	Alias(DayOfWeekISO(SampleTable.colDate), 'dayofweekiso'),
 	Alias(DayOfYear(SampleTable.colDate), 'dayofyear'),
-	Alias(Millenium(SampleTable.colDate), 'millenium'),
+	Alias(Millennium(SampleTable.colDate), 'millenium'),
 	Alias(Century(SampleTable.colDate), 'century'),
 	Alias(Decade(SampleTable.colDate), 'decade'),
-	Alias(EPoch(SampleTable.colDate), 'epoch'),
+	Alias(Epoch(SampleTable.colDate), 'epoch'),
 ))
 PrettyPrint(_)
 
@@ -146,7 +146,7 @@ _ = con.run(Get(SampleTable).values(
 	Alias(Second(SampleTable.colTime), 'second'),
 	Alias(MilliSecond(SampleTable.colTime), 'millisecond'),
 	Alias(MicroSecond(SampleTable.colTime), 'microsecond'),
-	Alias(EPoch(SampleTable.colTime), 'epoch'),
+	Alias(Epoch(SampleTable.colTime), 'epoch'),
 ))
 PrettyPrint(_)
 

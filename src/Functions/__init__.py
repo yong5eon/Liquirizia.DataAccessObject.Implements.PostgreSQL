@@ -35,10 +35,10 @@ from .DateTime import (
 	TimezoneHour,
 	TimezoneMinute,
 	TimezoneHourMinute,
-	Millenium,
+	Millennium,
 	Century,
 	Decade,
-	EPoch,
+	Epoch,
 )
 from .Sequence import (
 	NextVal,
@@ -84,10 +84,10 @@ __all__ = (
 	'TimezoneHour',
 	'TimezoneMinute',
 	'TimezoneHourMinute',
-	'Millenium',
+	'Millennium',
 	'Century',
 	'Decade',
-	'EPoch',
+	'Epoch',
 	# SEQUENCE
 	'NextVal',
 	# JSON
