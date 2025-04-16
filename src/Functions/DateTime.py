@@ -60,7 +60,7 @@ class DatePartType(str, Enum):
 	TimezoneMinute = 'TIMEZONE_MINUTE'
 	TimezoneHourMinute = 'TIMEZONE_HOUR_MINUTE'
 	Millenium = 'MILLENNIUM'
-	Centry = 'CENTURY'
+	Century = 'CENTURY'
 	Decade = 'DECADE'
 	EPoch = 'EPOCH'
 	def __str__(self): return self.value
@@ -185,7 +185,7 @@ class Millenium(DatePart):
 
 class Century(DatePart):
 	def __init__(self, expr: Union[Expr, Column, str]):
-		super().__init__(DatePartType.Centry, expr)
+		super().__init__(DatePartType.Century, expr)
 		return
 
 
