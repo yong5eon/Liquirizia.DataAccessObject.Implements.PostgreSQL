@@ -39,6 +39,7 @@ class Configuration(BaseConfiguration):
 		max: int = 0,
 		dumpers: Map[Type, Dumper] = None,
 		loaders: Map[Type, Loader] = None,
+		timezone: str = None,
 	):
 		self.host = host
 		self.port = port
@@ -58,5 +59,6 @@ class Configuration(BaseConfiguration):
 		}
 		if dumpers: self.dumpers.update(dumpers)
 		# TODO : set Loaders
+		self.timezone = timezone
 		return
 	

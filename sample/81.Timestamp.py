@@ -44,13 +44,12 @@ Helper.Set(
 		database='postgres',  # Database Name
 		username='postgres',  # Database User
 		password='password',  # Database Password for User
+		timezone='Asia/Seoul',  # Database Timezone
 	)
 )
 
 con: Connection = Helper.Get('Sample')
 con.begin()
-
-con.execute('SET TIME ZONE "Asia/Seoul"') # Asia/Seoul
 
 con.run(Drop(SampleTable))
 con.run(Create(SampleTable))
@@ -151,4 +150,5 @@ _ = con.run(Get(SampleTable).values(
 PrettyPrint(_)
 
 
+con.run(Drop(SampleTable))
 con.commit()

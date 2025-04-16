@@ -65,6 +65,8 @@ class Connection(BaseConnection, Database, Run):
 		for k, v in self.conf.dumpers.items() if self.conf.dumpers else []:
 			self.connection.adapters.register_dumper(k, v)
 		# TODO : set Loaders
+		if self.conf.timezone:
+			self.connection.execute('SET TIME ZONE "{}"'.format(self.conf.timezone))
 		return
 
 	def close(self):
