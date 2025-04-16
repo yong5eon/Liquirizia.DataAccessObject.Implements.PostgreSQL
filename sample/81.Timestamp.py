@@ -89,7 +89,7 @@ _ = con.run(Get(SampleTable).values(
 	Alias(DayOfWeek(SampleTable.colTimestamp), 'dayofweek'),
 	Alias(DayOfWeekISO(SampleTable.colTimestamp), 'dayofweekiso'),
 	Alias(DayOfYear(SampleTable.colTimestamp), 'dayofyear'),
-	Alias(Millennium(SampleTable.colTimestamp), 'millenium'),
+	Alias(Millennium(SampleTable.colTimestamp), 'millennium'),
 	Alias(Century(SampleTable.colTimestamp), 'century'),
 	Alias(Decade(SampleTable.colTimestamp), 'decade'),
 	Alias(Epoch(SampleTable.colTimestamp), 'epoch'),
