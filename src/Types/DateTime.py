@@ -63,7 +63,7 @@ class Timestamp(Type, typestr='TIMESTAMP'):
 				typedefault = str(Value(default))
 		super().__init__(
 			name,
-			type='{}{}'.format(str(self.__class__), ' WITH TIME ZONE' if timezone else ''),
+			type='TIMESTAMP{}'.format(' WITH TIME ZONE' if timezone else ''),
 			typedefault=typedefault,
 			null=null,
 			default=default,
@@ -109,7 +109,7 @@ class Date(Type, typestr='DATE'):
 				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
-			type=str(self.__class__),
+			type='DATE',
 			typedefault=typedefault,
 			null=null,
 			default=default,
@@ -155,7 +155,7 @@ class Time(Type, typestr='TIME'):
 				typedefault = str(Value(default))
 		super().__init__(
 			key=name, 
-			type=str(self.__class__),
+			type='TIME',
 			typedefault=typedefault,
 			null=null,
 			default=default,
