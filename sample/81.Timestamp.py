@@ -115,7 +115,7 @@ _ = con.run(Get(SampleTable).values(
 	Alias(TimezoneHour(SampleTable.colTimestampTZ), 'timezonehour'),
 	Alias(TimezoneMinute(SampleTable.colTimestampTZ), 'timezoneminute'),
 	Alias(TimezoneHourMinute(SampleTable.colTimestampTZ), 'timezonehourminute'),
-	Alias(Millennium(SampleTable.colTimestampTZ), 'millenium'),
+	Alias(Millennium(SampleTable.colTimestampTZ), 'millennium'),
 	Alias(Century(SampleTable.colTimestampTZ), 'century'),
 	Alias(Decade(SampleTable.colTimestampTZ), 'decade'),
 	Alias(Epoch(SampleTable.colTimestampTZ), 'epoch'),
