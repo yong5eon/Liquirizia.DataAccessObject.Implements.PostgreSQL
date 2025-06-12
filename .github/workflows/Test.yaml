@@ -30,10 +30,10 @@ jobs:
         run: pip install --upgrade setuptools wheel ruff
       - name: Install Liquirizia
         run: pip install --upgrade .
-      - name: Build PostgreSQL-15 docker
-        run: docker image build --file=res/PostgreSQL.15.docker --tag=postgresql:15 .
-      - name: Run PostgreSQL-15 docker
-        run: docker container run --name=postgresql --detach --publish=5432:5432 postgresql:15
+      - name: Build PostgreSQL-17 docker
+        run: docker image build --file=res/PostgreSQL.17.docker --tag=postgresql:17 .
+      - name: Run PostgreSQL-17 docker
+        run: docker container run --name=postgresql --detach --publish=5432:5432 postgresql:17
       - name: Check PostgreSQL-15 docker
         run: docker logs postgresql
       - name: Test

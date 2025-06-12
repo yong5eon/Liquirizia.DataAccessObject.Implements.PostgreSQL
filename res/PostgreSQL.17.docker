@@ -1,4 +1,4 @@
-ARG TAG=15-alpine
+ARG TAG=17-alpine
 
 # Install PgVector
 FROM postgres:$TAG AS pgvector
