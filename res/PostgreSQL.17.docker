@@ -11,8 +11,8 @@ RUN apk add --no-cache \
     gcc \
     libc-dev \
     clang \
-    llvm20-dev \
-    llvm20 \
+    llvm19.1-dev \
+    llvm19.1 \
     proj \
     proj-dev \
     gdal \
@@ -37,8 +37,8 @@ RUN apk add --no-cache \
     gcc \
     libc-dev \
     clang \
-    llvm20-dev \
-    llvm20 \
+    llvm19.1-dev \
+    llvm19.1 \
     proj \
     proj-dev \
     gdal \
@@ -71,7 +71,7 @@ RUN ls -lh /usr/local/lib/postgresql/bitcode/postgis-3
 FROM postgres:$TAG
 RUN apk add \
     curl \
-    llvm20 \
+    llvm19.1 \
     proj \
     gdal \
     geos \
