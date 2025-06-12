@@ -67,6 +67,8 @@ RUN apt install -y \
     geos-bin \
     libprotobuf-c-dev \
     protobuf-c-compiler \
+    bison \
+    byacc \
     postgresql-server-dev-all
 ## PgVector
 WORKDIR /tmp
