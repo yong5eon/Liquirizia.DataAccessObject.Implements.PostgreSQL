@@ -1,58 +1,10 @@
 ARG TAG=17
-
-# # Install PgVector
-# FROM postgres:$TAG AS pgvector
-# RUN apt upgrade
-# RUN apt update
-# RUN apt install -y \
-#     git \
-#     build-essential \
-#     autoconf \
-#     automake \
-#     autogen \
-#     postgresql-server-dev-all
-# WORKDIR /tmp
-# RUN git clone https://github.com/pgvector/pgvector.git
-# WORKDIR /tmp/pgvector
-# RUN make
-# RUN make install
-# 
-# # Install PostGIS
-# FROM postgres:$TAG AS postgis
-# RUN apt upgrade
-# RUN apt update
-# RUN apt install -y \
-#     git \
-#     build-essential \
-#     autoconf \
-#     automake \
-#     autogen \
-#     libproj-dev \
-#     proj-bin \
-#     libgdal-dev \
-#     gdal-bin \
-#     libgeos-dev \
-#     geos-bin \
-#     libprotobuf-c-dev \
-#     postgresql-server-dev-all
-# WORKDIR /tmp
-# RUN git clone --branch 3.5.2 https://github.com/postgis/postgis.git
-# WORKDIR /tmp/postgis
-# RUN ./autogen.sh
-# RUN ./configure \
-#     --with-projdir=/usr \
-#     --with-geosconfig=/usr/bin/geos-config \
-#     --with-gdalconfig=/usr/bin/gdal-config
-# RUN make
-# RUN make install
-# RUN ls -lh /usr/local/lib/postgresql
-# RUN ls -lh /usr/local/lib/postgresql/bitcode
-# RUN ls -lh /usr/local/lib/postgresql/bitcode/postgis-3
-
-# Build Final Image
 FROM postgres:$TAG
-RUN apt upgrade
+ENV POSTGRES_PASSWORD=password
+# Build Extensions
+## Install Dependencies
 RUN apt update
+RUN apt upgrade
 RUN apt install -y \
     git \
     build-essential \
@@ -70,13 +22,13 @@ RUN apt install -y \
     bison \
     byacc \
     postgresql-server-dev-all
-## PgVector
+## Install PgVector
 WORKDIR /tmp
 RUN git clone https://github.com/pgvector/pgvector.git
 WORKDIR /tmp/pgvector
 RUN make
 RUN make install
-## PostGIS
+## Install PostGIS
 WORKDIR /tmp
 RUN git clone --branch 3.5.2 https://github.com/postgis/postgis.git
 WORKDIR /tmp/postgis
@@ -87,5 +39,3 @@ RUN ./configure \
     --with-gdalconfig=/usr/bin/gdal-config
 RUN make
 RUN make install
-
-ENV POSTGRES_PASSWORD=password
