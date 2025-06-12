@@ -105,12 +105,17 @@ class AggregateToArray(Function):
 	def __init__(
 		self,
 		col: Union[Column, Type, Function, Expr],
+		distinct: bool = False,
 	):
 		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
 		self.col = col 
+		self.distinct = distinct
 		return
 	def __str__(self):
-		return 'ARRAY_AGG({})'.format(str(self.col))
+		return 'ARRAY_AGG({}{})'.format(
+			'DISTINCT ' if self.distinct else '',
+			str(self.col),
+		)
 
 
 class RowNumber(Function):
