@@ -87,8 +87,8 @@ class TestFunction(Case):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
 		_ = con.run(Get(SampleModel).values(
-			Alias(AggregateToArray(SampleModel.name), 'aggreated')
-		), filter=lambda _: _['aggreated'])
+			Alias(AggregateToArray(SampleModel.name), 'vs')
+		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, ['A', 'A', 'B', 'C'])
 		con.commit()
 		return
@@ -98,8 +98,8 @@ class TestFunction(Case):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
 		_ = con.run(Get(SampleModel).values(
-			Alias(AggregateToArray(SampleModel.name, distinct=True), 'aggreated')
-		), filter=lambda _: _['aggreated'])
+			Alias(AggregateToArray(SampleModel.name, distinct=True), 'vs')
+		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, ['A', 'B', 'C'])
 		con.commit()
 		return
@@ -111,8 +111,8 @@ class TestFunction(Case):
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToJSON({
 				'name': SampleModel.name,
-			}), 'aggreated')
-		), filter=lambda _: _['aggreated'])
+			}), 'vs')
+		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, [
 			{'name': 'A'},
 			{'name': 'A'},
@@ -129,8 +129,8 @@ class TestFunction(Case):
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToJSON({
 				'name': SampleModel.name,
-			}, distinct=True), 'aggreated')
-		), filter=lambda _: _['aggreated'])
+			}, distinct=True), 'vs')
+		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, [
 			{'name': 'A'},
 			{'name': 'B'},
@@ -146,8 +146,8 @@ class TestFunction(Case):
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToJSONB({
 				'name': SampleModel.name,
-			}), 'aggreated')
-		), filter=lambda _: _['aggreated'])
+			}), 'vs')
+		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, [
 			{'name': 'A'},
 			{'name': 'A'},
@@ -164,8 +164,8 @@ class TestFunction(Case):
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToJSONB({
 				'name': SampleModel.name,
-			}, distinct=True), 'aggreated')
-		), filter=lambda _: _['aggreated'])
+			}, distinct=True), 'vs')
+		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, [
 			{'name': 'A'},
 			{'name': 'B'},
@@ -173,4 +173,3 @@ class TestFunction(Case):
 		])
 		con.commit()
 		return
-
