@@ -4,6 +4,7 @@ from Liquirizia.DataAccessObject.Properties.Database import Executors
 
 from ..Table import Table
 from ..View import View
+from ..Constraints import PrimaryKey
 
 from typing import Union
 
@@ -23,7 +24,22 @@ class Drop(Executors):
 					index.name,
 					' CASCADE' if cascade else ' RESTRICT'
 				), ()))
+			# Not Primary Key
 			for constraint in o.__constraints__ if o.__constraints__ else []:
+				if isinstance(constraint, PrimaryKey):
+					continue
+				self.executors.append(('ALTER TABLE {}{}"{}" DROP CONSTRAINT {}"{}"{}'.format(
+					'IF EXISTS ' if exist else '',
+					'"{}".'.format(o.__schema__) if o.__schema__ else '',
+					o.__table__,
+					'IF EXISTS ' if exist else '',
+					constraint.name,
+					' CASCADE' if cascade else ' RESTRICT'
+				), ()))
+			# Primary Key
+			for constraint in o.__constraints__ if o.__constraints__ else []:
+				if not isinstance(constraint, PrimaryKey):
+					continue
 				self.executors.append(('ALTER TABLE {}{}"{}" DROP CONSTRAINT {}"{}"{}'.format(
 					'IF EXISTS ' if exist else '',
 					'"{}".'.format(o.__schema__) if o.__schema__ else '',
