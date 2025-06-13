@@ -69,7 +69,7 @@ class TestExpressions(Case):
 
 	@classmethod
 	def tearDownClass(cls):
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		con.run(Drop(SampleModel))
 		con.commit()
@@ -77,7 +77,7 @@ class TestExpressions(Case):
 
 	@Order(1)
 	def testAlias(self):
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		rows = con.run(Select(SampleModel).values(
 			Alias(SampleModel.name, 'NM')
@@ -89,7 +89,7 @@ class TestExpressions(Case):
 
 	@Order(2)
 	def testTypeTo(self):
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		rows = con.run(Select(SampleModel).values(
 			TypeTo(SampleModel.id, FLOAT)
@@ -101,7 +101,7 @@ class TestExpressions(Case):
 
 	@Order(3)
 	def testIf(self):
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		rows = con.run(Select(SampleModel).values(
 			SampleModel.description,
@@ -123,7 +123,7 @@ class TestExpressions(Case):
 
 	@Order(4)
 	def testIn(self):
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		rows = con.run(Select(SampleModel).where(
 			In(SampleModel.name, (Value('A'), Value('B')))
@@ -134,7 +134,7 @@ class TestExpressions(Case):
 
 	@Order(5)
 	def testIsNull(self):
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		rows = con.run(Select(SampleModel).where(
 			IsNull(SampleModel.description)
@@ -145,7 +145,7 @@ class TestExpressions(Case):
 
 	@Order(6)
 	def testIsNotNull(self):
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		rows = con.run(Select(SampleModel).where(
 			IsNotNull(SampleModel.description)
@@ -153,3 +153,23 @@ class TestExpressions(Case):
 		con.commit()
 		ASSERT_IS_EQUAL(len(rows), 1)
 		return
+	
+	@Order(7)
+	def testSwitch(self):
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		rows = con.run(Select(SampleModel).values(
+			Alias(Switch().case(
+				IsEqualTo(SampleModel.name, 'A'),
+				1,
+			).case(
+				IsEqualTo(SampleModel.name, 'B'),
+				2,
+			).other(
+				0
+			), 'switch'),
+		), filter=lambda row: row['switch'])
+		con.commit()
+		ASSERT_IS_EQUAL(rows, [1,2,0])
+		return
+	
