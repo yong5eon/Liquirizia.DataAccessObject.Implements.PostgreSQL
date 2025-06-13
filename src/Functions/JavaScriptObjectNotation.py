@@ -23,7 +23,7 @@ class AggregateToJSON(Function):
 	):
 		for k, v in format.items():
 			if not isinstance(v, (Value, Column, Type, Function, Expr)):
-				format[k] = Value (v)
+				format[k] = Value(v)
 		self.kwargs = format
 		self.conds = None
 		return
