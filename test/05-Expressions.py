@@ -5,8 +5,6 @@ from Liquirizia.Test import *
 from Liquirizia.DataAccessObject import Helper
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Joins import *
@@ -32,7 +30,7 @@ class SampleModel(
 	atCreated: datetime = TIMESTAMP(name='AT_CREATED')
 
 
-class TestExpression(Case):
+class TestExpressions(Case):
 	@classmethod
 	def setUpClass(cls):
 		Helper.Set(
@@ -49,7 +47,7 @@ class TestExpression(Case):
 				max=10,
 			)
 		)
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 		con.begin()
 		con.run(Drop(SampleModel))
 		con.run(Create(SampleModel))

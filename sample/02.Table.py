@@ -4,9 +4,7 @@ from Liquirizia.DataAccessObject import Helper
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Values import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Joins import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Exprs import *
@@ -36,16 +34,16 @@ from typing import Tuple
 
 
 class SampleModel(Model):
-	attrBool : bool = Value(Validator(IsToNone(IsBool())))
-	attrInteger : int = Value(Validator(IsToNone(IsInteger())))
-	attrFloat : float = Value(Validator(IsToNone(IsFloat())))
-	attrDecimal : Decimal = Value(Validator(IsToNone(IsDecimal())))
-	attrString : str = Value(Validator(IsToNone(IsString())))
-	attrList : list = Value(Validator(IsToNone(IsList())))
-	attrDictionary : dict = Value(Validator(IsToNone(IsDictionary())))
-	attrDateTime : datetime = Value(Validator(IsToNone(IsDateTime())))
-	attrDate : date = Value(Validator(IsToNone(IsDate())))
-	attrTime : time = Value(Validator(IsToNone(IsTime())))
+	attrBool: bool = Value(Validator(IsToNone(IsBool())))
+	attrInteger: int = Value(Validator(IsToNone(IsInteger())))
+	attrFloat: float = Value(Validator(IsToNone(IsFloat())))
+	attrDecimal: Decimal = Value(Validator(IsToNone(IsDecimal())))
+	attrString: str = Value(Validator(IsToNone(IsString())))
+	attrList: list = Value(Validator(IsToNone(IsList())))
+	attrDictionary: dict = Value(Validator(IsToNone(IsDictionary())))
+	attrDateTime: datetime = Value(Validator(IsToNone(IsDateTime())))
+	attrDate: date = Value(Validator(IsToNone(IsDate())))
+	attrTime: time = Value(Validator(IsToNone(IsTime())))
 
 
 class SampleTableUpdated(Handler):
@@ -74,24 +72,24 @@ class SampleTable(
 	),
 	fn=SampleTableUpdated()
 ):
-	id : int = INT('ID', default=NextVal('SEQ_SAMPLE'))
-	colBool : bool = BOOL('COL_BOOL', null=True)
-	colShort : int = INT2('COL_INT2', null=True)
-	colInteger : int = INT4('COL_INT4', null=True)
-	colLong : int = INT4('COL_INT8', null=True)
-	colFloat : float = REAL('COL_FLOAT', null=True)
+	id: int = INT('ID', default=NextVal('SEQ_SAMPLE'))
+	colBool: bool = BOOL('COL_BOOL', null=True)
+	colShort: int = INT2('COL_INT2', null=True)
+	colInteger: int = INT4('COL_INT4', null=True)
+	colLong: int = INT4('COL_INT8', null=True)
+	colFloat: float = REAL('COL_FLOAT', null=True)
 	colDecimal: Decimal = DECIMAL('COL_DECIMAL', scale=10, precision=1, null=True)
-	colChar : str = CHAR('COL_CHAR', size=1, null=True)
-	colString : str = VARCHAR('COL_VARCHAR', size=256, null=True)
-	colText : str = TEXT('COL_TEXT', null=True)
-	colList : list = ARRAY('COL_LIST', type=INTEGER, null=True)
-	colDictionary : dict = JSON('COL_DICTIONARY', null=True)
+	colChar: str = CHAR('COL_CHAR', size=1, null=True)
+	colString: str = VARCHAR('COL_VARCHAR', size=256, null=True)
+	colText: str = TEXT('COL_TEXT', null=True)
+	colList: list = ARRAY('COL_LIST', type=INTEGER, null=True)
+	colDictionary: dict = JSON('COL_DICTIONARY', null=True)
 	colTimestamp: datetime = TIMESTAMP('COL_TIMESTAMP', null=True)
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
-	colVector : list = VECTOR('COL_VECTOR', size=3, null=True)
+	colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
 	colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
-	colDataModel : Model = JSON('COL_DATAMODEL', null=True)
+	colDataModel: Model = JSON('COL_DATAMODEL', null=True)
 
 
 Helper.Set(

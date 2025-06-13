@@ -33,7 +33,7 @@ class SampleModel(
 	atCreated: datetime = TIMESTAMP(name='AT_CREATED', timezone=True)
 
 
-class TestFunction(Case):
+class TestFunctions(Case):
 	@classmethod
 	def setUpClass(cls):
 		Helper.Set(

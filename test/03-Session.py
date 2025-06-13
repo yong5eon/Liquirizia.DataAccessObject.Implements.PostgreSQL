@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from Liquirizia.Test import *
-
 from Liquirizia.DataAccessObject import Helper
+from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 
-from Liquirizia.DataAccessObject.Implements.PostgreSQL import Configuration, Connection
 
-
-class TestCursor(Case):
+class TestSession(Case):
 	@classmethod
 	def setUpClass(cls):
 		Helper.Set(
@@ -27,17 +25,15 @@ class TestCursor(Case):
 		return super().setUpClass()
 
 	@Order(1)
-	def testCursorExecute(self):
+	def testSessionExecute(self):
 		con = Helper.Get('Sample')
-		con.begin()
-		cur = con.cursor()
-		ctx = cur.execute('SELECT 1 AS col1')
+		ses = con.session()
+		ctx = ses.execute('SELECT 1 AS col1')
 		ASSERT_IS_NOT_NONE(ctx)
 		rows = ctx.rows()
 		ASSERT_IS_EQUAL(len(rows), 1)
 		row = rows[0]
 		ASSERT_IS_EQUAL(len(row), 1)
 		ASSERT_IS_EQUAL(row['col1'], 1)
-		con.commit()
 		return
 

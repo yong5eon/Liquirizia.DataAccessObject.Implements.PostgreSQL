@@ -6,8 +6,6 @@ from Liquirizia.DataAccessObject.Properties.Database import Filter
 
 from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Types import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Constraints import *
-from Liquirizia.DataAccessObject.Implements.PostgreSQL.Executors import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Functions import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Joins import *
@@ -160,7 +158,7 @@ class StudentOfClass(
 	metadata = JSON(name='METADATA', null=True)
 	atCreated = TIMESTAMP(name='AT_CREATED', timezone=True, default=Now())
 	atCreatedDate = DATE(name='AT_CREATED_DATE', default=Now())
-	atCreatedTime = TIME(name='AT_CREATED_TIME', timezone=True, default=Now())
+	atCreatedTime = TIME(name='AT_CREATED_TIME', default=Now())
 	atUpdated = TIMESTAMP(name='AT_UPDATED', null=True)
 	atUpdatedDate = DATE(name='AT_UPDATED_DATE', null=True)
 	atUpdatedTime = TIME(name='AT_UPDATED_TIME', null=True)
@@ -176,7 +174,7 @@ class StatOfStudent(
 		LeftOuter(Class, IsEqualTo(StudentOfClass.classId, Class.id)),
 	).where(
 		IsEqualTo(Student.isDeleted, 'N')
-	).groupBy(
+	).group(
 		Student.id
 	).values(
 		Student.id,
@@ -186,7 +184,7 @@ class StatOfStudent(
 		Alias(Average(StudentOfClass.score), 'AVG'),
 		Student.atCreated,
 		Student.atUpdated,
-	).orderBy(
+	).order(
 		Ascend(Student.id)
 	)
 ):
@@ -207,7 +205,7 @@ class StatOfClass(
 		LeftOuter(Student), IsEqualTo(StudentOfClass.studentId, Student.id)
 	).where(
 		IsEqualTo(Class.isDeleted, 'N')
-	).groupBy(
+	).group(
 		Class.id
 	).values(
 		Class.id,
@@ -217,7 +215,7 @@ class StatOfClass(
 		Alias(Average(StudentOfClass.score), 'AVG'),
 		Class.atCreated,
 		Class.atUpdated,
-	).orderBy(
+	).order(
 		Ascend(Class.id)
 	)
 ):
@@ -452,11 +450,11 @@ if __name__ == '__main__':
 			Alias(Max(StudentOfClass.atUpdated), 'AT_UPDATED'),
 		).where(
 			IsEqualTo(Student.isDeleted, 'N')
-		).groupBy(
+		).group(
 			Student.id,
 		).having(
 			IsGreaterEqualTo(Average(StudentOfClass.score), 3)
-		).orderBy(
+		).order(
 			Ascend(Student.id),
 			Descend(Average(StudentOfClass.score)),
 			Ascend(Sum(StudentOfClass.score)),
