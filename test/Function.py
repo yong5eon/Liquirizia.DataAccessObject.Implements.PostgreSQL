@@ -44,9 +44,6 @@ class TestFunction(Case):
 				database='postgres',  # Database Name
 				username='postgres',  # Database User
 				password='password',  # Database Password for User
-				pool=True,
-				min=1,
-				max=10,
 			)
 		)
 		con: Connection = Helper.Get('Sample')
@@ -90,13 +87,6 @@ class TestFunction(Case):
 			Alias(AggregateToArray(SampleModel.name), 'vs')
 		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, ['A', 'A', 'B', 'C'])
-		con.commit()
-		return
-
-	@Order(2)
-	def testAggregateToArrayDistinct(self):
-		con: Connection = Helper.Get('Sample')
-		con.begin()
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToArray(SampleModel.name, distinct=True), 'vs')
 		), filter=lambda _: _['vs'])
@@ -104,63 +94,89 @@ class TestFunction(Case):
 		con.commit()
 		return
 
+	@Order(2)
+	def testToJSON(self):
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		_ = con.run(Get(SampleModel).where(
+			IsEqualTo(SampleModel.id, 1)
+		).values(
+			Alias(ToJSON({
+				'id': SampleModel.id,
+				'name': SampleModel.name,
+				'1': 1,
+				'2': Value(2),
+			}), 'o')
+		), filter=lambda _: _['o'])
+		ASSERT_IS_EQUAL(_, {
+			'id': 1,
+			'name': 'A',
+			'1': 1,
+			'2': 2,
+		})
+		con.commit()
+		return
+
 	@Order(3)
+	def testToJSONB(self):
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		_ = con.run(Get(SampleModel).where(
+			IsEqualTo(SampleModel.id, 1)
+		).values(
+			Alias(ToJSON({
+				'id': SampleModel.id,
+				'name': SampleModel.name,
+				'1': 1,
+				'2': Value(2),
+			}), 'o')
+		), filter=lambda _: _['o'])
+		ASSERT_IS_EQUAL(_, {
+			'id': 1,
+			'name': 'A',
+			'1': 1,
+			'2': 2,
+		})
+		con.commit()
+		return
+
+	@Order(4)
 	def testAggregateToJSON(self):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToJSON({
 				'name': SampleModel.name,
+				'1': 1,
+				'2': Value(2),
 			}), 'vs')
 		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, [
-			{'name': 'A'},
-			{'name': 'A'},
-			{'name': 'B'},
-			{'name': 'C'},
+			{'name': 'A', '1': 1, '2': 2},
+			{'name': 'A', '1': 1, '2': 2},
+			{'name': 'B', '1': 1, '2': 2},
+			{'name': 'C', '1': 1, '2': 2},
 		])
 		con.commit()
 		return
 
 	@Order(5)
-	def testAggregateToJSONDistinct(self):
-		con: Connection = Helper.Get('Sample')
-		con.begin()
-		_ = con.run(Get(SampleModel).values(
-			Alias(AggregateToJSON({
-				'name': SampleModel.name,
-			}, distinct=True), 'vs')
-		), filter=lambda _: _['vs'])
-		ASSERT_IS_EQUAL(_, [
-			{'name': 'A'},
-			{'name': 'B'},
-			{'name': 'C'},
-		])
-		con.commit()
-		return
-
-	@Order(6)
 	def testAggregateToJSONB(self):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToJSONB({
 				'name': SampleModel.name,
+				'1': 1,
+				'2': Value(2),
 			}), 'vs')
 		), filter=lambda _: _['vs'])
 		ASSERT_IS_EQUAL(_, [
-			{'name': 'A'},
-			{'name': 'A'},
-			{'name': 'B'},
-			{'name': 'C'},
+			{'name': 'A', '1': 1, '2': 2},
+			{'name': 'A', '1': 1, '2': 2},
+			{'name': 'B', '1': 1, '2': 2},
+			{'name': 'C', '1': 1, '2': 2},
 		])
-		con.commit()
-		return
-
-	@Order(7)
-	def testAggregateToJSONBDistinct(self):
-		con: Connection = Helper.Get('Sample')
-		con.begin()
 		_ = con.run(Get(SampleModel).values(
 			Alias(AggregateToJSONB({
 				'name': SampleModel.name,
