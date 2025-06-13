@@ -25,7 +25,7 @@ __all__ = (
 class Count(Function):
 	def __init__(
 		self,
-		col: Union[Expr, Function, Column, Type],
+		col: Union[Column, Type, Function, Expr],
 		distinct: bool = False,
 	):
 		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
@@ -47,7 +47,7 @@ class Count(Function):
 class Sum(Function):
 	def __init__(
 		self,
-		col: Union[Expr, Function, Column, Type],
+		col: Union[Column, Type, Function, Expr],
 		distinct: bool = False,
 	):
 		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
@@ -69,7 +69,7 @@ class Sum(Function):
 class Average(Function):
 	def __init__(
 		self,
-		col: Union[Expr, Function, Column, Type],
+		col: Union[Column, Type, Function, Expr],
 		distinct: bool = False,
 	):
 		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
@@ -160,7 +160,7 @@ class Rank(Function):
 		return
 	def __str__(self):
 		return 'RANK() OVER({}{})'.format(
-			' PARTITION BY {} '.format(', '.join([str(partition) for partition in self.partitionBy])) if self.partitions else '',
+			' PARTITION BY {} '.format(', '.join([str(partition) for partition in self.partitions])) if self.partitions else '',
 			' ORDER BY {}'.format(', '.join([str(order) for order in self.orders])) if self.orders else '',
 		)
 
@@ -178,6 +178,6 @@ class DenseRank(Function):
 		return
 	def __str__(self):
 		return 'DENSE_RANK() OVER({}{})'.format(
-			' PARTITION BY {} '.format(', '.join([str(partition) for partition in self.partitionBy])) if self.partitions else '',
+			' PARTITION BY {} '.format(', '.join([str(partition) for partition in self.partitions])) if self.partitions else '',
 			' ORDER BY {}'.format(', '.join([str(order) for order in self.orders])) if self.orders else '',
 		)
