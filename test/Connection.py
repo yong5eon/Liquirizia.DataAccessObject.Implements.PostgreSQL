@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from Liquirizia.Test import *
-
 from Liquirizia.DataAccessObject import Helper
-
-from Liquirizia.DataAccessObject.Implements.PostgreSQL import Configuration, Connection
+from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 
 
 class TestConnection(Case):

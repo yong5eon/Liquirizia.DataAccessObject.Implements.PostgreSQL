@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from Liquirizia.DataAccessObject import Helper
-from Liquirizia.DataAccessObject.Implements.PostgreSQL import (
-	Configuration,
-	Connection,
-)
+from Liquirizia.DataAccessObject.Implements.PostgreSQL import *
 
 import sys
 
@@ -27,7 +24,7 @@ if __name__ == '__main__':
 		)
 
 		# Get Connection
-		con = Helper.Get('Sample')
+		con: Connection = Helper.Get('Sample')
 	except Exception as e:
 		print(str(e), file=sys.stderr)
 		exit(-1)
