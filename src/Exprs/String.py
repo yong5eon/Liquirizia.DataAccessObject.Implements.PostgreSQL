@@ -2,26 +2,26 @@
 
 from ..Expr import Expr
 from ..Function import Function
-from ..Type import Type
 from ..Column import Column
+from ..Value import Value
 
-from typing import Union
+from typing import Union, Any
 
 __all__ = (
-	'IsLike',
-	'IsLikeStartWith',
-	'IsLikeEndWith',
+	'Like',
+	'LikeStartWith',
+	'LikeEndWith',
 )
 
 
-class IsLike(Expr):
-	"""Is Like Filter Class"""
+class Like(Expr):
+	"""Like Filter Class"""
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
+		col: Union[Any, Value, Column, Function, Expr],
 		other: str,
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.other = other
 		return
@@ -32,14 +32,14 @@ class IsLike(Expr):
 		)
 
 
-class IsLikeStartWith(Expr):
+class LikeStartWith(Expr):
 	"""Is Like Filter Class"""
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
+		col: Union[Any, Value, Column, Function, Expr],
 		other: str,
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.other = other
 		return
@@ -50,14 +50,14 @@ class IsLikeStartWith(Expr):
 		)
 
 
-class IsLikeEndWith(Expr):
+class LikeEndWith(Expr):
 	"""Is Like Filter Class"""
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
+		col: Union[Any, Value, Column, Function, Expr],
 		other: str,
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.other = other
 		return

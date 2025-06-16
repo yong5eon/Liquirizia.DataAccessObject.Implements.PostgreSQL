@@ -2,7 +2,6 @@
 
 from ..Expr import Expr
 from ..Function import Function
-from ..Type import Type
 from ..Column import Column
 from ..Value import Value
 
@@ -11,6 +10,7 @@ from typing import Union, Sequence, Any
 __all__ = (
 	'In',
 	'NotIn',
+	'Is',
 	'IsNull',
 	'IsNotNull',
 )
@@ -19,16 +19,16 @@ __all__ = (
 class In(Expr):
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
-		args: Sequence[Union[Any, Value, Function, Expr]] = None,
+		col: Union[Any, Value, Column, Function, Expr],
+		args: Sequence[Union[Any, Value, Column, Function, Expr]] = None,
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.args = []
 		if args:
 			args = args if isinstance(args, (list, tuple)) else [args]
 			for arg in args:
-				if not isinstance(arg, (Value, Function, Expr)):
+				if not isinstance(arg, (Value, Column, Function, Expr)):
 					arg = Value(arg)
 				self.args.append(arg)
 		return
@@ -37,8 +37,8 @@ class In(Expr):
 			str(self.col),
 			', '.join([str(arg) for arg in self.args])
 		)
-	def where(self, arg: Union[Any, Value, Function, Expr]):
-		if not isinstance(arg, (Value, Function, Expr)):
+	def where(self, arg: Union[Any, Value, Column, Function, Expr]):
+		if not isinstance(arg, (Value, Column, Function, Expr)):
 			arg = Value(arg)
 		self.args.append(arg)
 		return self
@@ -47,16 +47,16 @@ class In(Expr):
 class NotIn(Expr):
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
-		args: Sequence[Union[Any, Value, Function, Expr]] = None,
+		col: Union[Any, Value, Column, Function, Expr],
+		args: Sequence[Union[Any, Value, Column, Function, Expr]] = None,
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.args = []
 		if args:
 			args = args if isinstance(args, (list, tuple)) else [args]
 			for arg in args:
-				if not isinstance(arg, (Value, Function, Expr)):
+				if not isinstance(arg, (Value, Column, Function, Expr)):
 					arg = Value(arg)
 				self.args.append(arg)
 		return
@@ -65,19 +65,38 @@ class NotIn(Expr):
 			str(self.col),
 			', '.join([str(arg) for arg in self.args])
 		)
-	def where(self, arg: Union[Any, Value, Function, Expr]):
-		if not isinstance(arg, (Value, Function, Expr)):
+	def where(self, arg: Union[Any, Value, Column, Function, Expr]):
+		if not isinstance(arg, (Value, Column, Function, Expr)):
 			arg = Value(arg)
 		self.args.append(arg)
 		return self
 
 
+class Is(Expr):
+	def __init__(
+		self,
+		col: Union[Any, Value, Column, Function, Expr],
+		other: Union[Any, Value, Column, Function, Expr],
+	):
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
+		if not isinstance(other, (Value, Column, Function, Expr)):
+			other = Value(other)
+		self.col = col
+		self.other = other
+		return
+	def __str__(self):
+		return '{} IS {}'.format(
+			str(self.col),
+			str(self.other),
+		)
+
+
 class IsNull(Expr):
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
+		col: Union[Any, Value, Column, Function, Expr],
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		return
 	def __str__(self):
@@ -89,9 +108,9 @@ class IsNull(Expr):
 class IsNotNull(Expr):
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
+		col: Union[Any, Value, Column, Function, Expr],
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		return
 	def __str__(self):
