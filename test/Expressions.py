@@ -100,6 +100,58 @@ class TestExpressions(Case):
 		return
 
 	@Order(3)
+	def testIn(self):
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		rows = con.run(Select(SampleModel).where(
+			In(SampleModel.name, (Value('A'), Value('B')))
+		))
+		con.commit()
+		ASSERT_IS_EQUAL(len(rows), 2)
+		return
+
+	@Order(4)
+	def testIsNull(self):
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		rows = con.run(Select(SampleModel).where(
+			IsNull(SampleModel.description)
+		))
+		con.commit()
+		ASSERT_IS_EQUAL(len(rows), 2)
+		return
+
+	@Order(5)
+	def testIsNotNull(self):
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		rows = con.run(Select(SampleModel).where(
+			IsNotNull(SampleModel.description)
+		))
+		con.commit()
+		ASSERT_IS_EQUAL(len(rows), 1)
+		return
+	
+	@Order(6)
+	def testSwitch(self):
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		rows = con.run(Select(SampleModel).values(
+			Alias(Switch().case(
+				IsEqualTo(SampleModel.name, 'A'),
+				1,
+			).case(
+				IsEqualTo(SampleModel.name, 'B'),
+				2,
+			).other(
+				0
+			), 'switch'),
+		), filter=lambda row: row['switch'])
+		con.commit()
+		ASSERT_IS_EQUAL(rows, [1,2,0])
+		return
+
+	@Order(7)
 	def testIf(self):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
@@ -121,55 +173,61 @@ class TestExpressions(Case):
 				ASSERT_IS_EQUAL(row['STATUS'], 'N')
 		return
 
-	@Order(4)
-	def testIn(self):
+	@Order(8)
+	def testIfNull(self):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
-		rows = con.run(Select(SampleModel).where(
-			In(SampleModel.name, (Value('A'), Value('B')))
-		))
+		_ = con.run(Select(SampleModel).values(
+			Alias(
+				IfNull(SampleModel.description, Value('No Description')),
+				'_'
+			),
+		), filter=lambda row: row['_'])
+		ASSERT_IS_EQUAL(_, [
+			'No Description',
+			'This is B',
+			'No Description',
+		])
+		_ = con.run(Select(SampleModel).values(
+			Alias(
+				IfNull(SampleModel.description, 'No Description', 'Description'),
+				'_'
+			),
+		), filter=lambda row: row['_'])
+		ASSERT_IS_EQUAL(_, [
+			'No Description',
+			'Description',
+			'No Description',
+		])
 		con.commit()
-		ASSERT_IS_EQUAL(len(rows), 2)
 		return
 
-	@Order(5)
-	def testIsNull(self):
-		con: Connection = Helper.Get('Sample')
-		con.begin()
-		rows = con.run(Select(SampleModel).where(
-			IsNull(SampleModel.description)
-		))
-		con.commit()
-		ASSERT_IS_EQUAL(len(rows), 2)
-		return
 
-	@Order(6)
-	def testIsNotNull(self):
+	@Order(9)
+	def testIfNotNull(self):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
-		rows = con.run(Select(SampleModel).where(
-			IsNotNull(SampleModel.description)
-		))
+		_ = con.run(Select(SampleModel).values(
+			Alias(
+				IfNotNull(SampleModel.description, Value('Description')),
+				'_'
+			),
+		), filter=lambda row: row['_'])
+		ASSERT_IS_EQUAL(_, [
+			None,
+			'Description',
+			None,
+		])
+		_ = con.run(Select(SampleModel).values(
+			Alias(
+				IfNotNull(SampleModel.description, 'Description', 'No Description'),
+				'_'
+			),
+		), filter=lambda row: row['_'])
+		ASSERT_IS_EQUAL(_, [
+			'No Description',
+			'Description',
+			'No Description',
+		])
 		con.commit()
-		ASSERT_IS_EQUAL(len(rows), 1)
 		return
-	
-	@Order(7)
-	def testSwitch(self):
-		con: Connection = Helper.Get('Sample')
-		con.begin()
-		rows = con.run(Select(SampleModel).values(
-			Alias(Switch().case(
-				IsEqualTo(SampleModel.name, 'A'),
-				1,
-			).case(
-				IsEqualTo(SampleModel.name, 'B'),
-				2,
-			).other(
-				0
-			), 'switch'),
-		), filter=lambda row: row['switch'])
-		con.commit()
-		ASSERT_IS_EQUAL(rows, [1,2,0])
-		return
-	

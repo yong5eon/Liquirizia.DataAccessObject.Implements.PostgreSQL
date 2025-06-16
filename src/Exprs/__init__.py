@@ -4,6 +4,8 @@ from .Common import (
 	Alias,
 	TypeTo,
 	If,
+	IfNull,
+	IfNotNull,
 	Switch,
 	Query,
 )
@@ -40,6 +42,8 @@ __all__ = (
 	'Alias',
 	'TypeTo',
 	'If',
+	'IfNull',
+	'IfNotNull',
 	'Switch',
 	'Query',
 	# CONDITION

@@ -7,12 +7,14 @@ from ..Column import Column
 from ..Value import Value
 from ..Executors import Select
 
-from typing import Union, Type as T, Any
+from typing import Union, Type as T, Any, List, Tuple
 
 __all__ = (
 	'Alias',
 	'TypeTo',
 	'If',
+	'IfNull',
+	'IfNotNull',
 	'Switch',
 	'Query',
 )
@@ -21,10 +23,10 @@ __all__ = (
 class Alias(Expr):
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
+		col: Union[Any, Value, Column, Function, Expr],
 		name: str
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.name = name
 		return
@@ -38,10 +40,10 @@ class Alias(Expr):
 class TypeTo(Expr):
 	def __init__(
 		self,
-		col: Union[Column, Type, Function, Expr],
+		col: Union[Any, Value, Column, Function, Expr],
 		type: T[Type],
 	):
-		if not isinstance(col, (Column, Type, Function, Expr)): col = Column(col)
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.type = type
 		return
@@ -52,27 +54,30 @@ class TypeTo(Expr):
 class If(Expr):
 	def __init__(
 		self,
-		cond: Expr,
-		thenexpr: Union[Any, Value, Expr] = None,
-		elseexpr: Union[Any, Value, Expr] = None,
+		cond: Union[Any, Value, Column, Function, Expr],
+		thenexpr: Union[Any, Value, Expr, Function, Column] = None,
+		elseexpr: Union[Any, Value, Expr, Function, Column] = None,
 	):
 		self.condexpr = cond
+		if not isinstance(self.condexpr, (Value, Column, Function, Expr)): self.condexpr = Value(self.condexpr)
 		self.thenexpr = thenexpr
-		if not isinstance(self.thenexpr, (Value, Expr)): self.thenexpr = Value(self.thenexpr)
+		if not isinstance(self.thenexpr, (Value, Column, Function, Expr)): self.thenexpr = Value(self.thenexpr)
 		self.elseexpr = elseexpr
-		if not isinstance(self.elseexpr, (Value, Expr)): self.elseexpr = Value(self.elseexpr)
+		if self.elseexpr and not isinstance(self.elseexpr, (Value, Column, Function, Expr)): self.elseexpr = Value(self.elseexpr)
 		return
 	def then_(
 		self,
-		expr: Expr,
+		expr: Union[Any, Value, Column, Function, Expr],
 	):
 		self.thenexpr = expr
+		if not isinstance(self.thenexpr, (Value, Column, Function, Expr)): self.thenexpr = Value(self.thenexpr)
 		return self
 	def else_(
 		self,
-		expr: Expr,
+		expr: Union[Any, Value, Column, Function, Expr],
 	):
 		self.elseexpr = expr
+		if not isinstance(self.elseexpr, (Value, Column, Function, Expr)): self.elseexpr = Value(self.elseexpr)
 		return self
 	def __str__(self):
 		return 'CASE WHEN {} THEN {}{} END'.format(
@@ -82,19 +87,98 @@ class If(Expr):
 		)
 
 
+class IfNull(Expr):
+	def __init__(
+		self,
+		cond: Union[Any, Value, Column, Function, Expr],
+		thenexpr: Union[Any, Value, Expr, Function, Column],
+		elseexpr: Union[Any, Value, Expr, Function, Column] = None,
+	):
+		self.cond = cond
+		if not isinstance(self.cond, (Value, Column, Function, Expr)): self.cond = Value(self.cond)
+		self.thenexpr = thenexpr
+		if not isinstance(self.thenexpr, (Value, Column, Function, Expr)): self.thenexpr = Value(self.thenexpr)
+		self.elseexpr = elseexpr
+		if self.elseexpr and not isinstance(self.elseexpr, (Value, Column, Function, Expr)): self.elseexpr = Value(self.elseexpr)
+		return
+	def then_(
+		self,
+		expr: Union[Any, Value, Column, Function, Expr],
+	):
+		self.thenexpr = expr
+		if not isinstance(self.thenexpr, (Value, Column, Function, Expr)): self.thenexpr = Value(self.thenexpr)
+		return self
+	def else_(
+		self,
+		expr: Union[Any, Value, Column, Function, Expr],
+	):
+		self.elseexpr = expr
+		if not isinstance(self.elseexpr, (Value, Column, Function, Expr)): self.elseexpr = Value(self.elseexpr)
+		return self
+	def __str__(self):
+		return 'CASE WHEN {} IS NULL THEN {} ELSE {} END'.format(
+			str(self.cond),
+			str(self.thenexpr),
+			str(self.elseexpr) if self.elseexpr else str(self.cond),
+		)
+
+
+class IfNotNull(Expr):
+	def __init__(
+		self,
+		cond: Union[Any, Value, Column, Function, Expr],
+		thenexpr: Union[Any, Value, Expr, Function, Column],
+		elseexpr: Union[Any, Value, Expr, Function, Column] = None,
+	):
+		self.cond = cond
+		if not isinstance(self.cond, (Value, Column, Function, Expr)): self.cond = Value(self.cond)
+		self.thenexpr = thenexpr
+		if not isinstance(self.thenexpr, (Value, Column, Function, Expr)): self.thenexpr = Value(self.thenexpr)
+		self.elseexpr = elseexpr
+		if self.elseexpr and not isinstance(self.elseexpr, (Value, Column, Function, Expr)): self.elseexpr = Value(self.elseexpr)
+		return
+	def then_(
+		self,
+		expr: Union[Any, Value, Column, Function, Expr],
+	):
+		self.thenexpr = expr
+		if not isinstance(self.thenexpr, (Value, Column, Function, Expr)): self.thenexpr = Value(self.thenexpr)
+		return self
+	def else_(
+		self,
+		expr: Union[Any, Value, Column, Function, Expr],
+	):
+		self.elseexpr = expr
+		if not isinstance(self.elseexpr, (Value, Column, Function, Expr)): self.elseexpr = Value(self.elseexpr)
+		return self
+	def __str__(self):
+		return 'CASE WHEN {} IS NOT NULL THEN {} ELSE {} END'.format(
+			str(self.cond),
+			str(self.thenexpr),
+			str(self.elseexpr) if self.elseexpr else str(self.cond),
+		)
+
+
 class Switch(Expr):
 	def __init__(
-		self
+		self,
+		*args: List[Tuple[
+			Union[Any, Value, Column, Function, Expr],
+			Union[Any, Value, Column, Function, Expr],
+		]]
 	):
-		self.args = []
+		self.args: List[Tuple[
+			Union[Any, Value, Column, Function, Expr],
+			Union[Any, Value, Column, Function, Expr],
+		]] = list(args)
 		self.elseexpr = None
 		return
 	def case(
 		self,
-		cond: Expr,
-		thenexpr: Union[Any, Value, Expr] = None,
+		cond: Union[Any, Value, Column, Function, Expr],
+		thenexpr: Union[Any, Value, Column, Function, Expr] = None,
 	):
-		if not isinstance(thenexpr, (Value, Expr)): thenexpr = Value(thenexpr)
+		if not isinstance(thenexpr, (Value, Column, Function, Expr)): thenexpr = Value(thenexpr)
 		self.args.append(
 			'WHEN {} THEN {}'.format(
 				str(cond),
@@ -104,9 +188,9 @@ class Switch(Expr):
 		return self
 	def other(
 		self,
-		elseexpr: Union[Any, Value, Expr] = None,
+		elseexpr: Union[Any, Value, Column, Function, Expr] = None,
 	):
-		if not isinstance(elseexpr, (Value, Expr)): elseexpr = Value(elseexpr)
+		if not isinstance(elseexpr, (Value, Column, Function, Expr)): elseexpr = Value(elseexpr)
 		self.elseexpr = elseexpr
 		return self
 	def __str__(self):
@@ -114,7 +198,6 @@ class Switch(Expr):
 			return 'NULL'
 		expr = 'CASE {}'.format(' '.join(self.args))
 		if self.elseexpr:
-			if not isinstance(self.elseexpr, (Value, Expr)): self.elseexpr = Value(self.elseexpr)
 			expr += ' ELSE {}'.format(str(self.elseexpr))
 		expr += ' END'
 		return expr
