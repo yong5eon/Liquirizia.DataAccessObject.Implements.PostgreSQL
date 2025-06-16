@@ -13,6 +13,7 @@ __all__ = (
 	'Alias',
 	'TypeTo',
 	'If',
+	'Switch',
 	'Query',
 )
 
@@ -79,6 +80,44 @@ class If(Expr):
 			str(self.thenexpr),
 			' ELSE {}'.format(str(self.elseexpr)) if self.elseexpr else '',
 		)
+
+
+class Switch(Expr):
+	def __init__(
+		self
+	):
+		self.args = []
+		self.elseexpr = None
+		return
+	def case(
+		self,
+		cond: Expr,
+		thenexpr: Union[Any, Value, Expr] = None,
+	):
+		if not isinstance(thenexpr, (Value, Expr)): thenexpr = Value(thenexpr)
+		self.args.append(
+			'WHEN {} THEN {}'.format(
+				str(cond),
+				str(thenexpr),
+			)
+		)
+		return self
+	def other(
+		self,
+		elseexpr: Union[Any, Value, Expr] = None,
+	):
+		if not isinstance(elseexpr, (Value, Expr)): elseexpr = Value(elseexpr)
+		self.elseexpr = elseexpr
+		return self
+	def __str__(self):
+		if not self.args:
+			return 'NULL'
+		expr = 'CASE {}'.format(' '.join(self.args))
+		if self.elseexpr:
+			if not isinstance(self.elseexpr, (Value, Expr)): self.elseexpr = Value(self.elseexpr)
+			expr += ' ELSE {}'.format(str(self.elseexpr))
+		expr += ' END'
+		return expr
 
 
 class Query(Expr):
