@@ -11,9 +11,6 @@ from .Common import (
 	Rank,
 	DenseRank,
 )
-from .Condition import (
-	IfNull,
-)
 from .DateTime import (
 	Now,
 	DatePartType,
@@ -61,8 +58,6 @@ __all__ = (
 	'RowNumber',
 	'Rank',
 	'DenseRank',
-	# CONDITION
-	'IfNull',
 	# DATETIME
 	'Now',
 	'DatePartType',
