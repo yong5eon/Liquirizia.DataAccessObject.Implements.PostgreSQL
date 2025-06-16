@@ -11,7 +11,7 @@ __all__ = (
 	'EqualTo',
 	'NotEqualTo',
 	'GreaterThan',
-	'GreaterEqualtTo',
+	'GreaterEqualTo',
 	'LessThan',
 	'LessEqualtTo',
 )
