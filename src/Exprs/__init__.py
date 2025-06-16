@@ -12,6 +12,7 @@ from .Common import (
 from .Condition import (
 	In,
 	NotIn,
+	Is,
 	IsNull,
 	IsNotNull,
 )
@@ -20,22 +21,21 @@ from .Operator import (
 	Or,
 )
 from .Compare import (
-	IsEqualTo,
-	IsNotEqualTo,
-	IsGreaterThan,
-	IsGreaterEqualTo,
-	IsLessThan,
-	IsLessEqualTo,
+	EqualTo,
+	NotEqualTo,
+	GreaterThan,
+	GreaterEqualTo,
+	LessThan,
+	LessEqualTo,
 )
 from .String import (
-	IsLike,
-	IsLikeEndWith,
-	IsLikeStartWith,
+	Like,
+	LikeEndWith,
+	LikeStartWith,
 )
 from .JavaScriptObjectNotation import (
 	Of,
 )
-
 
 __all__ = (
 	# COMMON
@@ -49,22 +49,23 @@ __all__ = (
 	# CONDITION
 	'In',
 	'NotIn',
+	'Is',
 	'IsNull',
 	'IsNotNull',
 	# OPERATOR
 	'And',
 	'Or',
 	# COMPARE
-	'IsEqualTo',
-	'IsNotEqualTo',
-	'IsGreaterThan',
-	'IsGreaterEqualTo',
-	'IsLessThan',
-	'IsLessEqualTo',
+	'EqualTo',
+	'NotEqualTo',
+	'GreaterThan',
+	'GreaterEqualTo',
+	'LessThan',
+	'LessEqualTo',
 	# STRING
-	'IsLike',
-	'IsLikeStartWith',
-	'IsLikeEndWith',
+	'Like',
+	'LikeStartWith',
+	'LikeEndWith',
 	# JSON
 	'Of',
 )

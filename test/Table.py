@@ -24,7 +24,7 @@ class SampleTableUpdated(Handler):
 		changed = m.__cursor__.run(Update(SampleTable).set(
 			**{o.name: v}
 		).where(
-			IsEqualTo(SampleTable.id, m.id)
+			EqualTo(SampleTable.id, m.id)
 		))
 		return
 class SampleTable(
@@ -179,7 +179,7 @@ class TestTable(Case):
 		self.con.run(Create(SampleTable))
 		try:
 			_ = self.con.run(Insert(SampleTable).values(**i), fetch=SampleTable)
-			_ = self.con.run(Update(SampleTable).where(IsEqualTo(SampleTable.id, _.id)).set(**u), fetch=SampleTable)
+			_ = self.con.run(Update(SampleTable).where(EqualTo(SampleTable.id, _.id)).set(**u), fetch=SampleTable)
 		finally:
 			if status:
 				ASSERT_IS_NOT_NONE(_)
@@ -248,7 +248,7 @@ class TestTable(Case):
 			_.colTime=u['colTime']
 			_.colVector=u['colVector']
 			_.colGeography=u['colGeography']
-			_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
+			_ = self.con.run(Get(SampleTable).where(EqualTo(SampleTable.id, _.id)), fetch=SampleTable)
 		finally:
 			ASSERT_IS_NOT_NONE(_)
 			ASSERT_IS_EQUAL(_.colBool, u['colBool'])
@@ -291,8 +291,8 @@ class TestTable(Case):
 			colGeography=Point(1, 2),
 		), fetch=SampleTable)
 		ASSERT_IS_NOT_NONE(_)
-		self.con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, _.id)))
-		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
+		self.con.run(Delete(SampleTable).where(EqualTo(SampleTable.id, _.id)))
+		_ = self.con.run(Get(SampleTable).where(EqualTo(SampleTable.id, _.id)), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NONE(_)
 		return
@@ -320,13 +320,13 @@ class TestTable(Case):
 		), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NOT_NONE(_)
-		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), fetch=SampleTable)
+		_ = self.con.run(Get(SampleTable).where(EqualTo(SampleTable.id, _.id)), fetch=SampleTable)
 		ASSERT_IS_NOT_NONE(_)
 		class RowFilter(Filter):
 			def __call__(self, row):
 				return {
 					'id': row['ID'],
 				}
-		_ = self.con.run(Get(SampleTable).where(IsEqualTo(SampleTable.id, _.id)), filter=RowFilter())
+		_ = self.con.run(Get(SampleTable).where(EqualTo(SampleTable.id, _.id)), filter=RowFilter())
 		ASSERT_IS_NOT_NONE(_)
 		return
