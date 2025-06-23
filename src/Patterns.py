@@ -3,7 +3,7 @@
 from Liquirizia.Validator import Pattern
 
 from .Values import Point
-
+from shapely import wkb
 from typing import Tuple
 
 __all__ = (

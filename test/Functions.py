@@ -102,7 +102,7 @@ class TestFunctions(Case):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
 		_ = con.run(Get(SampleModel).where(
-			IsEqualTo(SampleModel.id, 1)
+			EqualTo(SampleModel.id, 1)
 		).values(
 			Alias(ToJSON({
 				'id': SampleModel.id,
@@ -125,7 +125,7 @@ class TestFunctions(Case):
 		con: Connection = Helper.Get('Sample')
 		con.begin()
 		_ = con.run(Get(SampleModel).where(
-			IsEqualTo(SampleModel.id, 1)
+			EqualTo(SampleModel.id, 1)
 		).values(
 			Alias(ToJSON({
 				'id': SampleModel.id,

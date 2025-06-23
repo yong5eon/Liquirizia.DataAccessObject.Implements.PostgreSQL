@@ -17,12 +17,19 @@ __all__ = (
 )
 
 
+class IfStrToArray(IsArray):
+	def __call__(self, parameter):
+		if isinstance(parameter, str):
+			parameter = eval(parameter)
+		return super().__call__(parameter)
+
+
 class Vector(Type, typestr='VECTOR'):
 	def __init__(
 			self, 
 			name: str,
 			size: Union[int, Sequence[int]],
-			va: Validator = Validator(IsArray()),
+			va: Validator = Validator(IfStrToArray()),
 			fn: Handler = None,
 			null: bool = False,
 			default: Union[Sequence[float], Function] = None,
@@ -37,6 +44,7 @@ class Vector(Type, typestr='VECTOR'):
 			key=name, 
 			type=list,
 			typestr='{}({})'.format('VECTOR', size),
+			encoder=lambda o: str(o),
 			null=null,
 			default=default,
 			description=description,

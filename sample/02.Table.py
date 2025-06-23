@@ -80,13 +80,13 @@ class SampleTable(
 	colString: str = VARCHAR('COL_VARCHAR', size=256, null=True)
 	colText: str = TEXT('COL_TEXT', null=True)
 	colList: list = ARRAY('COL_LIST', type=INTEGER, null=True)
-	colDictionary: dict = JSON('COL_DICTIONARY', null=True)
+	colObject: dict = JSON('COL_DICTIONARY', null=True)
 	colTimestamp: datetime = TIMESTAMP('COL_TIMESTAMP', null=True)
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
 	colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
 	colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
-	colDataModel: Model = JSON('COL_DATAMODEL', null=True)
+	# colDataModel: Model = JSON('COL_DATAMODEL', null=True)
 
 
 Helper.Set(
@@ -124,7 +124,7 @@ o = SampleModel(
 		'Decimal': Decimal(1.0),
 		'String': 'String',
 		'List': [1,2,3],
-		'Dictionary': {
+		'Object': {
 			'Bool': True,
 			'Integer': 1,
 			'Float': 1.0,
@@ -150,13 +150,13 @@ _: SampleTable = con.run(
 		colString='String',
 		colText='Text',
 		colList=[1,2,3],
-		colDictionary={'a': 1, 'b': 2},
+		colObject={'a': 1, 'b': 2},
 		colTimestamp=datetime.now(),
 		colDate=datetime.now().date(),
 		colTime=datetime.now().time(),
-		colVector=[1,2,3],
+		colVector=[1.1,2.2,3.3],
 		colGeography=Point(1.0, 2.0),
-		colDataModel=o,
+		# colDataModel=o,
 	),
 	fetch=SampleTable
 )
@@ -177,7 +177,7 @@ o = SampleModel(
 		'Decimal': Decimal(2.0),
 		'String': 'string',
 		'List': [4,5,6],
-		'Dictionary': {
+		'Object': {
 			'Bool': False,
 			'Integer': 2,
 			'Float': 2.0,
@@ -204,14 +204,14 @@ _.colText='ChangedText'
 _.colList=[4,5,6]
 _.colList.append(7)
 _.colList.extend([8, 9])
-_.colDictionary={'c': 3, 'd': 4}
-_.colDictionary['e'] = 5
+_.colObject={'c': 3, 'd': 4}
+_.colObject['e'] = 5
 _.colTimestamp=datetime.now()
 _.colDate=datetime.now().date()
 _.colTime=datetime.now().time()
 _.colVector=[4,5,6]
 _.colGeography=Point(4.0, 5.0)
-_.colDataModel=o
+# _.colDataModel=o
 
 # SELECT
 _ = con.run(Select(SampleTable), fetch=SampleTable)

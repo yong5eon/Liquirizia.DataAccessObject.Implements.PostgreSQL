@@ -28,11 +28,13 @@ class Of(Expr):
 		return '({}->{}){}'.format(
 			str(self.col),
 			'\'{}\''.format(self.arg) if isinstance(self.arg, str) else str(self.arg),
-			'::{}'.format(self.type) if self.type else '',
+			'::{}'.format(
+				self.type if isinstance(self.type, str) else self.type.__typestr__
+			) if self.type else '',
 		)
 	def cast(
 		self,
 		type: Union[str, T[Type]],
 	):
-		self.type = type if isinstance(type, str) else str(type)
+		self.type = type if isinstance(type, str) else type.__typestr__
 		return self

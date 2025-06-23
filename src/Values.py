@@ -12,6 +12,11 @@ class Point(object):
 	longitude: float
 	latitude: float
 	def __eq__(self, o: 'Point') -> bool:
-		if self.longitude == o.longitude and self.latitude == o.latitude:
+		if self.longitude.__eq__(o.longitude) and self.latitude.__eq__(o.latitude):
 			return True
 		return False
+	def __ne__(self, o: 'Point') -> bool:
+		if self.longitude.__ne__(o.longitude) or self.latitude.__ne__(o.latitude):
+			return True
+		return False
+

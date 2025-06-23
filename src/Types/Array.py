@@ -21,7 +21,7 @@ class Array(Type, typestr='ARRAY'):
 	def __init__(
 		self, 
 		name: str,
-		type: T[Type],
+		type: Union[str, T[Type]],
 		typesize: int = None,
 		size: Union[int, Sequence[int]] = None,
 		va: Validator = Validator(IsArray()),
@@ -30,21 +30,6 @@ class Array(Type, typestr='ARRAY'):
 		default: Union[Any, Value, Function] = None,
 		description: str = None,
 	):
-		SCALAR_TYPES = [
-			'BOOLEAN',
-			'SMALLINT',
-			'INTEGER',
-			'BIGINT',
-			'REAL',
-			'DOUBLE PRECISION',
-			'NUMERIC',
-			'DECIMAL',
-			# TODO : add other scalar types
-		]
-		if type.__typestr__ not in SCALAR_TYPES:
-			raise TypeError(
-				'Type {} is not a scalar type for array'.format(type.__typestr__)
-			)
 		args = None
 		if size:
 			args = []
@@ -55,7 +40,7 @@ class Array(Type, typestr='ARRAY'):
 			type=list,
 			typestr='{}{}'.format(
 				'{}{}'.format(
-					type.__typestr__,
+					type if isinstance(type, str) else type.__typestr__,
 					'({})'.format(typesize) if typesize else ''
 				),
 				''.join(args) if args else []

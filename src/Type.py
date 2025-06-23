@@ -5,12 +5,18 @@ from Liquirizia.Validator.Validator import Validator
 
 from .Value import Value
 from .Function import Function
-
 from typing import Any, Union
+from abc import ABCMeta
 
 __all__ = (
 	'Type'
 )
+
+
+class TypeEncoder(metaclass=ABCMeta):
+	def __call__(self, o: Any) -> Any:
+		"""Encode the object to postgres object representation"""
+		raise NotImplementedError("{} must implement __call__ method".format(self.__class__.__name__))
 
 
 class Type(BaseType):
@@ -19,6 +25,7 @@ class Type(BaseType):
 			key: str,
 			type: str,
 			typestr: str,
+			encoder: TypeEncoder = None,
 			va: Validator = None,
 			fn: Handler = None,
 			null: bool = False,
@@ -35,6 +42,7 @@ class Type(BaseType):
 		self.key = key
 		self.null = null
 		self.typestr = typestr
+		self.encoder = encoder
 		if default is not None:
 			if isinstance(default, Value):
 				self.typedef = str(default)

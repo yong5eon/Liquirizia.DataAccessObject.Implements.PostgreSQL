@@ -40,7 +40,7 @@ class StudentUpdated(Handler):
 		changed = m.__cursor__.run(Update(Student).set(
 			**{o.name: v}
 		).where(
-			IsEqualTo(Student.id, m.id)
+			EqualTo(Student.id, m.id)
 		))
 		PrettyPrint(changed)
 		return
@@ -84,7 +84,7 @@ class ClassUpdated(Handler):
 		changed = m.__cursor__.run(Update(Class).set(
 			**{o.name: v}
 		).where(
-			IsEqualTo(Class.id, m.id)
+			EqualTo(Class.id, m.id)
 		))
 		PrettyPrint(changed)
 		return
@@ -127,8 +127,8 @@ class StudentClassUpdated(Handler):
 		changed = m.__cursor__.run(Update(StudentOfClass).set(
 			**{o.name: v}
 		).where(
-			IsEqualTo(StudentOfClass.studentId, m.studentId),
-			IsEqualTo(StudentOfClass.classId, m.classId),
+			EqualTo(StudentOfClass.studentId, m.studentId),
+			EqualTo(StudentOfClass.classId, m.classId),
 		))
 		PrettyPrint(changed)
 		return
@@ -170,10 +170,10 @@ class StatOfStudent(
 	View,
 	name='STAT_STUDENT',
 	executor=Select(Student).join(
-		LeftOuter(StudentOfClass, IsEqualTo(Student.id, StudentOfClass.studentId)),
-		LeftOuter(Class, IsEqualTo(StudentOfClass.classId, Class.id)),
+		LeftOuter(StudentOfClass, EqualTo(Student.id, StudentOfClass.studentId)),
+		LeftOuter(Class, EqualTo(StudentOfClass.classId, Class.id)),
 	).where(
-		IsEqualTo(Student.isDeleted, 'N')
+		EqualTo(Student.isDeleted, 'N')
 	).group(
 		Student.id
 	).values(
@@ -201,10 +201,10 @@ class StatOfClass(
 	View,
 	name='STAT_CLASS',
 	executor=Select(Class).join(
-		LeftOuter(StudentOfClass, IsEqualTo(Class.id, StudentOfClass.classId)),
-		LeftOuter(Student), IsEqualTo(StudentOfClass.studentId, Student.id)
+		LeftOuter(StudentOfClass, EqualTo(Class.id, StudentOfClass.classId)),
+		LeftOuter(Student), EqualTo(StudentOfClass.studentId, Student.id)
 	).where(
-		IsEqualTo(Class.isDeleted, 'N')
+		EqualTo(Class.isDeleted, 'N')
 	).group(
 		Class.id
 	).values(
@@ -348,8 +348,8 @@ if __name__ == '__main__':
 	PrettyPrint(classes)
 	
 	for scode, ccode in STUDENT_OF_CLASS:
-		s = con.run(Get(Student).where(IsEqualTo(Student.code, scode)), fetch=Student)
-		c = con.run(Get(Class).where(IsEqualTo(Class.code, ccode)), fetch=Class)
+		s = con.run(Get(Student).where(EqualTo(Student.code, scode)), fetch=Student)
+		c = con.run(Get(Class).where(EqualTo(Class.code, ccode)), fetch=Class)
 		costs = []
 		for i in range(0, randrange(5, 10)):
 			costs.append(randrange(0, 100))
@@ -413,8 +413,8 @@ if __name__ == '__main__':
 				atUpdated=datetime.now(),
 				isUpdated=True,
 			).where(
-				IsEqualTo(StudentOfClass.studentId, _.studentId),
-				IsEqualTo(StudentOfClass.classId, _.classId),
+				EqualTo(StudentOfClass.studentId, _.studentId),
+				EqualTo(StudentOfClass.classId, _.classId),
 			),
 			fetch=StudentOfClass,
 		)
@@ -438,8 +438,8 @@ if __name__ == '__main__':
 	PrettyPrint(studentsOfClasses)
 	
 	exec = Select(Student).join(
-			LeftOuter(StudentOfClass, IsEqualTo(Student.id, StudentOfClass.studentId)),
-			LeftOuter(Class, IsEqualTo(StudentOfClass.classId, Class.id)),
+			LeftOuter(StudentOfClass, EqualTo(Student.id, StudentOfClass.studentId)),
+			LeftOuter(Class, EqualTo(StudentOfClass.classId, Class.id)),
 		).values(
 			Alias(Student.id, 'STUDENT'),
 			Alias(Student.name, 'NAME'),
@@ -449,11 +449,11 @@ if __name__ == '__main__':
 			Alias(Min(StudentOfClass.atCreated), 'AT_CREATED'),
 			Alias(Max(StudentOfClass.atUpdated), 'AT_UPDATED'),
 		).where(
-			IsEqualTo(Student.isDeleted, 'N')
+			EqualTo(Student.isDeleted, 'N')
 		).group(
 			Student.id,
 		).having(
-			IsGreaterEqualTo(Average(StudentOfClass.score), 3)
+			GreaterEqualTo(Average(StudentOfClass.score), 3)
 		).order(
 			Ascend(Student.id),
 			Descend(Average(StudentOfClass.score)),
@@ -472,7 +472,7 @@ if __name__ == '__main__':
 	PrettyPrint(con.run(exec, filter=RowFilter()))
 
 	con.run(Delete(StudentOfClass).where(
-		IsEqualTo(StudentOfClass.studentName, 'Song Hahee')
+		EqualTo(StudentOfClass.studentName, 'Song Hahee')
 	))
 
 	PrettyPrint(con.run(exec))
@@ -482,7 +482,7 @@ if __name__ == '__main__':
 	
 	statOfStudent = con.run(
 		Select(StatOfStudent).where(
-			IsGreaterThan(StatOfStudent.average, 3)
+			GreaterThan(StatOfStudent.average, 3)
 		)
 	)
 	PrettyPrint(statOfStudent)
@@ -492,7 +492,7 @@ if __name__ == '__main__':
 	
 	statOfClass = con.run(
 		Select(StatOfClass).where(
-			IsEqualTo(StatOfClass.count, 0)
+			EqualTo(StatOfClass.count, 0)
 		),
 		fetch=StatOfClass,
 	)
