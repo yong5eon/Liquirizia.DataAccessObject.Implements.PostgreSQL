@@ -9,38 +9,11 @@ from Liquirizia.DataAccessObject.Implements.PostgreSQL.Orders import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Joins import *
 from Liquirizia.DataAccessObject.Implements.PostgreSQL.Exprs import *
 
-from Liquirizia.DataModel import Model, Value, Handler
-from Liquirizia.Validator import Validator
-from Liquirizia.Validator.Patterns import (
-	IsBool,
-	IsInteger,
-	IsFloat,
-	IsDecimal,
-	IsString,
-	IsList,
-	IsObject,
-	IsDateTime,
-	IsDate,
-	IsTime,
-)
+from Liquirizia.DataModel import Handler
 
 from Liquirizia.Utils import PrettyPrint
-
 from decimal import Decimal
 from datetime import datetime, date, time
-
-
-class SampleModel(Model):
-	attrBool: bool = Value(type=bool, va=Validator(IsBool()))
-	attrInteger: int = Value(type=int, va=Validator(IsInteger()))
-	attrFloat: float = Value(type=float, va=Validator(IsFloat()))
-	attrDecimal: Decimal = Value(type=Decimal, va=Validator(IsDecimal()))
-	attrString: str = Value(type=str, va=Validator(IsString()))
-	attrList: list = Value(type=list, va=Validator(IsList()))
-	attrObject: dict = Value(type=dict, va=Validator(IsObject()))
-	attrDateTime: datetime = Value(type=datetime, va=Validator(IsDateTime()))
-	attrDate: date = Value(type=date, va=Validator(IsDate()))
-	attrTime: time = Value(type=time, va=Validator(IsTime()))
 
 
 class SampleTableUpdated(Handler):
@@ -86,7 +59,6 @@ class SampleTable(
 	colTime: date = TIME('COL_TIME', null=True)
 	colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
 	colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
-	# colDataModel: Model = JSON('COL_DATAMODEL', null=True)
 
 
 Helper.Set(
@@ -110,33 +82,6 @@ con.execute('CREATE EXTENSION IF NOT EXISTS postgis')
 con.run(Drop(SampleTable))
 con.run(Create(SampleTable))
 
-o = SampleModel(
-	attrBool=True,
-	attrInteger=1,
-	attrFloat=1.0,
-	attrDecimal=Decimal(1.0),
-	attrString='String',
-	attrList=[1,2,3],
-	attrObject={
-		'Bool': True,
-		'Integer': 1,
-		'Float': 1.0,
-		'Decimal': Decimal(1.0),
-		'String': 'String',
-		'List': [1,2,3],
-		'Object': {
-			'Bool': True,
-			'Integer': 1,
-			'Float': 1.0,
-			'Decimal': Decimal(1.0),
-			'String': 'String',
-		}
-	},
-	attrDateTime=datetime.now(),
-	attrDate=datetime.now().date(),
-	attrTime=datetime.now().time(),
-)
-
 # INSERT
 _: SampleTable = con.run(
 	Insert(SampleTable).values(
@@ -156,40 +101,11 @@ _: SampleTable = con.run(
 		colTime=datetime.now().time(),
 		colVector=[1.1,2.2,3.3],
 		colGeography=Point(1.0, 2.0),
-		# colDataModel=o,
 	),
 	fetch=SampleTable
 )
 
 PrettyPrint(_)
-
-o = SampleModel(
-	attrBool=False,
-	attrInteger=2,
-	attrFloat=2.0,
-	attrDecimal=Decimal(2.0),
-	attrString='string',
-	attrList=[4,5,6],
-	attrObject={
-		'Bool': False,
-		'Integer': 2,
-		'Float': 2.0,
-		'Decimal': Decimal(2.0),
-		'String': 'string',
-		'List': [4,5,6],
-		'Object': {
-			'Bool': False,
-			'Integer': 2,
-			'Float': 2.0,
-			'Decimal': Decimal(2.0),
-			'String': 'string',
-		}
-	},
-	attrDateTime=datetime.now(),
-	attrDate=datetime.now().date(),
-	attrTime=datetime.now().time(),
-)
-
 
 # HANDLER
 _.colBool=False
@@ -211,7 +127,6 @@ _.colDate=datetime.now().date()
 _.colTime=datetime.now().time()
 _.colVector=[4,5,6]
 _.colGeography=Point(4.0, 5.0)
-# _.colDataModel=o
 
 # SELECT
 _ = con.run(Select(SampleTable), fetch=SampleTable)
