@@ -19,7 +19,7 @@ from .DateTime import (
 	Date,
 	Time,
 )
-from .Binary import ByteArray
+from .Binary import Binary
 from .JavaScriptObjectNotation import (
 	JavaScriptObjectNotation,
 	JavaScriptObjectNotationByteArray,
@@ -42,7 +42,7 @@ __all__ = (
 	'Date', 'DATE',
 	'Time', 'TIME',
 	'Timestamp', 'TIMESTAMP',
-	'ByteArray', 'BLOB', 'BYTES', 'BYTEARRAY', 'BYTESTREAM',
+	'Binary', 'BLOB', 'BYTES', 'BYTEARRAY', 'BYTESTREAM',
 	'JavaScriptObjectNotation', 'JSON',
 	'JavaScriptObjectNotationByteArray', 'JSONB',
 	'Array', 'ARRAY',
@@ -80,10 +80,10 @@ DATE = Date
 TIME = Time
 TIMESTAMP = Timestamp
 ## BYTE ARRAY
-BLOB = ByteArray
-BYTES = ByteArray
-BYTEARRAY = ByteArray
-BYTESTREAM = ByteArray
+BLOB = Binary
+BYTES = Binary
+BYTEARRAY = Binary
+BYTESTREAM = Binary
 ## JSON
 JSON = JavaScriptObjectNotation
 JSONB = JavaScriptObjectNotationByteArray

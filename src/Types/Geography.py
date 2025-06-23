@@ -6,12 +6,8 @@ from ..Patterns import IsPoint, TupleToPoint, StrToPoint
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
-	IsToNone,
-	IsNotToNone,
-	Any,
 	IsTuple,
 	IsSizeOf,
-	IsString,
 )
 
 __all__ = (
@@ -25,22 +21,15 @@ class Geography(Type, typestr='GEOGRAPHY'):
 			name: str,
 			subtype: str = 'POINT',
 			srid: int = 4326,
+			va: Validator = Validator(IsTuple(IsSizeOf(2), TupleToPoint())),
+			fn: Handler = None,
 			null: bool = False,
 			description: str = None,
-			va: Validator = None,
-			fn: Handler = None,
 		):
-		if not va:
-			vargs = []
-			if null:
-				vargs.append(IsToNone(Any(IsPoint(), IsTuple(IsSizeOf(2), TupleToPoint()), IsString(StrToPoint()))))
-			else:
-				vargs.append(IsNotToNone(Any(IsPoint(), IsTuple(IsSizeOf(2), TupleToPoint()), IsString(StrToPoint()))))
-			va = Validator(*vargs)
 		super().__init__(
 			key=name, 
-			type='{}({}, {})'.format('GEOGRAPHY', subtype, srid),
-			typedefault=None,
+			type=tuple,
+			typestr='{}({}, {})'.format('GEOGRAPHY', subtype, srid),
 			null=null,
 			default=None,
 			description=description,

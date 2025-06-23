@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from Liquirizia.DataModel import Model, Handler
-from Liquirizia.DataModel.Format import Object
-
 from Liquirizia.DataAccessObject.Properties.Database import Executor
 
 from .Schema import Schema
@@ -37,9 +35,8 @@ class View(Model):
 		executor: Executor,
 		name: str = None,
 		schema: Schema = None,
-		description: str = None,
-		format: Object = None,
 		fn: Handler = None,
+		description: str = None,
 	):
 		cls.__executor__ = executor
 		if schema:
@@ -48,7 +45,6 @@ class View(Model):
 		cls.__view__ = name if name else cls.__name__
 		return super().__init_subclass__(
 			name=None,
-			description=description,
-			format=format,
 			fn=fn,
+			description=description,
 		)

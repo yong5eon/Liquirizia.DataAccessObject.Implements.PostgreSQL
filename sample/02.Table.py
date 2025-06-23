@@ -12,14 +12,13 @@ from Liquirizia.DataAccessObject.Implements.PostgreSQL.Exprs import *
 from Liquirizia.DataModel import Model, Value, Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
-	IsToNone,
 	IsBool,
 	IsInteger,
 	IsFloat,
 	IsDecimal,
 	IsString,
 	IsList,
-	IsDictionary,
+	IsObject,
 	IsDateTime,
 	IsDate,
 	IsTime,
@@ -30,20 +29,18 @@ from Liquirizia.Utils import PrettyPrint
 from decimal import Decimal
 from datetime import datetime, date, time
 
-from typing import Tuple
-
 
 class SampleModel(Model):
-	attrBool: bool = Value(Validator(IsToNone(IsBool())))
-	attrInteger: int = Value(Validator(IsToNone(IsInteger())))
-	attrFloat: float = Value(Validator(IsToNone(IsFloat())))
-	attrDecimal: Decimal = Value(Validator(IsToNone(IsDecimal())))
-	attrString: str = Value(Validator(IsToNone(IsString())))
-	attrList: list = Value(Validator(IsToNone(IsList())))
-	attrDictionary: dict = Value(Validator(IsToNone(IsDictionary())))
-	attrDateTime: datetime = Value(Validator(IsToNone(IsDateTime())))
-	attrDate: date = Value(Validator(IsToNone(IsDate())))
-	attrTime: time = Value(Validator(IsToNone(IsTime())))
+	attrBool: bool = Value(type=bool, va=Validator(IsBool()))
+	attrInteger: int = Value(type=int, va=Validator(IsInteger()))
+	attrFloat: float = Value(type=float, va=Validator(IsFloat()))
+	attrDecimal: Decimal = Value(type=Decimal, va=Validator(IsDecimal()))
+	attrString: str = Value(type=str, va=Validator(IsString()))
+	attrList: list = Value(type=list, va=Validator(IsList()))
+	attrObject: dict = Value(type=dict, va=Validator(IsObject()))
+	attrDateTime: datetime = Value(type=datetime, va=Validator(IsDateTime()))
+	attrDate: date = Value(type=date, va=Validator(IsDate()))
+	attrTime: time = Value(type=time, va=Validator(IsTime()))
 
 
 class SampleTableUpdated(Handler):
@@ -57,7 +54,7 @@ class SampleTableUpdated(Handler):
 		changed = m.__cursor__.run(Update(SampleTable).set(
 			**{o.name: v}
 		).where(
-			IsEqualTo(SampleTable.id, m.id)
+			EqualTo(SampleTable.id, m.id)
 		))
 		print(changed)
 		return
@@ -120,7 +117,7 @@ o = SampleModel(
 	attrDecimal=Decimal(1.0),
 	attrString='String',
 	attrList=[1,2,3],
-	attrDictionary={
+	attrObject={
 		'Bool': True,
 		'Integer': 1,
 		'Float': 1.0,
@@ -173,7 +170,7 @@ o = SampleModel(
 	attrDecimal=Decimal(2.0),
 	attrString='string',
 	attrList=[4,5,6],
-	attrDictionary={
+	attrObject={
 		'Bool': False,
 		'Integer': 2,
 		'Float': 2.0,
@@ -225,7 +222,7 @@ _ = con.run(Get(SampleTable), fetch=SampleTable)
 PrettyPrint(_)
 
 # DELETE
-_ = con.run(Delete(SampleTable).where(IsEqualTo(SampleTable.id, 1)))
+_ = con.run(Delete(SampleTable).where(EqualTo(SampleTable.id, 1)))
 _ = con.run(Select(SampleTable), fetch=SampleTable)
 PrettyPrint(_)
 

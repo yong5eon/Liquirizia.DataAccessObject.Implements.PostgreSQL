@@ -1,48 +1,54 @@
 # -*- coding: utf-8 -*-
 
-from Liquirizia.DataModel import Value, Handler
+from Liquirizia.DataModel import Value as BaseType, Handler, MISSING
 from Liquirizia.Validator.Validator import Validator
 
-from abc import ABCMeta
+from .Value import Value
+from .Function import Function
 
-from typing import Any
+from typing import Any, Union
 
 __all__ = (
 	'Type'
 )
 
 
-class TypeCreator(ABCMeta):
-	def __repr__(cls): return cls.__typestr__
-
-
-class Type(Value, metaclass=TypeCreator):
+class Type(BaseType):
 	def __init__(
 			self, 
 			key: str,
 			type: str,
-			typedefault: str = None,
-			null: bool = False,
-			default: Any = None,
-			description: str = None,
+			typestr: str,
 			va: Validator = None,
-			fn: Handler = None
+			fn: Handler = None,
+			null: bool = False,
+			default: Union[Any, Value, Function] = None,
+			description: str = None,
 		):
 		super().__init__(
+			type=type,
 			va=va,
-			default=default,
-			description=description,
 			fn=fn,
+			default=None if null else MISSING,
+			description=description,
 		)
 		self.key = key
-		self.type = type
-		self.typedefault = typedefault
 		self.null = null
+		self.typestr = typestr
+		if default is not None:
+			if isinstance(default, Value):
+				self.typedef = str(default)
+			elif isinstance(default, Function):
+				self.typedef = str(default)
+			else:
+				self.typedef = str(Value(default))
+		else:
+			self.typedef = None
 		return
-
-	def __init_subclass__(cls, typestr: str = None):
+	
+	def __init_subclass__(cls, typestr: str):
 		cls.__typestr__ = typestr
-		return
+		return super().__init_subclass__()
 
 	def __str__(self):
 		from .Table import Table
@@ -59,8 +65,3 @@ class Type(Value, metaclass=TypeCreator):
 				self.model.__view__, # attribute's model name
 				self.key,
 			)
-
-	def encode(self, o: any): return o
-
-	@classmethod
-	def ToString(cls): return cls.__typestr__

@@ -30,7 +30,7 @@ class ColumnToSQL(object):
 			col.key,
 			col.type,
 			' NOT NULL' if not col.null else '',
-			' DEFAULT {}'.format(col.typedefault) if col.typedefault is not None else '',
+			' DEFAULT {}'.format(col.typedef) if col.typedef is not None else '',
 		)
 
 
