@@ -34,7 +34,7 @@ setup(
 		'Liquirizia :: DataAccessObject :: PostgreSQL',
 	],
 	install_requires=[
-		'Liquirizia@git+https://github.com/yong5eon/Liquirizia.git',
+		'Liquirizia@git+https://github.com/yong5eon/Liquirizia.git@fix/211',
 		'psycopg[binary,pool]',
 		'shapely',
 	],
