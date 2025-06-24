@@ -41,14 +41,17 @@ class TypeTo(Expr):
 	def __init__(
 		self,
 		col: Union[Any, Value, Column, Function, Expr],
-		type: T[Type],
+		type: Union[str, T[Type]],
 	):
 		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
 		self.col = col
 		self.type = type
 		return
 	def __str__(self):
-		return '{}::{}'.format(str(self.col), str(self.type))
+		return '{}::{}'.format(
+			str(self.col), 
+			self.type if isinstance(self.type, str) else self.type.__typestr__
+		)
 
 
 class If(Expr):

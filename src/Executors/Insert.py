@@ -31,7 +31,8 @@ class Insert(Executor, Fetch):
 	def values(self, **kwargs: Dict[str, Any]):
 		for k, v in self.obj.__mapper__.items():
 			if k not in kwargs.keys(): continue
-			self.kwargs[v.key] = (uuid4().hex, v.encode(v.validator(kwargs[k])))
+			o = v.validator(kwargs[k])
+			self.kwargs[v.key] = (uuid4().hex, v.encoder(o) if v.encoder else o)
 		return self
 	
 	def on(self, *args: Sequence[Union[Column, Type]]):
@@ -49,7 +50,8 @@ class Insert(Executor, Fetch):
 		self.onkwargs = {}
 		for k, v in self.obj.__mapper__.items():
 			if k not in kwargs.keys(): continue
-			self.onkwargs[v.key] = (uuid4().hex, v.encode(v.validator(kwargs[k])))
+			o = v.validator(kwargs[k])
+			self.kwargs[v.key] = (uuid4().hex, v.encoder(o) if v.encoder else o)
 		return self
 
 	@property

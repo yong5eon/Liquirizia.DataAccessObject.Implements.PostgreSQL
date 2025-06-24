@@ -5,13 +5,9 @@ from ..Function import Function
 from ..Value import Value
 
 from Liquirizia.DataModel import Handler
-
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
-	IsToNone,
-	IsNotToNone,
 	IsBool,
-	SetDefault,
 )
 
 from typing import Union
@@ -23,46 +19,22 @@ __all__ = (
 
 class Bool(Type, typestr='BOOLEAN'):
 	def __init__(
-			self, 
-			name: str, 
-			null: bool = False,
-			default: Union[bool, Value, Function] = None,
-			description: str = None,
-			va: Validator = None,
-			fn: Handler = None,
-		):
-		if not va:
-			vargs = []
-			if default:
-				if not isinstance(default, Function):
-					if isinstance(default, Value):
-						vargs.append(SetDefault(default.value))
-					else:
-						vargs.append(SetDefault(default))
-			if null:
-				vargs.append(IsToNone(IsBool()))
-			else:
-				vargs.append(IsNotToNone(IsBool()))
-			va = Validator(*vargs)
-		typedefault = None
-		if default is not None:
-			if isinstance(default, Value):
-				typedefault = str(default)
-				default = default.value
-			elif isinstance(default, Function):
-				typedefault = str(default)
-				default = None
-			else:
-				typedefault = str(Value(default))
+		self, 
+		name: str, 
+		va: Validator = Validator(IsBool()),
+		fn: Handler = None,
+		null: bool = False,
+		default: Union[bool, Value, Function] = None,
+		description: str = None,
+	):
 		super().__init__(
 			key=name, 
-			type='BOOLEAN',
-			typedefault=typedefault,
+			type=bool,
+			typestr='BOOLEAN',
+			va=va, 
+			fn=fn,
 			null=null,
 			default=default,
 			description=description,
-			va=va, 
-			fn=fn,
 		)
 		return
-

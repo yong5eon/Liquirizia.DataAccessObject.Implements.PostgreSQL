@@ -3,7 +3,7 @@
 from .Type import Type
 from .Types import BIGINT
 
-from typing import Type as T
+from typing import Type as T, Union
 
 __all__ = (
 	'Sequence'
@@ -14,7 +14,7 @@ class Sequence(object):
 	def __init__(
 		self, 
 		name: str,
-		type: T[Type] = BIGINT,
+		type: Union[str, T[Type]] = BIGINT,
 		increment: int = 1,
 		min: int = 1,
 		max: int = None,
@@ -23,7 +23,7 @@ class Sequence(object):
 	):
 		self.name = name
 		self.schema = None
-		self.type = type if isinstance(type, str) else str(type)
+		self.type = type if isinstance(type, str) else type.__typestr__
 		self.increment = increment
 		self.min = min
 		self.max = max

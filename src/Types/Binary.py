@@ -5,64 +5,36 @@ from ..Function import Function
 from ..Value import Value
 
 from Liquirizia.DataModel import Handler
-
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
-	IsToNone,
-	IsNotToNone,
-	ToByteArray,
-	IsByteArray,
-	SetDefault,
+	IsByteString,
 )
 
 from typing import Union
 
 __all__ = (
-	'ByteArray',
+	'Binary',
 )
 
 
-class ByteArray(Type, typestr='BYTEA'):
+class Binary(Type, typestr='BYTEA'):
 	def __init__(
-			self, 
-			name: str, 
-			null: bool = False,
-			default: Union[bytes, Value, Function] = None,
-			description: str = None,
-			va: Validator = None,
-			fn: Handler = None,
-		):
-		if not va:
-			vargs = []
-			if default:
-				if not isinstance(default, Function):
-					if isinstance(default, Value):
-						vargs.append(SetDefault(default.value))
-					else:
-						vargs.append(SetDefault(default))
-			if null:
-				vargs.append(IsToNone(ToByteArray(), IsByteArray()))
-			else:
-				vargs.append(IsNotToNone(ToByteArray(), IsByteArray()))
-			va = Validator(*vargs)
-		typedefault = None
-		if default is not None:
-			if isinstance(default, Value):
-				typedefault = str(default)
-				default = default.value
-			elif isinstance(default, Function):
-				typedefault = str(default)
-				default = None
-			else:
-				typedefault = str(Value(default))
+		self, 
+		name: str, 
+		va: Validator = Validator(IsByteString()),
+		fn: Handler = None,
+		null: bool = False,
+		default: Union[bytes, Value, Function] = None,
+		description: str = None,
+	):
 		super().__init__(
 			key=name, 
-			type='BYTEA',
-			typedefault=typedefault,
+			type=bytes,
+			typestr='BYTEA',
+			va=va,
+			fn=fn,
 			null=null,
 			default=default,
 			description=description,
-			va=va,
-			fn=fn,
 		)
 		return

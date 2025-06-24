@@ -29,7 +29,8 @@ class Update(Executor, Fetch):
 	def set(self, **kwargs: Dict[str, Any]):
 		for k, v in self.obj.__mapper__.items():
 			if k not in kwargs.keys(): continue
-			self.kwargs[v.key] = (uuid4().hex, v.encode(v.validator(kwargs[k])))
+			o = v.validator(kwargs[k])
+			self.kwargs[v.key] = (uuid4().hex, v.encoder(o) if v.encoder else o)
 		return self
 	
 	def where(self, *args: Sequence[Expr]):

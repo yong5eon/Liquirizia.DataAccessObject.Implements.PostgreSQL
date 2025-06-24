@@ -28,9 +28,9 @@ class ColumnToSQL(object):
 	def __call__(self, col: Type) -> str:
 		return '"{}" {}{}{}'.format(
 			col.key,
-			col.type,
+			col.typestr,
 			' NOT NULL' if not col.null else '',
-			' DEFAULT {}'.format(col.typedefault) if col.typedefault is not None else '',
+			' DEFAULT {}'.format(col.typedef) if col.typedef is not None else '',
 		)
 
 

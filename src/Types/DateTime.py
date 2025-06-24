@@ -5,15 +5,11 @@ from ..Function import Function
 from ..Value import Value
 
 from Liquirizia.DataModel import Handler
-
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
-	IsToNone,
-	IsNotToNone,
 	IsDateTime,
 	IsDate,
 	IsTime,
-	SetDefault,
 )
 
 from datetime import date, time, datetime
@@ -27,90 +23,60 @@ __all__ = (
 )
 
 
+class IfStrOrTimestampToDateTime(IsDateTime):
+	def __call__(self, parameter):
+		if isinstance(parameter, str):
+			return datetime.fromisoformat(parameter)
+		if isinstance(parameter, float):
+			return datetime.fromtimestamp(parameter)
+		return super().__call__(parameter)
+
+
 class Timestamp(Type, typestr='TIMESTAMP'):
 	def __init__(
-			self, 
-			name: str, 
-			timezone: bool = False,
-			null: bool = False,
-			default: Union[datetime, Value, Function] = None,
-			description: str = None,
-			va: Validator = None,
-			fn: Handler = None,
-		):
-		if not va:
-			vargs = []
-			if default:
-				if not isinstance(default, Function):
-					if isinstance(default, Value):
-						vargs.append(SetDefault(default.value))
-					else:
-						vargs.append(SetDefault(default))
-			if null:
-				vargs.append(IsToNone(IsDateTime()))
-			else:
-				vargs.append(IsNotToNone(IsDateTime()))
-			va = Validator(*vargs)
-		typedefault = None
-		if default is not None:
-			if isinstance(default, Value):
-				typedefault = str(default)
-				default = default.value
-			elif isinstance(default, Function):
-				typedefault = str(default)
-				default = None
-			else:
-				typedefault = str(Value(default))
+		self, 
+		name: str, 
+		timezone: bool = False,
+		va: Validator = Validator(IfStrOrTimestampToDateTime()),
+		fn: Handler = None,
+		null: bool = False,
+		default: Union[datetime, Value, Function] = None,
+		description: str = None,
+	):
 		super().__init__(
 			name,
-			type='TIMESTAMP{}'.format(' WITH TIME ZONE' if timezone else ''),
-			typedefault=typedefault,
+			type=datetime,
+			typestr='TIMESTAMP{}'.format(' WITH TIME ZONE' if timezone else ''),
+			va=va,
+			fn=fn,
 			null=null,
 			default=default,
 			description=description,
-			va=va,
-			fn=fn,
 		)
 		return
 
 
+class IfStrToDate(IsDate):
+	def __call__(self, parameter):
+		if isinstance(parameter, str):
+			return date.fromisoformat(parameter)
+		return super().__call__(parameter)
+
+
 class Date(Type, typestr='DATE'):
 	def __init__(
-			self, 
-			name: str, 
-			null: bool = False,
-			default: Union[date, Value, Function] = None,
-			description: str = None,
-			va: Validator = None,
-			fn: Handler = None,
-		):
-		if not va:
-			vargs = []
-			if default:
-				if not isinstance(default, Function):
-					if isinstance(default, Value):
-						vargs.append(SetDefault(default.value))
-					else:
-						vargs.append(SetDefault(default))
-			if null:
-				vargs.append(IsToNone(IsDate()))
-			else:
-				vargs.append(IsNotToNone(IsDate()))
-			va = Validator(*vargs)
-		typedefault = None
-		if default is not None:
-			if isinstance(default, Value):
-				typedefault = str(default)
-				default = default.value
-			elif isinstance(default, Function):
-				typedefault = str(default)
-				default = None
-			else:
-				typedefault = str(Value(default))
+		self, 
+		name: str, 
+		va: Validator = Validator(IfStrToDate()),
+		fn: Handler = None,
+		null: bool = False,
+		default: Union[date, Value, Function] = None,
+		description: str = None,
+	):
 		super().__init__(
 			key=name, 
-			type='DATE',
-			typedefault=typedefault,
+			type=date,
+			typestr='DATE',
 			null=null,
 			default=default,
 			description=description,
@@ -120,43 +86,27 @@ class Date(Type, typestr='DATE'):
 		return
 
 
+class IfStrToTime(IsTime):
+	def __call__(self, parameter):
+		if isinstance(parameter, str):
+			return time.fromisoformat(parameter)
+		return super().__call__(parameter)
+
+
 class Time(Type, typestr='TIME'):
 	def __init__(
-			self, 
-			name: str, 
-			null: bool = False,
-			default: Union[time, Value, Function] = None,
-			description: str = None,
-			va: Validator = None,
-			fn: Handler = None,
-		):
-		if not va:
-			vargs = []
-			if default:
-				if not isinstance(default, Function):
-					if isinstance(default, Value):
-						vargs.append(SetDefault(default.value))
-					else:
-						vargs.append(SetDefault(default))
-			if null:
-				vargs.append(IsToNone(IsTime()))
-			else:
-				vargs.append(IsNotToNone(IsTime()))
-			va = Validator(*vargs)
-		typedefault = None
-		if default is not None:
-			if isinstance(default, Value):
-				typedefault = str(default)
-				default = default.value
-			elif isinstance(default, Function):
-				typedefault = str(default)
-				default = None
-			else:
-				typedefault = str(Value(default))
+		self, 
+		name: str, 
+		va: Validator = Validator(IfStrToTime()),
+		fn: Handler = None,
+		null: bool = False,
+		default: Union[time, Value, Function] = None,
+		description: str = None,
+	):
 		super().__init__(
 			key=name, 
-			type='TIME',
-			typedefault=typedefault,
+			type=time,
+			typestr='TIME',
 			null=null,
 			default=default,
 			description=description,
