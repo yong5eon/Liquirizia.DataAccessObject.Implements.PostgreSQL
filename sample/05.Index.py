@@ -25,7 +25,7 @@ class SampleTable(
 	),
 	indexes=(
 		Index('IDX_SAMPLE_COL_1', exprs=['COL_1']),
-		Index('IDX_SAMPLE_COL_2', exprs=Column('COL_1')),
+		Index('IDX_SAMPLE_COL_2', exprs=Column('COL_2'), using=IndexType.GeneralizedInvertedIndex, operator='GIN_TRGM_OPS'),
 		# Index('IDX_SAMPLE_DATA', exprs=Column('DATA')),
 		Index('IDX_SAMPLE_DATA_TARGET', exprs=Of(Of(Of('DATA', 'target'), 0), 'dest')),
 		Index('IDX_SAMPLE_DATA_COL', exprs=Of('DATA', 'col'), using=IndexType.GeneralizedInvertedIndex),
