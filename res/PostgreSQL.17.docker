@@ -3,31 +3,31 @@ FROM postgres:$TAG
 ENV POSTGRES_PASSWORD=password
 # Build Extensions
 ## Install Dependencies
-RUN apt update
-RUN apt upgrade
-RUN apt install -y \
-    git \
-    build-essential \
-    autoconf \
-    automake \
-    autogen \
-    libproj-dev \
-    proj-bin \
-    libgdal-dev \
-    gdal-bin \
-    libgeos-dev \
-    geos-bin \
-    libprotobuf-c-dev \
-    protobuf-c-compiler \
-    bison \
-    byacc \
-    postgresql-server-dev-all
+# RUN apt update
+# RUN apt upgrade
+# RUN apt install -y \
+#     git \
+#     build-essential \
+#     autoconf \
+#     automake \
+#     autogen \
+#     libproj-dev \
+#     proj-bin \
+#     libgdal-dev \
+#     gdal-bin \
+#     libgeos-dev \
+#     geos-bin \
+#     libprotobuf-c-dev \
+#     protobuf-c-compiler \
+#     bison \
+#     byacc \
+#     postgresql-server-dev-all
 ## Install PgVector
-WORKDIR /tmp
-RUN git clone https://github.com/pgvector/pgvector.git
-WORKDIR /tmp/pgvector
-RUN make
-RUN make install
+# WORKDIR /tmp
+# RUN git clone https://github.com/pgvector/pgvector.git
+# WORKDIR /tmp/pgvector
+# RUN make
+# RUN make install
 ## Install PostGIS
 # WORKDIR /tmp
 # RUN git clone --branch 3.5.2 https://github.com/postgis/postgis.git
