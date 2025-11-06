@@ -20,7 +20,12 @@ from .Constraints import (
 	Unique,
 	Check,
 )
-from .Index import IndexType, Index, IndexUnique
+from .Index import (
+    IndexType,
+    Index,
+    IndexUnique,
+    IndexOperation,
+)
 from .Executors import (
 	Create,
 	Drop,
@@ -54,6 +59,7 @@ __all__ = (
 	'IndexType',
 	'Index',
 	'IndexUnique',
+    'IndexOperation',
 	'Expr',
 	'Function',
 	# Executors
