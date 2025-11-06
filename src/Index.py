@@ -67,7 +67,6 @@ class IndexUnique(Index):
 		name: str, 
 		exprs: Union[Expr, Sequence[Expr]],
 		using: IndexType = None,
-		operator: str = None,
 		notexists: bool = True,
 	):
 		super().__init__(
@@ -75,7 +74,6 @@ class IndexUnique(Index):
 			exprs=exprs,
 			unique=True,
 			using=using,
-			operator=operator,
 			notexists=notexists
 		)
 		return
