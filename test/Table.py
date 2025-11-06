@@ -36,6 +36,9 @@ class SampleTable(
 	constraints=(
 		PrimaryKey('PK_SAMPLE', cols=Column('ID')),
 	),
+	indexes=(
+		Index('IDX_SAMPLE_COL_VARCHAR', exprs=IndexOperation(Column('COL_VARCHAR'), operator='GIN_TRGM_OPS'), using=IndexType.GeneralizedInvertedIndex),
+	),
 	fn=SampleTableUpdated(),
 ):
 	id : int = INT('ID', default=NextVal('SEQ_SAMPLE'))
@@ -74,11 +77,12 @@ class TestTable(Case):
 				max=10,
 			)
 		)
-		# con: Connection = Helper.Get('Sample')
-		# con.begin()
+		con: Connection = Helper.Get('Sample')
+		con.begin()
+		con.execute('CREATE EXTENSION IF NOT EXISTS PG_TRGM')
 		# con.execute('CREATE EXTENSION IF NOT EXISTS VECTOR')
 		# con.execute('CREATE EXTENSION IF NOT EXISTS POSTGIS')
-		# con.commit()
+		con.commit()
 		return super().setUpClass()
 	
 	def setUp(self):
