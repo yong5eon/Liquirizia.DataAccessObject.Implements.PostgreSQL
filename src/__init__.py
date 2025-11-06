@@ -59,7 +59,7 @@ __all__ = (
 	'IndexType',
 	'Index',
 	'IndexUnique',
-    'IndexOperation',
+	'IndexOperation',
 	'Expr',
 	'Function',
 	# Executors
