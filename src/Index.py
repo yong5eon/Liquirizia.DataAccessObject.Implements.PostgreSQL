@@ -37,6 +37,7 @@ class Index(object):
 		],
 		unique: bool = False,
 		using: IndexType = None,
+		operator: str = None,
 		notexists: bool = True,
 	):
 		self.name = name
@@ -49,6 +50,7 @@ class Index(object):
 				self.exprs.append(expr)
 		self.unique = unique
 		self.using = using
+		self.operator = operator
 		self.notexists = notexists
 		self.conds = None
 		return
@@ -66,7 +68,15 @@ class IndexUnique(Index):
 		name: str, 
 		exprs: Union[Expr, Sequence[Expr]],
 		using: IndexType = None,
+		operator: str = None,
 		notexists: bool = True,
 	):
-		super().__init__(name, exprs, True, using, notexists)
+		super().__init__(
+			name=name,
+			exprs=exprs,
+			unique=True,
+			using=using,
+			operator=operator,
+			notexists=notexists
+		)
 		return
