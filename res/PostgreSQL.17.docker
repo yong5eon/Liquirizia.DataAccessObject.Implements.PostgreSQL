@@ -29,13 +29,13 @@ WORKDIR /tmp/pgvector
 RUN make
 RUN make install
 ## Install PostGIS
-WORKDIR /tmp
-RUN git clone --branch 3.5.2 https://github.com/postgis/postgis.git
-WORKDIR /tmp/postgis
-RUN ./autogen.sh
-RUN ./configure \
-    --with-projdir=/usr \
-    --with-geosconfig=/usr/bin/geos-config \
-    --with-gdalconfig=/usr/bin/gdal-config
-RUN make
-RUN make install
+# WORKDIR /tmp
+# RUN git clone --branch 3.5.2 https://github.com/postgis/postgis.git
+# WORKDIR /tmp/postgis
+# RUN ./autogen.sh
+# RUN ./configure \
+#     --with-projdir=/usr \
+#     --with-geosconfig=/usr/bin/geos-config \
+#     --with-gdalconfig=/usr/bin/gdal-config
+# RUN make
+# RUN make install
