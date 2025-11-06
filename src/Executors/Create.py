@@ -95,7 +95,7 @@ class SequenceToSQL(object):
 
 class IndexToSQL(object):
 	def __call__(self, o: T[Table], index: Index) -> str:
-		return 'CREATE {}INDEX {}"{}" ON {}"{}" {}({}){}'.format(
+		return 'CREATE {}INDEX {}"{}" ON {}"{}" {}({}{}){}'.format(
 			'UNIQUE ' if index.unique else '',
 			'IF NOT EXISTS ' if index.notexists else '',
 			index.name,
@@ -103,6 +103,7 @@ class IndexToSQL(object):
 			o.__table__,
 			'USING {} '.format(str(index.using)) if index.using else '',
 			', '.join(str(expr) for expr in index.exprs),
+			', {}'.format(index.operator) if index.operator else '',
 			' WHERE {}'.format(
 				' AND '.join([str(cond) for cond in index.conds])
 			) if index.conds else ''
