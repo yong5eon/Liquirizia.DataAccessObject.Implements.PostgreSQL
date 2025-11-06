@@ -25,7 +25,7 @@ class SampleTable(
 	),
 	indexes=(
 		Index('IDX_SAMPLE_COL_1', exprs=['COL_1']),
-		Index('IDX_SAMPLE_COL_2', exprs=Column('COL_2'), using=IndexType.GeneralizedInvertedIndex, operator='GIN_TRGM_OPS'),
+		Index('IDX_SAMPLE_COL_2', exprs=IndexOperation(Column('COL_2'), operator='GIN_TRGM_OPS'), using=IndexType.GeneralizedInvertedIndex),
 		# Index('IDX_SAMPLE_DATA', exprs=Column('DATA')),
 		Index('IDX_SAMPLE_DATA_TARGET', exprs=Of(Of(Of('DATA', 'target'), 0), 'dest')),
 		Index('IDX_SAMPLE_DATA_COL', exprs=Of('DATA', 'col'), using=IndexType.GeneralizedInvertedIndex),
@@ -52,6 +52,7 @@ Helper.Set(
 
 con: Connection = Helper.Get('Sample')
 con.begin()
+con.execute('CREATE EXTENSION IF NOT EXISTS PG_TRGM')
 con.run(Drop(SampleTable))
 for sql, *args in Create(SampleTable):
 	print(sql)
