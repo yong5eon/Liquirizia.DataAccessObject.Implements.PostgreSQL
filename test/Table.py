@@ -74,11 +74,11 @@ class TestTable(Case):
 				max=10,
 			)
 		)
-		con: Connection = Helper.Get('Sample')
-		con.begin()
-		con.execute('CREATE EXTENSION IF NOT EXISTS VECTOR')
-		con.execute('CREATE EXTENSION IF NOT EXISTS POSTGIS')
-		con.commit()
+		# con: Connection = Helper.Get('Sample')
+		# con.begin()
+		# con.execute('CREATE EXTENSION IF NOT EXISTS VECTOR')
+		# con.execute('CREATE EXTENSION IF NOT EXISTS POSTGIS')
+		# con.commit()
 		return super().setUpClass()
 	
 	def setUp(self):
