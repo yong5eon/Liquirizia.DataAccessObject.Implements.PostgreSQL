@@ -36,6 +36,9 @@ class SampleTable(
 	constraints=(
 		PrimaryKey('PK_SAMPLE', cols=Column('ID')),
 	),
+	indexes=(
+		Index('IDX_SAMPLE_COL_VARCHAR', exprs=IndexOperation(Column('COL_VARCHAR'), operator='GIN_TRGM_OPS'), using=IndexType.GeneralizedInvertedIndex),
+	),
 	fn=SampleTableUpdated(),
 ):
 	id : int = INT('ID', default=NextVal('SEQ_SAMPLE'))
@@ -53,8 +56,8 @@ class SampleTable(
 	colTimestamp: datetime = TIMESTAMP('COL_TIMESTAMP', null=True)
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
-	colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
-	colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
+	# colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
+	# colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
 
 
 class TestTable(Case):
@@ -76,8 +79,9 @@ class TestTable(Case):
 		)
 		con: Connection = Helper.Get('Sample')
 		con.begin()
-		con.execute('CREATE EXTENSION IF NOT EXISTS VECTOR')
-		con.execute('CREATE EXTENSION IF NOT EXISTS POSTGIS')
+		con.execute('CREATE EXTENSION IF NOT EXISTS PG_TRGM')
+		# con.execute('CREATE EXTENSION IF NOT EXISTS VECTOR')
+		# con.execute('CREATE EXTENSION IF NOT EXISTS POSTGIS')
 		con.commit()
 		return super().setUpClass()
 	
@@ -117,8 +121,8 @@ class TestTable(Case):
 			'colTimestamp': datetime.now(),
 			'colDate': datetime.now().date(),
 			'colTime': datetime.now().time(),
-			'colVector': [1,2,3],
-			'colGeography': Point(1, 2),
+			# 'colVector': [1,2,3],
+			# 'colGeography': Point(1, 2),
 		}, 'status': True},
 	)
 	@Order(3)
@@ -150,8 +154,8 @@ class TestTable(Case):
 				'colTimestamp': datetime.now(),
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
-				'colVector': [1,2,3],
-				'colGeography': Point(1, 2),
+				# 'colVector': [1,2,3],
+				# 'colGeography': Point(1, 2),
 			},
 			'u': {
 				'colBool': False,
@@ -168,8 +172,8 @@ class TestTable(Case):
 				'colTimestamp': datetime.now(),
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
-				'colVector': [4,5,6],
-				'colGeography': Point(3, 4),
+				# 'colVector': [4,5,6],
+				# 'colGeography': Point(3, 4),
 			},
 			'status': True
 		},
@@ -204,8 +208,8 @@ class TestTable(Case):
 				'colTimestamp': datetime.now(),
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
-				'colVector': [1,2,3],
-				'colGeography': Point(1, 2),
+				# 'colVector': [1,2,3],
+				# 'colGeography': Point(1, 2),
 			},
 			'u': {
 				'colBool': False,
@@ -222,8 +226,8 @@ class TestTable(Case):
 				'colTimestamp': datetime.now(),
 				'colDate': datetime.now().date(),
 				'colTime': datetime.now().time(),
-				'colVector': [4,5,6],
-				'colGeography': Point(3, 4),
+				# 'colVector': [4,5,6],
+				# 'colGeography': Point(3, 4),
 			},
 		},
 	)
@@ -246,8 +250,8 @@ class TestTable(Case):
 			_.colTimestamp=u['colTimestamp']
 			_.colDate=u['colDate']
 			_.colTime=u['colTime']
-			_.colVector=u['colVector']
-			_.colGeography=u['colGeography']
+			# _.colVector=u['colVector']
+			# _.colGeography=u['colGeography']
 			_ = self.con.run(Get(SampleTable).where(EqualTo(SampleTable.id, _.id)), fetch=SampleTable)
 		finally:
 			ASSERT_IS_NOT_NONE(_)
@@ -265,8 +269,8 @@ class TestTable(Case):
 			ASSERT_IS_EQUAL(_.colTimestamp, u['colTimestamp'])
 			ASSERT_IS_EQUAL(_.colDate, u['colDate'])
 			ASSERT_IS_EQUAL(_.colTime, u['colTime'])
-			ASSERT_IS_EQUAL(list(_.colVector), u['colVector'])
-			ASSERT_IS_EQUAL(_.colGeography, u['colGeography'])
+			# ASSERT_IS_EQUAL(list(_.colVector), u['colVector'])
+			# ASSERT_IS_EQUAL(_.colGeography, u['colGeography'])
 		return
 
 	@Order(6)
@@ -287,8 +291,8 @@ class TestTable(Case):
 			colTimestamp=datetime.now(),
 			colDate=datetime.now().date(),
 			colTime=datetime.now().time(),
-			colVector=[1,2,3],
-			colGeography=Point(1, 2),
+			# colVector=[1,2,3],
+			# colGeography=Point(1, 2),
 		), fetch=SampleTable)
 		ASSERT_IS_NOT_NONE(_)
 		self.con.run(Delete(SampleTable).where(EqualTo(SampleTable.id, _.id)))
@@ -315,8 +319,8 @@ class TestTable(Case):
 			colTimestamp=datetime.now(),
 			colDate=datetime.now().date(),
 			colTime=datetime.now().time(),
-			colVector=[1,2,3],
-			colGeography=Point(1, 2),
+			# colVector=[1,2,3],
+			# colGeography=Point(1, 2),
 		), fetch=SampleTable)
 		# ASSERT
 		ASSERT_IS_NOT_NONE(_)

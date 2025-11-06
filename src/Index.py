@@ -9,6 +9,7 @@ __all__ = (
 	'IndexType',
 	'Index',
 	'IndexUnique',
+	'IndexOperation',
 )
 
 class IndexType(str, Enum):
@@ -68,5 +69,28 @@ class IndexUnique(Index):
 		using: IndexType = None,
 		notexists: bool = True,
 	):
-		super().__init__(name, exprs, True, using, notexists)
+		super().__init__(
+			name=name,
+			exprs=exprs,
+			unique=True,
+			using=using,
+			notexists=notexists
+		)
 		return
+
+
+class IndexOperation(Expr):
+	"""Define Index Operation"""
+	def __init__(
+		self,
+		col: Union[str, Column],
+		operator: str,
+	):
+		self.col = col
+		self.operator = operator
+		return
+	def __str__(self):
+		return '{} {}'.format(
+			str(self.col),
+			self.operator,
+		)
