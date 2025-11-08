@@ -13,6 +13,12 @@ __all__ = (
 	'Is',
 	'IsNull',
 	'IsNotNull',
+	'IsTrue',
+	'IsNotTrue',
+	'IsFalse',
+	'IsNotFalse',
+	'IsUnknown',
+	'IsNotUnknown',
 )
 
 
@@ -117,3 +123,88 @@ class IsNotNull(Expr):
 		return '{} IS NOT NULL'.format(
 			str(self.col),
 		)
+	
+
+class IsTrue(Expr):
+	def __init__(
+		self,
+		col: Union[Any, Value, Column, Function, Expr],
+	):
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
+		self.col = col
+		return
+	def __str__(self):
+		return '{} IS TRUE'.format(
+			str(self.col),
+		)
+
+
+class IsNotTrue(Expr):
+	def __init__(
+		self,
+		col: Union[Any, Value, Column, Function, Expr],
+	):
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
+		self.col = col
+		return
+	def __str__(self):
+		return '{} IS NOT TRUE'.format(
+			str(self.col),
+		)
+
+
+class IsFalse(Expr):
+	def __init__(
+		self,
+		col: Union[Any, Value, Column, Function, Expr],
+	):
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
+		self.col = col
+		return
+	def __str__(self):
+		return '{} IS FALSE'.format(
+			str(self.col),
+		)
+
+
+class IsNotFalse(Expr):
+	def __init__(
+		self,
+		col: Union[Any, Value, Column, Function, Expr],
+	):
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
+		self.col = col
+		return
+	def __str__(self):
+		return '{} IS NOT FALSE'.format(
+			str(self.col),
+		)
+
+
+class IsUnknown(Expr):
+	def __init__(
+		self,
+		col: Union[Any, Value, Column, Function, Expr],
+	):
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
+		self.col = col
+		return
+	def __str__(self):
+		return '{} IS UNKNOWN'.format(
+			str(self.col),
+		)
+
+
+class IsNotUnknown(Expr):
+	def __init__(
+		self,
+		col: Union[Any, Value, Column, Function, Expr],
+	):
+		if not isinstance(col, (Value, Column, Function, Expr)): col = Value(col)
+		self.col = col
+		return
+	def __str__(self):
+		return '{} IS NOT UNKNOWN'.format(
+			str(self.col),
+		)
+
