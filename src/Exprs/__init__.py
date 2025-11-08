@@ -15,6 +15,12 @@ from .Condition import (
 	Is,
 	IsNull,
 	IsNotNull,
+	IsTrue,
+	IsNotTrue,
+	IsFalse,
+	IsNotFalse,
+	IsUnknown,
+	IsNotUnknown,
 )
 from .Operator import (
 	And,
@@ -52,6 +58,12 @@ __all__ = (
 	'Is',
 	'IsNull',
 	'IsNotNull',
+	'IsTrue',
+	'IsNotTrue',
+	'IsFalse',
+	'IsNotFalse',
+	'IsUnknown',
+	'IsNotUnknown',
 	# OPERATOR
 	'And',
 	'Or',
