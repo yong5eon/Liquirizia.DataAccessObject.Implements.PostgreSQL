@@ -23,7 +23,7 @@ class Update(Executor, Fetch):
 	def __init__(self, o: Type[Table]):
 		self.obj = o
 		self.kwargs = {}
-		self.cond = None
+		self.conds = None
 		return
 	
 	def set(self, **kwargs: Dict[str, Any]):

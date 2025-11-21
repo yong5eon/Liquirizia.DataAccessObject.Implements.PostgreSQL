@@ -16,7 +16,7 @@ class Delete(Executor):
 	def __init__(self, o: Type[Table]):
 		self.obj = o
 		self.kwargs = {}
-		self.cond = None
+		self.conds = None
 		return
 	
 	def where(self, *args: Iterable[Expr]):
