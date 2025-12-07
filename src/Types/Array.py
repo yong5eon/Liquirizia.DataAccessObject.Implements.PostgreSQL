@@ -7,6 +7,7 @@ from ..Value import Value
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
+	Optional,
 	IsArray,
 )
 
@@ -24,7 +25,7 @@ class Array(Type, typestr='ARRAY'):
 		type: Union[str, T[Type]],
 		typesize: int = None,
 		size: Union[int, Sequence[int]] = None,
-		va: Validator = Validator(IsArray()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[Any, Value, Function] = None,
@@ -35,6 +36,11 @@ class Array(Type, typestr='ARRAY'):
 			args = []
 			for s in size if isinstance(size, Sequence) else [size]:
 				args.append('[{}]'.format(s))
+		if va is None:
+			if null:
+				va = Validator(Optional(IsArray()))
+			else:
+				va = Validator(IsArray())
 		super().__init__(
 			key=name, 
 			type=list,

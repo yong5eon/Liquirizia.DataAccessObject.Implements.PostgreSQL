@@ -7,6 +7,7 @@ from ..Value import Value
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
+	Optional,
 	IsString,
 )
 
@@ -23,13 +24,18 @@ class Char(Type, typestr='CHAR'):
 	def __init__(
 		self, 
 		name: str,
-		va: Validator = Validator(IsString()),
+		va: Validator = None,
 		fn: Handler = None,
 		size: int = None,
 		null: bool = False,
 		default: Union[str, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsString()))
+			else:
+				va = Validator(IsString())
 		super().__init__(
 			key=name, 
 			type=str,
@@ -50,13 +56,18 @@ class String(Type, typestr='VARCHAR'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsString()),
+		va: Validator = None,
 		fn: Handler = None,
 		size: int = None,
 		null: bool = False,
 		default: Union[str, Value, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsString()))
+			else:
+				va = Validator(IsString())
 		super().__init__(
 			key=name, 
 			type=str,
@@ -77,12 +88,17 @@ class Text(Type, typestr='TEXT'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsString()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[str, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsString()))
+			else:
+				va = Validator(IsString())
 		super().__init__(
 			key=name, 
 			type=str,

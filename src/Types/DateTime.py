@@ -7,6 +7,7 @@ from ..Value import Value
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
+	Optional,
 	IsDateTime,
 	IsDate,
 	IsTime,
@@ -37,12 +38,17 @@ class Timestamp(Type, typestr='TIMESTAMP'):
 		self, 
 		name: str, 
 		timezone: bool = False,
-		va: Validator = Validator(IfStrOrTimestampToDateTime()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[datetime, Value, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IfStrOrTimestampToDateTime()))
+			else:
+				va = Validator(IfStrOrTimestampToDateTime())
 		super().__init__(
 			name,
 			type=datetime,
@@ -67,12 +73,17 @@ class Date(Type, typestr='DATE'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IfStrToDate()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[date, Value, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IfStrToDate()))
+			else:
+				va = Validator(IfStrToDate())
 		super().__init__(
 			key=name, 
 			type=date,
@@ -97,12 +108,17 @@ class Time(Type, typestr='TIME'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IfStrToTime()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[time, Value, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IfStrToTime()))
+			else:
+				va = Validator(IfStrToTime())
 		super().__init__(
 			key=name, 
 			type=time,
