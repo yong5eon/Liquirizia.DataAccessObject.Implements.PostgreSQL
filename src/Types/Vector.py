@@ -7,6 +7,7 @@ from ..Value import Value
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
+	Optional,
 	IsArray,
 )
 
@@ -29,7 +30,7 @@ class Vector(Type, typestr='VECTOR'):
 			self, 
 			name: str,
 			size: Union[int, Sequence[int]],
-			va: Validator = Validator(IfStrToArray()),
+			va: Validator = None,
 			fn: Handler = None,
 			null: bool = False,
 			default: Union[Sequence[float], Function] = None,
@@ -40,6 +41,11 @@ class Vector(Type, typestr='VECTOR'):
 			args = []
 			for s in size if isinstance(size, Sequence) else [size]:
 				args.append('[{}]'.format(s))
+		if va is None:
+			if null:
+				va = Validator(Optional(IfStrToArray()))
+			else:
+				va = Validator(IfStrToArray())
 		super().__init__(
 			key=name, 
 			type=list,

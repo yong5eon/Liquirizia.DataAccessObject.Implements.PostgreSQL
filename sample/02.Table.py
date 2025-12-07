@@ -57,8 +57,8 @@ class SampleTable(
 	colTimestamp: datetime = TIMESTAMP('COL_TIMESTAMP', null=True)
 	colDate: date = DATE('COL_DATE', null=True)
 	colTime: date = TIME('COL_TIME', null=True)
-	colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
-	colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
+	# colVector: list = VECTOR('COL_VECTOR', size=3, null=True)
+	# colGeography: Point = GEOGRAPHY('COL_GEOGRAPHY', null=True)
 
 
 Helper.Set(
@@ -99,10 +99,35 @@ _: SampleTable = con.run(
 		colTimestamp=datetime.now(),
 		colDate=datetime.now().date(),
 		colTime=datetime.now().time(),
-		colVector=[1.1,2.2,3.3],
-		colGeography=Point(1.0, 2.0),
+		# colVector=[1.1,2.2,3.3],
+		# colGeography=Point(1.0, 2.0),
 	),
 	fetch=SampleTable
+)
+
+PrettyPrint(_)
+
+_: SampleTable = con.run(
+	Update(SampleTable).where(
+		EqualTo(SampleTable.id, 1)
+	).set(
+		colBool=None,
+		colShort=None,
+		colInteger=None,
+		colLong=None,
+		colFloat=None,
+		colDecimal=None,
+		colChar=None,
+		colString=None,
+		colText=None,
+		colList=None,
+		colObject=None,
+		colTimestamp=None,
+		colDate=None,
+		colTime=None,
+		# colVector=None,
+		# colGeography=None,
+	), fetch=SampleTable
 )
 
 PrettyPrint(_)
@@ -125,8 +150,8 @@ _.colObject['e'] = 5
 _.colTimestamp=datetime.now()
 _.colDate=datetime.now().date()
 _.colTime=datetime.now().time()
-_.colVector=[4,5,6]
-_.colGeography=Point(4.0, 5.0)
+# _.colVector=[4,5,6]
+# _.colGeography=Point(4.0, 5.0)
 
 # SELECT
 _ = con.run(Select(SampleTable), fetch=SampleTable)

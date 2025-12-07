@@ -7,6 +7,7 @@ from ..Value import Value
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
+	Optional,
 	IsInteger,
 	IsFloat,
 	IsDecimal,
@@ -29,12 +30,17 @@ class Short(Type, typestr='SMALLINT'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsInteger()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[int, Value, Function]= None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsInteger()))
+			else:
+				va = Validator(IsInteger())
 		super().__init__(
 			key=name, 
 			type=int,
@@ -52,12 +58,17 @@ class Integer(Type, typestr='INTEGER'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsInteger()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[int, Value, Function]= None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsInteger()))
+			else:
+				va = Validator(IsInteger())
 		super().__init__(
 			key=name, 
 			type=int,
@@ -75,12 +86,17 @@ class Long(Type, typestr='BIGINT'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsInteger()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[int, Value, Function]= None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsInteger()))
+			else:
+				va = Validator(IsInteger())
 		super().__init__(
 			key=name, 
 			type=int,
@@ -98,12 +114,17 @@ class Float(Type, typestr='REAL'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsFloat()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[float, Value, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsFloat()))
+			else:
+				va = Validator(IsFloat())
 		super().__init__(
 			key=name, 
 			type=float,
@@ -121,12 +142,17 @@ class Double(Type, typestr='DOUBLE PRECISION'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsFloat()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[float, Value, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsFloat()))
+			else:
+				va = Validator(IsFloat())
 		super().__init__(
 			key=name, 
 			type=float,
@@ -146,12 +172,17 @@ class Decimal(Type, typestr='NUMERIC'):
 		name: str, 
 		scale: int,
 		precision: int,
-		va: Validator = Validator(IsDecimal()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[PyDecimal, Value, Function]= None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsDecimal()))
+			else:
+				va = Validator(IsDecimal())
 		super().__init__(
 			key=name, 
 			type=PyDecimal,

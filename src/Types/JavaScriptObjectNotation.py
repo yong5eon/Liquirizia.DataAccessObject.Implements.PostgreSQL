@@ -7,6 +7,7 @@ from ..Value import Value
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
+	Optional,
 	IsObject,
 	IsArray,
 	Any,
@@ -24,12 +25,17 @@ class JavaScriptObjectNotation(Type, typestr='JSON'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(Any(IsObject(), IsArray())),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[Dict, Value, Function]= None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(Any(IsObject(), IsArray())))
+			else:
+				va = Validator(Any(IsObject(), IsArray()))
 		super().__init__(
 			key=name,
 			type=dict,
@@ -47,12 +53,17 @@ class JavaScriptObjectNotationByteArray(Type, typestr='JSONB'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(Any(IsObject(), IsArray())),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[Dict, Value, Function]= None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(Any(IsObject(), IsArray())))
+			else:
+				va = Validator(Any(IsObject(), IsArray()))
 		super().__init__(
 			key=name, 
 			type=dict,

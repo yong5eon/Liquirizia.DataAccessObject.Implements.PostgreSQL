@@ -7,6 +7,7 @@ from ..Value import Value
 from Liquirizia.DataModel import Handler
 from Liquirizia.Validator import Validator
 from Liquirizia.Validator.Patterns import (
+	Optional,
 	IsBool,
 )
 
@@ -21,12 +22,17 @@ class Bool(Type, typestr='BOOLEAN'):
 	def __init__(
 		self, 
 		name: str, 
-		va: Validator = Validator(IsBool()),
+		va: Validator = None,
 		fn: Handler = None,
 		null: bool = False,
 		default: Union[bool, Value, Function] = None,
 		description: str = None,
 	):
+		if va is None:
+			if null:
+				va = Validator(Optional(IsBool()))
+			else:
+				va = Validator(IsBool())
 		super().__init__(
 			key=name, 
 			type=bool,
