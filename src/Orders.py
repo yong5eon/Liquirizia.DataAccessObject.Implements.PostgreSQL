@@ -8,9 +8,9 @@ from .Function import Function
 from typing import Union
 
 __all__ = (
-	'Ascend'
-	'Descend'
-	'Random'
+	'Ascend',
+	'Descend',
+	'Random',
 )
 
 
